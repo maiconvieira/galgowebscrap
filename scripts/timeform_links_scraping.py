@@ -81,9 +81,6 @@ try:
 except FileNotFoundError:
     arquivo = open(path_file, 'w+')
 
-fileDayScraped = os.path.join(parent_dir, racingDate + '.txt')
-f = open(fileDayScraped, 'w+')
-
 # Link para rastrear
 timeform_link = "https://www.timeform.com/greyhound-racing/results/"
 
@@ -92,6 +89,9 @@ driver.get(timeform_link + racingDate)
 driver.implicitly_wait(0.5)
 
 fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
+
+fileDayScraped = os.path.join(parent_dir, racingDate + '.txt')
+f = open(fileDayScraped, 'w+')
 
 for index, i in enumerate(fullpage):
     qty = index + 1
