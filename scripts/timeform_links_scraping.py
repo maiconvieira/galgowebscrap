@@ -23,25 +23,25 @@ parent_dir = "arquivos"
 if os.path.exists(parent_dir) != True:
     os.mkdir(parent_dir)
 
-# arquivo para salvar os links
-nome_arquivo = "DepositoDeLinks.txt"
+# carregar a variavel racingDate com o dia de hoje
+date_now = datetime.datetime.now()
+two_days_ago = date_now - datetime.timedelta(days=2)
+racingDate = two_days_ago.strftime("%Y-%m-%d")
 
+# arquivo para salvar os links
+nome_arquivo = "UltimoDiaScaneado.txt"
 path_file = os.path.join(parent_dir, nome_arquivo)
 
 # se o arquivo existe ok, se não existir criar
 try:
     arquivo = open(path_file, 'r+')
     if os.stat(path_file).st_size == 0:
-        # carregar a variavel racingDate com o dia de hoje
-        date_now = datetime.datetime.now()
-        two_days_ago = date_now - datetime.timedelta(days=2)
-        racingDate = two_days_ago.strftime("%Y-%m-%d")
+        pass
     else:
         with open(path_file) as file:
             for line in file:
                 pass
-            partsOfLine = line.split('/')
-            partsOfDate = partsOfLine[-2].split('-')
+            partsOfDate = line.split('-')
             lastLineYear = int(partsOfDate[0])
             lastLineMonth = int(partsOfDate[1])
             lastLineDay = int(partsOfDate[2])
@@ -73,6 +73,9 @@ try:
 except FileNotFoundError:
     arquivo = open(path_file, 'w+')
 
+fileDayScraped = os.path.join(parent_dir, racingDate + '.txt')
+f = open(fileDayScraped, 'w+')
+
 # Link para rastrear
 timeform_link = "https://www.timeform.com/greyhound-racing/results/"
 
@@ -86,10 +89,13 @@ for index, i in enumerate(fullpage):
     qty = index + 1
     hrefCaptured = i.get_attribute("href")
     if index != len(fullpage) - 1:
-        arquivo.write(hrefCaptured + '\n')
+        f.write(hrefCaptured + '\n')
     else:
-        arquivo.write(hrefCaptured)
+        f.write(hrefCaptured)
+f.close()
 
 print(str(qty) + " corrida(s) nesse dia.")
+    
+arquivo.write(racingDate)
 arquivo.close()
 driver.quit()
