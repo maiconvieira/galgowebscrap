@@ -47,7 +47,7 @@ try:
             lastLineDay = int(partsOfDate[2])
             if lastLineDay > 1 and lastLineMonth > 1:
                 dayToScrap = str(lastLineDay - 1).zfill(2)
-                monthToScrap = str(lastLineMonth - 1).zfill(2)
+                monthToScrap = str(lastLineMonth).zfill(2)
                 yearToScrap = str(lastLineYear).zfill(4)
             elif lastLineDay > 1 and lastLineMonth == 1:
                 dayToScrap = str(lastLineDay - 1).zfill(2)
