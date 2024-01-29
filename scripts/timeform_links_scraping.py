@@ -57,8 +57,12 @@ try:
                 dayToScrap = str(lastLineDay - 1).zfill(2)
                 monthToScrap = str(lastLineMonth).zfill(2)
                 yearToScrap = str(lastLineYear).zfill(4)
-            elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4==0 and lastLineYear%100!=0) or (lastLineYear%400==0)):
+            elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 == 0 and lastLineYear%100 != 0) or (lastLineYear%400 == 0)):
                 dayToScrap = str(29)
+                monthToScrap = str(lastLineMonth - 1).zfill(2)
+                yearToScrap = str(lastLineYear).zfill(4)
+            elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 != 0 and lastLineYear%100 == 0) or (lastLineYear%400 != 0)):
+                dayToScrap = str(28)
                 monthToScrap = str(lastLineMonth - 1).zfill(2)
                 yearToScrap = str(lastLineYear).zfill(4)
             elif lastLineDay == 1 and lastLineMonth in(2, 4, 6, 8, 9, 11):
