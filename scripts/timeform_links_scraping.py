@@ -16,6 +16,7 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 # Import bibliotecas
 import os
 import datetime
+import sys
 
 # Importar função criada retrocederData
 from retrocederData import *
@@ -39,6 +40,11 @@ if os.path.isfile(path_file):
     if os.stat(path_file).st_size != 0:
         with open(path_file) as f:
             line = f.readline()
+            # Se a variavel line for igual a '2013-01-01' abortar o script.
+            if line == '2013-01-01':
+                f.close()
+                os.remove(path_file)
+                sys.exit()
             racingDate = retrocederData(line)
         f.close()
 
