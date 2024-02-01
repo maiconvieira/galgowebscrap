@@ -21,7 +21,7 @@ import sys
 # Importar função criada retrocederData
 from retrocederData import *
 
-# checar se diretório existe se não existir cirar
+# checar se diretório existe se não existir criar
 parent_dir = 'arquivos'
 
 if os.path.exists(parent_dir) != True:

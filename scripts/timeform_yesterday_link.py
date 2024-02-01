@@ -20,11 +20,8 @@ import datetime
 # Importar função criada retrocederData
 from retrocederData import *
 
-# checar se diretório existe se não existir cirar
+# checar se diretório existe se não existir criar
 parent_dir = 'arquivos'
-
-# arquivo para salvar os links
-path_file = os.path.join(parent_dir, 'UltimoDiaEscaneado.txt')
 
 # carregar a variavel racingDate com a data de ontem
 date_now = datetime.datetime.now()
@@ -52,9 +49,4 @@ if len(fullpage) != 0:
         f.close()
 else:
     racingDate = retrocederData(racingDate)
-
-# Atualizando data do arquivo 'UltimoDiaEscaneado.txt'
-with open(path_file, 'w+') as f:
-    f.write(racingDate)
-f.close()
 driver.quit()
