@@ -16,7 +16,6 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 # Import bibliotecas
 import os
 import datetime
-import sys
 
 # Importar função criada retrocederData
 from retrocederData import *
@@ -24,36 +23,15 @@ from retrocederData import *
 # checar se diretório existe se não existir cirar
 parent_dir = 'arquivos'
 
-if os.path.exists(parent_dir) != True:
-    os.mkdir(parent_dir)
-
 # arquivo para salvar os links
 path_file = os.path.join(parent_dir, 'UltimoDiaEscaneado.txt')
 
 # carregar a variavel racingDate com a data de ontem
 date_now = datetime.datetime.now()
-two_days_ago = date_now - datetime.timedelta(days=1)
-racingDate = two_days_ago.strftime('%Y-%m-%d')
-
-# se o arquivo existe ok, se não existir criar
-if os.path.isfile(path_file):
-    if os.stat(path_file).st_size != 0:
-        with open(path_file) as f:
-            line = f.readline()
-            # Se a variavel line for igual a '2013-01-01' abortar o script.
-            if line == '2013-01-01':
-                f.close()
-                os.remove(path_file)
-                sys.exit()
-            racingDate = retrocederData(line)
-        f.close()
-
-# Parte do link para rastrear
-timeform_link = 'https://www.timeform.com/greyhound-racing/results/'
+racingDate = date_now.strftime('%Y-%m-%d')
 
 # Link com variavel racingpost para rastrear
-driver.get(timeform_link + racingDate)
-#driver.get(timeform_link + '2023-12-26')
+driver.get('https://www.timeform.com/greyhound-racing/results/yesterday')
 driver.implicitly_wait(0.5)
 fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
 
