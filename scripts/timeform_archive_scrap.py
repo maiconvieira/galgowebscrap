@@ -33,8 +33,8 @@ if not table_exists(cursor, table_lastscannedday):
     create_table_query = """
         CREATE TABLE lastscannedday (
             id SERIAL PRIMARY KEY,
-            timeform_scannedday VARCHAR(100),
-            racingpost_scannedday VARCHAR(100)
+            timeform_scannedday VARCHAR(10),
+            racingpost_scannedday VARCHAR(10)
         )
     """
     cursor.execute(create_table_query)
@@ -45,7 +45,7 @@ if not table_exists(cursor, table_linkstoscam):
     create_table_query = """
         CREATE TABLE IF NOT EXISTS table_linkstoscam (
             id SERIAL PRIMARY KEY,
-            url VARCHAR(100),
+            url VARCHAR,
             website VARCHAR(25),
             scanned BOOLEAN
         )
@@ -86,7 +86,7 @@ else:
     # Chamar a função e salvar o valor retornado em uma variável
     racingDate = get_scanned_day(cursor, table_lastscannedday, column_lastscannedday)
     if racingDate == '2013-01-01':
-        drop_table(conn, table_lastscannedday)
+        update_field_to_null(conn, table_lastscannedday, column_lastscannedday)
         sys.exit()
     else:
         racingDate = retrocederData(racingDate)

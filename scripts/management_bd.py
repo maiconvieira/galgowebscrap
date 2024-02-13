@@ -36,26 +36,24 @@ def insert_or_update_value(conn, cursor, table_name, column_name, value):
         if row_count > 0:
             update_query = f"UPDATE {table_name} SET {column_name} = %s WHERE id = 1"
             cursor.execute(update_query, (value,))
-            print(f"Valor atualizado para {value} na coluna {column_name} da tabela {table_name}.")
         else:
             insert_query = f"INSERT INTO {table_name} ({column_name}) VALUES (%s)"
             cursor.execute(insert_query, (value,))
-            print(f"Valor inserido {value} na coluna {column_name} da tabela {table_name}.")
         
         conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
         print("Erro ao inserir ou atualizar valor:", e)
 
-def drop_table(conn, table_name):
+def update_field_to_null(conn, table_name, column_name):
     try:
         cursor = conn.cursor()
-        drop_table_query = f"DROP TABLE IF EXISTS {table_name}"
-        cursor.execute(drop_table_query)
+        update_query = f"UPDATE {table_name} SET {column_name} = NULL"
+        cursor.execute(update_query)
         conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
-        print("Erro ao excluir a tabela:", e)
+        print("Erro ao atualizar campo:", e)
 
 # Função para verificar se a URL já existe na tabela
 def url_exists(conn, url):

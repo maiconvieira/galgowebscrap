@@ -33,8 +33,8 @@ if not table_exists(cursor, table_lastscannedday):
     create_table_query = """
         CREATE TABLE lastscannedday (
             id SERIAL PRIMARY KEY,
-            timeform_scannedday VARCHAR(100),
-            racingpost_scannedday VARCHAR(100)
+            timeform_scannedday VARCHAR(10),
+            racingpost_scannedday VARCHAR(10)
         )
     """
     cursor.execute(create_table_query)
@@ -45,7 +45,7 @@ if not table_exists(cursor, table_linkstoscam):
     create_table_query = """
         CREATE TABLE IF NOT EXISTS table_linkstoscam (
             id SERIAL PRIMARY KEY,
-            url VARCHAR(100),
+            url VARCHAR,
             website VARCHAR(25),
             scanned BOOLEAN
         )
@@ -74,12 +74,11 @@ def arrayoflinks(listoflinks):
         for i in listoflinks:
             hrefCaptured = i.get_attribute('href')
             # Verificar se a URL já existe na tabela
-#            if not url_exists(conn, hrefCaptured):
+            if not url_exists(conn, hrefCaptured):
                 # Inserir a URL na tabela se não existir
-#                insert_data(conn, hrefCaptured)
-#            else:
-#                print("A URL já existe na tabela. Ignorando a inserção.")
-            print(hrefCaptured)
+                insert_data(conn, hrefCaptured, website_scanned)
+            else:
+                print("A URL já existe na tabela. Ignorando a inserção.")
 
 # Verificar se a tabela tem algum valor
 if not has_values(cursor, table_lastscannedday, column_lastscannedday):
@@ -93,7 +92,7 @@ else:
     # Chamar a função e salvar o valor retornado em uma variável
     racingDate = get_scanned_day(cursor, table_lastscannedday, column_lastscannedday)
     if racingDate == '2013-01-01':
-        drop_table(conn, table_lastscannedday)
+        update_field_to_null(conn, table_lastscannedday, column_lastscannedday)
         sys.exit()
     else:
         racingDate = retrocederData(racingDate)
@@ -103,26 +102,8 @@ else:
     insert_or_update_value(conn, cursor, table_lastscannedday, column_lastscannedday, racingDate)
 
 # Salvar alterações no banco de dados
-#conn.commit()
+conn.commit()
 
 # Fechar o cursor e a conexão
-#cursor.close()
-#conn.close()
-
-#dayscanned = '2024-02-10'
-
-#driver.get(partoflink + dayscanned)
-#driver.implicitly_wait(0.5)
-#fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
-#partialHTML = driver.find_elements(By.CLASS_NAME, 'results-race-list-row')
-
-#num = 0
-
-#for i in partialHTML:
-#    linksscanned = i.find_elements(By.TAG_NAME, 'a')
-
-#for n in linksscanned:
-#    hrefCaptured = n.get_attribute('href')
-#    print(hrefCaptured)
-
-#print(fullpage)
+cursor.close()
+conn.close()

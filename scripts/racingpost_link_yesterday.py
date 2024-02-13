@@ -25,8 +25,8 @@ cursor = conn.cursor()
 # Váriaveis de banco de dados 
 table_lastscannedday = 'lastscannedday'
 table_linkstoscam = 'linkstoscam'
-column_lastscannedday = 'timeform_scannedday'
-website_scanned = 'timeform'
+column_lastscannedday = 'racingpost_scannedday'
+website_scanned = 'racingpost'
 
 # Verificar se as tabelas existem
 if not table_exists(cursor, table_lastscannedday):
@@ -54,15 +54,21 @@ if not table_exists(cursor, table_linkstoscam):
     cursor.execute(create_table_query)
     conn.commit()
 
-# Links de ontem do Timeform
-partoflink = 'https://www.timeform.com/greyhound-racing/results/'
+# Parte do link para rastrear
+partoflink = 'https://greyhoundbet.racingpost.com/#results-list/r_date='
+fulllinksscanned = []
 
 def getlinksatscannedday(daytoscrap):
     # Link com variavel racingpost para rastrear
     driver.get(partoflink + daytoscrap)
     driver.implicitly_wait(0.5)
-    fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
-    return fullpage
+#    fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
+    partialHTML = driver.find_elements(By.CLASS_NAME, 'results-race-list-row')
+    for i in partialHTML:
+        linksscanned = i.find_elements(By.TAG_NAME, 'a')
+        for n in linksscanned:
+            fulllinksscanned.append(n)
+    return fulllinksscanned
 
 def arrayoflinks(listoflinks):
     if len(listoflinks) != 0:
@@ -72,6 +78,7 @@ def arrayoflinks(listoflinks):
             if not url_exists(conn, hrefCaptured):
                 # Inserir a URL na tabela se não existir
                 insert_data(conn, hrefCaptured, website_scanned)
+                pass
             else:
                 print("A URL já existe na tabela. Ignorando a inserção.")
 
@@ -79,6 +86,7 @@ racingDate = datetime.datetime.now().strftime('%Y-%m-%d')
 
 # Verificar se a tabela tem algum valor
 if not has_values(cursor, table_lastscannedday, column_lastscannedday):
+    # Chamar a função e salvar a data de ontem em uma variável
     listoflinks = getlinksatscannedday(racingDate)
     arrayoflinks(listoflinks)
     # Inserir valor se não houver nenhum
