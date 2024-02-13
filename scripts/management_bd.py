@@ -51,11 +51,11 @@ def url_exists(conn, url):
         print("Erro ao verificar a existência da URL na tabela:", e)
 
 # Função para inserir dados na tabela
-def insert_data(conn, website, url):
+def insert_data(conn, url):
     try:
         cursor = conn.cursor()
-        insert_query = "INSERT INTO table_linkstoscam (url, scanned, website) VALUES (%s, FALSE, %s)"
-        cursor.execute(insert_query, (website, url,))
+        insert_query = "INSERT INTO table_linkstoscam (url, scanned, website) VALUES (%s, FALSE)"
+        cursor.execute(insert_query, (url, ))
         conn.commit()
     except psycopg2.Error as e:
         conn.rollback()

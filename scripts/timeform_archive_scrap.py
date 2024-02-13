@@ -67,7 +67,7 @@ def arrayoflinks(listoflinks):
             # Verificar se a URL já existe na tabela
             if not url_exists(conn, hrefCaptured):
                 # Inserir a URL na tabela se não existir
-                insert_data(conn, 'timeform', hrefCaptured)
+                insert_data(conn, hrefCaptured)
             else:
                 print("A URL já existe na tabela. Ignorando a inserção.")
 
