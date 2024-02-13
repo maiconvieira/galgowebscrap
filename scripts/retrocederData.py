@@ -1,3 +1,12 @@
+import datetime
+
+def getlastday():
+    # carregar a variavel racingDate com a data de ontem
+    date_now = datetime.datetime.now()
+    last_day = date_now - datetime.timedelta(days=1)
+    racingDate = last_day.strftime('%Y-%m-%d')
+    return racingDate
+
 def retrocederData(parameter):
     partsOfDate = parameter.split('-')
     lastLineYear = int(partsOfDate[0])
