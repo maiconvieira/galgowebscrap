@@ -8,9 +8,9 @@ def table_exists(cursor, table_name):
     return cursor.fetchone()[0]
 
 # Função para verificar o valor salvo na tabela
-def get_scanned_day(cursor, table_name):
+def get_scanned_day(cursor, table_name, column_name):
     # Consultar o valor do campo scannedday
-    select_query = f"SELECT scannedday FROM {table_name} WHERE id = 1"
+    select_query = f"SELECT {column_name} FROM {table_name} WHERE id = 1"
     cursor.execute(select_query)
     racing_date = cursor.fetchone()[0]
     return racing_date
@@ -22,13 +22,24 @@ def has_values(cursor, table_name):
     return cursor.fetchone()[0] > 0
 
 # Função para inserir ou atualizar o valor
-def insert_or_update_value(cursor, table_name, value):
-    if has_values(cursor, table_name):
-        update_query = sql.SQL("UPDATE {} SET scannedday = %s WHERE id = 1").format(sql.Identifier(table_name))
-        cursor.execute(update_query, (value,))
-    else:
-        insert_query = sql.SQL("INSERT INTO {} (scannedday) VALUES (%s)").format(sql.Identifier(table_name))
-        cursor.execute(insert_query, (value,))
+def insert_or_update_value(conn, cursor, table_name, column_name, value):
+    try:
+        cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+        row_count = cursor.fetchone()[0]
+        
+        if row_count > 0:
+            update_query = f"UPDATE {table_name} SET {column_name} = %s WHERE id = 1"
+            cursor.execute(update_query, (value,))
+            print(f"Valor atualizado para {value} na coluna {column_name} da tabela {table_name}.")
+        else:
+            insert_query = f"INSERT INTO {table_name} ({column_name}) VALUES (%s)"
+            cursor.execute(insert_query, (value,))
+            print(f"Valor inserido {value} na coluna {column_name} da tabela {table_name}.")
+        
+        conn.commit()
+    except psycopg2.Error as e:
+        conn.rollback()
+        print("Erro ao inserir ou atualizar valor:", e)
 
 def drop_table(conn, table_name):
     try:

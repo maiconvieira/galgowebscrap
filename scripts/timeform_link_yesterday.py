@@ -22,9 +22,11 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 conn = connect()
 cursor = conn.cursor()
 
-# Nome das tabelas 
+# Váriaveis de banco de dados 
 table_lastscannedday = 'lastscannedday'
 table_linkstoscam = 'linkstoscam'
+column_lastscannedday = 'timeform_scannedday'
+website_scanned = 'timeform'
 
 # Verificar se as tabelas existem
 if not table_exists(cursor, table_lastscannedday):
@@ -32,7 +34,8 @@ if not table_exists(cursor, table_lastscannedday):
     create_table_query = """
         CREATE TABLE lastscannedday (
             id SERIAL PRIMARY KEY,
-            scannedday VARCHAR(100)
+            timeform_scannedday VARCHAR(100),
+            racingpost_scannedday VARCHAR(100)
         )
     """
     cursor.execute(create_table_query)
@@ -64,11 +67,11 @@ def getlinksatscannedday(daytoscrap):
 def arrayoflinks(listoflinks):
     if len(listoflinks) != 0:
         for i in listoflinks:
-            hrefCaptured = i.get_attribute("href")
+            hrefCaptured = i.get_attribute('href')
             # Verificar se a URL já existe na tabela
             if not url_exists(conn, hrefCaptured):
                 # Inserir a URL na tabela se não existir
-                insert_data(conn, hrefCaptured, 'timeform')
+                insert_data(conn, hrefCaptured, website_scanned)
             else:
                 print("A URL já existe na tabela. Ignorando a inserção.")
 
@@ -79,7 +82,7 @@ if not has_values(cursor, table_lastscannedday):
     listoflinks = getlinksatscannedday(racingDate)
     arrayoflinks(listoflinks)
     # Inserir valor se não houver nenhum
-    insert_or_update_value(cursor, table_lastscannedday, racingDate)
+    insert_or_update_value(conn, cursor, table_lastscannedday, column_lastscannedday, racingDate)
 else:
     # Chamar a função e salvar o valor retornado em uma variável
     if racingDate == '2013-01-01':
@@ -89,7 +92,7 @@ else:
         listoflinks = getlinksatscannedday(racingDate)
         arrayoflinks(listoflinks)
     # Atualizar valor se houver algum
-    insert_or_update_value(cursor, table_lastscannedday, racingDate)
+    insert_or_update_value(conn, cursor, table_lastscannedday, column_lastscannedday, racingDate)
 
 # Salvar alterações no banco de dados
 conn.commit()

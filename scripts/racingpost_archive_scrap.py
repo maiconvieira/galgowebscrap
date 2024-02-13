@@ -18,12 +18,12 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Usar a função connect() para obter uma conexão com o banco de dados
-#conn = connect()
-#cursor = conn.cursor()
+conn = connect()
+cursor = conn.cursor()
 
 # Nome das tabelas 
-#table_lastscannedday = 'lastscannedday'
-#table_linkstoscam = 'linkstoscam'
+table_lastscannedday = 'lastscannedday'
+table_linkstoscam = 'linkstoscam'
 
 # Verificar se as tabelas existem
 #if not table_exists(cursor, table_lastscannedday):
