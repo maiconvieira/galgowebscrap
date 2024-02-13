@@ -44,7 +44,7 @@ if not table_exists(cursor, table_lastscannedday):
 if not table_exists(cursor, table_linkstoscam):
     # Criar a tabela table_linkstoscam se ela não existir
     create_table_query = """
-        CREATE TABLE IF NOT EXISTS table_linkstoscam (
+        CREATE TABLE IF NOT EXISTS linkstoscam (
             id SERIAL PRIMARY KEY,
             url VARCHAR,
             website VARCHAR(25),
@@ -93,7 +93,7 @@ if not has_values(cursor, table_lastscannedday, column_lastscannedday):
     insert_or_update_value(conn, cursor, table_lastscannedday, column_lastscannedday, racingDate)
 else:
     # Chamar a função e salvar o valor retornado em uma variável
-    if racingDate == '2013-01-01':
+    if racingDate == '1997-01-01':
         update_field_to_null(conn, table_lastscannedday, column_lastscannedday)
         sys.exit()
     else:

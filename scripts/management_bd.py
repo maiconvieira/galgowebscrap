@@ -75,3 +75,18 @@ def insert_data(conn, url, website):
     except psycopg2.Error as e:
         conn.rollback()
         print("Erro ao inserir dados:", e)
+
+def get_url_to_scrap(conn, table_name, column_name):
+    try:
+        cursor = conn.cursor()
+        select_query = f"SELECT url FROM {table_name} WHERE website = {column_name} AND scanned IS NULL"
+        cursor.execute(select_query)
+        url_to_scrap = cursor.fetchone()
+        if url_to_scrap:
+            return url_to_scrap[0]
+        else:
+            print("Nenhuma URL encontrada com as condições especificadas.")
+            return None
+    except psycopg2.Error as e:
+        print("Erro ao selecionar a URL:", e)
+        return None

@@ -44,7 +44,7 @@ if not table_exists(cursor, table_lastscannedday):
 if not table_exists(cursor, table_linkstoscam):
     # Criar a tabela table_linkstoscam se ela não existir
     create_table_query = """
-        CREATE TABLE IF NOT EXISTS table_linkstoscam (
+        CREATE TABLE IF NOT EXISTS linkstoscam (
             id SERIAL PRIMARY KEY,
             url VARCHAR,
             website VARCHAR(25),
