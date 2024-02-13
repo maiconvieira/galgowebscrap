@@ -54,8 +54,8 @@ def url_exists(conn, url):
 def insert_data(conn, url):
     try:
         cursor = conn.cursor()
-        insert_query = "INSERT INTO table_linkstoscam (url, scanned, website) VALUES (%s, FALSE)"
-        cursor.execute(insert_query, (url, ))
+        insert_query = "INSERT INTO table_linkstoscam (url, scanned) VALUES (%s, FALSE)"
+        cursor.execute(insert_query, (url,))
         conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
