@@ -18,85 +18,99 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Usar a função connect() para obter uma conexão com o banco de dados
-conn = connect()
-cursor = conn.cursor()
+#conn = connect()
+#cursor = conn.cursor()
 
 # Nome das tabelas 
-table_lastscannedday = 'lastscannedday'
-table_linkstoscam = 'linkstoscam'
+#table_lastscannedday = 'lastscannedday'
+#table_linkstoscam = 'linkstoscam'
 
 # Verificar se as tabelas existem
-if not table_exists(cursor, table_lastscannedday):
-    # Criar a tabela table_lastscannedday se ela não existir
-    create_table_query = """
-        CREATE TABLE lastscannedday (
-            id SERIAL PRIMARY KEY,
-            scannedday VARCHAR(100)
-        )
-    """
-    cursor.execute(create_table_query)
-    conn.commit()
+#if not table_exists(cursor, table_lastscannedday):
+#    # Criar a tabela table_lastscannedday se ela não existir
+#    create_table_query = """
+#        CREATE TABLE lastscannedday (
+#            id SERIAL PRIMARY KEY,
+#            scannedday VARCHAR(100)
+#        )
+#    """
+#    cursor.execute(create_table_query)
+#    conn.commit()
 
-if not table_exists(cursor, table_linkstoscam):
+#if not table_exists(cursor, table_linkstoscam):
     # Criar a tabela table_linkstoscam se ela não existir
-    create_table_query = """
-        CREATE TABLE IF NOT EXISTS table_linkstoscam (
-            id SERIAL PRIMARY KEY,
-            url VARCHAR(100),
-            scanned BOOLEAN
-        )
-    """
-    cursor.execute(create_table_query)
-    conn.commit()
+#    create_table_query = """
+#        CREATE TABLE IF NOT EXISTS table_linkstoscam (
+#            id SERIAL PRIMARY KEY,
+#            url VARCHAR(100),
+#            scanned BOOLEAN
+#        )
+#    """
+#    cursor.execute(create_table_query)
+#    conn.commit()
 
 # Parte do link para rastrear
 partoflink = 'https://greyhoundbet.racingpost.com/#results-list/r_date='
+dayscanned = '2024-02-10'
 
-#//*[@id="results-list-scroll"]/div[1]/div/ul[1]/li[1]/div/div/a[1]
-#//*[@id="results-list-scroll"]/div[1]/div/ul[1]/li[2]/div/div/a[1]
+driver.get(partoflink + dayscanned)
+driver.implicitly_wait(0.5)
+#fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
+partialHTML = driver.find_elements(By.CLASS_NAME, 'results-race-list-row')
 
-def getlinksatscannedday(daytoscrap):
+num = 0
+
+for i in partialHTML:
+    linksscanned = i.find_elements(By.TAG_NAME, 'a')
+
+for n in linksscanned:
+    hrefCaptured = n.get_attribute('href')
+    print(hrefCaptured)
+
+#print(fullpage)
+
+#def getlinksatscannedday(daytoscrap):
     # Link com variavel racingpost para rastrear
-    driver.get(partoflink + daytoscrap)
-    driver.implicitly_wait(0.5)
-    fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
-    return fullpage
+#    driver.get(partoflink + daytoscrap)
+#    driver.implicitly_wait(0.5)
+#    fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
+#    return fullpage
 
-def arrayoflinks(listoflinks):
-    if len(listoflinks) != 0:
-        for i in listoflinks:
-            hrefCaptured = i.get_attribute("href")
-            # Verificar se a URL já existe na tabela
-            if not url_exists(conn, hrefCaptured):
+#def arrayoflinks(listoflinks):
+#    if len(listoflinks) != 0:
+#        for i in listoflinks:
+#            hrefCaptured = i.get_attribute("href")
+#            # Verificar se a URL já existe na tabela
+#            if not url_exists(conn, hrefCaptured):
                 # Inserir a URL na tabela se não existir
-                insert_data(conn, hrefCaptured)
-            else:
-                print("A URL já existe na tabela. Ignorando a inserção.")
+#                insert_data(conn, hrefCaptured)
+#            else:
+#                print("A URL já existe na tabela. Ignorando a inserção.")
 
 # Verificar se a tabela tem algum valor
-if not has_values(cursor, table_lastscannedday):
-    # Chamar a função e salvar a data de ontem em uma variável
-    racingDate = getlastday()
-    listoflinks = getlinksatscannedday(racingDate)
-    arrayoflinks(listoflinks)
+#if not has_values(cursor, table_lastscannedday):
+#    # Chamar a função e salvar a data de ontem em uma variável
+#    racingDate = getlastday()
+#    listoflinks = getlinksatscannedday(racingDate)
+#    arrayoflinks(listoflinks)
     # Inserir valor se não houver nenhum
-    insert_or_update_value(cursor, table_lastscannedday, racingDate)
-else:
+#    insert_or_update_value(cursor, table_lastscannedday, racingDate)
+#else:
     # Chamar a função e salvar o valor retornado em uma variável
-    racingDate = get_scanned_day(cursor, table_lastscannedday)
-    if racingDate == '2013-01-01':
-        drop_table(conn, table_lastscannedday)
-        sys.exit()
-    else:
-        racingDate = retrocederData(racingDate)
-        listoflinks = getlinksatscannedday(racingDate)
-        arrayoflinks(listoflinks)
+#    racingDate = get_scanned_day(cursor, table_lastscannedday)
+#    if racingDate == '2013-01-01':
+#        drop_table(conn, table_lastscannedday)
+#        sys.exit()
+#    else:
+#        racingDate = retrocederData(racingDate)
+#        listoflinks = getlinksatscannedday(racingDate)
+#        arrayoflinks(listoflinks)
     # Atualizar valor se houver algum
-    insert_or_update_value(cursor, table_lastscannedday, racingDate)
+#    insert_or_update_value(cursor, table_lastscannedday, racingDate)
 
 # Salvar alterações no banco de dados
-conn.commit()
+#conn.commit()
 
 # Fechar o cursor e a conexão
-cursor.close()
-conn.close()
+#cursor.close()
+#conn.close()

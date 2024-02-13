@@ -43,6 +43,7 @@ if not table_exists(cursor, table_linkstoscam):
         CREATE TABLE IF NOT EXISTS table_linkstoscam (
             id SERIAL PRIMARY KEY,
             url VARCHAR(100),
+            website VARCHAR(100),
             scanned BOOLEAN
         )
     """
@@ -66,7 +67,7 @@ def arrayoflinks(listoflinks):
             # Verificar se a URL já existe na tabela
             if not url_exists(conn, hrefCaptured):
                 # Inserir a URL na tabela se não existir
-                insert_data(conn, hrefCaptured)
+                insert_data(conn, hrefCaptured, 'timeform')
             else:
                 print("A URL já existe na tabela. Ignorando a inserção.")
 
