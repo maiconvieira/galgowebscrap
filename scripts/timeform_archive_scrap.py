@@ -84,7 +84,7 @@ if not has_values(cursor, table_lastscannedday):
     insert_or_update_value(conn, cursor, table_lastscannedday, column_lastscannedday, racingDate)
 else:
     # Chamar a função e salvar o valor retornado em uma variável
-    racingDate = get_scanned_day(cursor, table_lastscannedday)
+    racingDate = get_scanned_day(cursor, table_lastscannedday, column_lastscannedday)
     if racingDate == '2013-01-01':
         drop_table(conn, table_lastscannedday)
         sys.exit()
