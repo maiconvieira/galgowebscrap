@@ -75,7 +75,7 @@ def arrayoflinks(listoflinks):
                 print('A URL já existe na tabela. Ignorando a inserção.')
 
 # Verificar se a tabela tem algum valor
-if not has_values(cursor, table_lastscannedday):
+if not has_values(cursor, table_lastscannedday, column_lastscannedday):
     # Chamar a função e salvar a data de ontem em uma variável
     racingDate = getlastday()
     listoflinks = getlinksatscannedday(racingDate)

@@ -14,12 +14,18 @@ def get_scanned_day(cursor, table_name, column_name):
     cursor.execute(select_query)
     racing_date = cursor.fetchone()[0]
     return racing_date
-    
-# Função para verificar se a tabela tem algum valor
-def has_values(cursor, table_name):
-    count_query = sql.SQL("SELECT COUNT(*) FROM {}").format(sql.Identifier(table_name))
-    cursor.execute(count_query)
-    return cursor.fetchone()[0] > 0
+
+def has_values(cursor, table_name, column_name):
+    try:
+        query = sql.SQL("SELECT EXISTS(SELECT 1 FROM {} WHERE {} IS NOT NULL)").format(
+            sql.Identifier(table_name),
+            sql.Identifier(column_name)
+        )
+        cursor.execute(query)
+        return cursor.fetchone()[0]
+    except psycopg2.Error as e:
+        print("Erro ao verificar se a tabela tem valores:", e)
+        return False
 
 # Função para inserir ou atualizar o valor
 def insert_or_update_value(conn, cursor, table_name, column_name, value):
