@@ -56,20 +56,20 @@ def update_field_to_null(conn, table_name, column_name):
         print("Erro ao atualizar campo:", e)
 
 # Função para verificar se a URL já existe na tabela
-def url_exists(conn, url):
+def url_exists(conn, table_name, url):
     try:
         cursor = conn.cursor()
-        select_query = "SELECT EXISTS(SELECT 1 FROM table_linkstoscam WHERE url = %s)"
+        select_query = f"SELECT EXISTS(SELECT 1 FROM {table_name} WHERE url = %s)"
         cursor.execute(select_query, (url,))
         return cursor.fetchone()[0]
     except psycopg2.Error as e:
         print("Erro ao verificar a existência da URL na tabela:", e)
 
 # Função para inserir dados na tabela
-def insert_data(conn, url, website):
+def insert_data(conn, table_name, url, website):
     try:
         cursor = conn.cursor()
-        insert_query = "INSERT INTO table_linkstoscam (url, website, scanned) VALUES (%s, %s, FALSE)"
+        insert_query = f"INSERT INTO {table_name} (url, website, scanned) VALUES (%s, %s, FALSE)"
         cursor.execute(insert_query, (url, website))
         conn.commit()
     except psycopg2.Error as e:

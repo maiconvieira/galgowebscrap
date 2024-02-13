@@ -42,7 +42,7 @@ if not table_exists(cursor, table_lastscannedday):
     conn.commit()
 
 if not table_exists(cursor, table_linkstoscam):
-    # Criar a tabela table_linkstoscam se ela não existir
+    # Criar a tabela linkstoscam se ela não existir
     create_table_query = """
         CREATE TABLE IF NOT EXISTS linkstoscam (
             id SERIAL PRIMARY KEY,
@@ -75,9 +75,9 @@ def arrayoflinks(listoflinks):
         for i in listoflinks:
             hrefCaptured = i.get_attribute('href')
             # Verificar se a URL já existe na tabela
-            if not url_exists(conn, hrefCaptured):
+            if not url_exists(conn, table_linkstoscam, hrefCaptured):
                 # Inserir a URL na tabela se não existir
-                insert_data(conn, hrefCaptured, website_scanned)
+                insert_data(conn, table_linkstoscam, hrefCaptured, website_scanned)
                 pass
             else:
                 print("A URL já existe na tabela. Ignorando a inserção.")
