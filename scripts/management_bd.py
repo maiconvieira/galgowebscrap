@@ -45,7 +45,7 @@ def url_exists(conn, url):
     try:
         cursor = conn.cursor()
         select_query = "SELECT EXISTS(SELECT 1 FROM table_linkstoscam WHERE url = %s)"
-        cursor.execute(select_query, (url, website,))
+        cursor.execute(select_query, (url,))
         return cursor.fetchone()[0]
     except psycopg2.Error as e:
         print("Erro ao verificar a existência da URL na tabela:", e)
