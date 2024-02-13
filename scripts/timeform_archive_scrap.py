@@ -43,7 +43,6 @@ if not table_exists(cursor, table_linkstoscam):
         CREATE TABLE IF NOT EXISTS table_linkstoscam (
             id SERIAL PRIMARY KEY,
             url VARCHAR(100),
-            website VARCHAR(100),
             scanned BOOLEAN
         )
     """
