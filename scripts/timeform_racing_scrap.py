@@ -15,7 +15,7 @@ options.add_argument('--headless')
 #options.add_argument('--no-sandbox')
 options.add_argument('log-level=3') # INFO = 0 / WARNING = 1 / LOG_ERROR = 2 / LOG_FATAL = 3
 options.add_argument('--disable-dev-shm-usage')
-#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Usar a função connect() para obter uma conexão com o banco de dados
 conn = connect()
@@ -24,15 +24,35 @@ cursor = conn.cursor()
 # Váriaveis de banco de dados 
 table_lastscannedday = 'lastscannedday'
 table_linkstoscam = 'linkstoscam'
-column_lastscannedday = 'timeform_scannedday'
+#column_lastscannedday = 'timeform_scannedday'
 website_scanned = 'timeform'
-    
+
 # Obter a URL para raspagem
 urlToScrap = get_url_to_scrap(conn, table_linkstoscam, website_scanned)
-if urlToScrap:
-    print("URL para raspagem encontrada:", urlToScrap)
-else:
-    print("Não foi possível encontrar uma URL para raspagem.")
+parts0fUrl = urlToScrap.split('/')
+
+driver.get(urlToScrap)
+driver.implicitly_wait(0.5)
+elementscraped01 = driver.find_element(By.TAG_NAME, 'h1')
+elementscraped02 = driver.find_elements(By.XPATH, "//div[@class='rph-race-details-col rph-race-details-col-1']")
+elementscraped03 = driver.find_elements(By.XPATH, "//div[@class='rph-race-details-col rph-race-details-col-2']")
+print(urlToScrap)
+#print(elementscraped02.get_attribute('innerHTML'))
+print(parts0fUrl[5])
+print(parts0fUrl[6])
+print(parts0fUrl[7])
+print(parts0fUrl[8])
+print(elementscraped01.text[0:5])
+print(elementscraped01.text[6:])
+for i in elementscraped02:
+    partialElementsRace = i.find_elements(By.TAG_NAME, 'b')
+    for n in partialElementsRace:
+        print(n.text)
+for i in elementscraped03:
+    partialElementsRace = i.find_elements(By.TAG_NAME, 'b')
+    for n in partialElementsRace:
+        print(n.text)
+
 
 # Verificar se as tabelas existem
 #if not table_exists(cursor, table_lastscannedday):
@@ -60,15 +80,10 @@ else:
 #    cursor.execute(create_table_query)
 #    conn.commit()
 
-# Parte do link para rastrear
+
 #partoflink = 'https://www.timeform.com/greyhound-racing/results/'
 
-#def getlinksatscannedday(daytoscrap):
-#    # Link com variavel racingpost para rastrear
-#    driver.get(partoflink + daytoscrap)
-#    driver.implicitly_wait(0.5)
-#    fullpage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
-#    return fullpage
+
 
 #def arrayoflinks(listoflinks):
 #    if len(listoflinks) != 0:

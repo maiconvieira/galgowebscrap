@@ -1,1 +1,4 @@
-arquivos
+# Environments
+.venv/
+scripts/config.py
+scripts/__pycache__/

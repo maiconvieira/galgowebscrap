@@ -79,8 +79,10 @@ def insert_data(conn, table_name, url, website):
 def get_url_to_scrap(conn, table_name, column_name):
     try:
         cursor = conn.cursor()
-        select_query = f"SELECT url FROM {table_name} WHERE website = {column_name} AND scanned IS NULL"
-        cursor.execute(select_query)
+        select_query = sql.SQL("SELECT url FROM {} WHERE website = %s AND scanned = false order by id asc limit 1").format(
+            sql.Identifier(table_name)
+        )
+        cursor.execute(select_query, (column_name,))
         url_to_scrap = cursor.fetchone()
         if url_to_scrap:
             return url_to_scrap[0]
