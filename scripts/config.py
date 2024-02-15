@@ -1,6 +1,6 @@
 # config.py
 
-DB_NAME = 'webscrap_db'
+DB_NAME = 'webscrap_test'
 DB_USER = 'webscrap'
 DB_PASSWORD = 'P@nd@123!@#'
 DB_HOST = '192.168.56.2'
