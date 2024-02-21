@@ -42,7 +42,7 @@ with connect() as conn:
             'linkstoscam': """
                 CREATE TABLE IF NOT EXISTS linkstoscam (
                     id SERIAL PRIMARY KEY,
-                    url VARCHAR,
+                    url VARCHAR NOT NULL UNIQUE,
                     website VARCHAR(25),
                     scanned BOOLEAN
                 )
@@ -57,20 +57,18 @@ with connect() as conn:
                 print(f"Tabela {table_name} criada com sucesso.")
 
         # Variaveis criados para o script
-        partOfLinkTimeform = 'https://www.timeform.com/greyhound-racing/results/'
+#        partOfLinkTimeform = 'https://www.timeform.com/greyhound-racing/results/'
         partOfLinkRacingpost = 'https://greyhoundbet.racingpost.com/#results-list/r_date='
         scrapedPage = []
-        limitOfDateTimeform = '2013-01-01'
+#        limitOfDateTimeform = '2013-01-01'
         limitOfDateRacingpost = '1997-01-01'
 
         # Funções criadas para o script
-        def getLinksAtScannedDayAtTimeform(daytoscrap):
-            driver.get(partOfLinkTimeform + daytoscrap)
-            driver.implicitly_wait(0.5)
-            scrapedPage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
-            return scrapedPage
-
-        
+#        def getLinksAtScannedDayAtTimeform(daytoscrap):
+#            driver.get(partOfLinkTimeform + daytoscrap)
+#            driver.implicitly_wait(0.5)
+#            scrapedPage = driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
+#            return scrapedPage
 
         def getLinksAtScannedDayAtRacingpost(daytoscrap):
             # Link com variavel racingpost para rastrear
@@ -87,8 +85,6 @@ with connect() as conn:
             if len(listOfLinks) != 0:
                 for i in listOfLinks:
                     hrefCaptured = i.get_attribute('href')
-#                    print('')
-#                    print(hrefCaptured)
                     # Verificar se a URL já existe na tabela
                     if not url_exists(hrefCaptured):
                         # Inserir a URL na tabela se não existir
@@ -209,32 +205,15 @@ with connect() as conn:
 
         # Loop com informações referente ao websites a serem escavados
         websites = {
-            'timeform': partOfLinkTimeform,
+        #    'timeform': partOfLinkTimeform,
             'racingpost': partOfLinkRacingpost
         }
 
         for website_name, partOfLink in websites.items():
             scannedDayColumn = website_name + '_scannedday'
 
-            # TIMEFORM SCRAP
-            if website_name == 'timeform':
-                if not has_values(scannedDayColumn):
-                    racingDate = getLastDay()
-                    listOfLinks = getLinksAtScannedDayAtTimeform(racingDate)
-                    arrayOfLinks(listOfLinks)
-                    insert_or_update_value(scannedDayColumn, racingDate)
-                else:
-                    racingDate = get_scanned_day(scannedDayColumn)
-                    if not racingDate == limitOfDateTimeform:
-                        racingDate = goBackDay(racingDate)
-                        listOfLinks = getLinksAtScannedDayAtTimeform(racingDate)
-                        arrayOfLinks(listOfLinks)
-                        insert_or_update_value(scannedDayColumn, racingDate)
-                    else:
-                        update_field_to_null(scannedDayColumn)
-                        sys.exit()
             # RACINGPOST SCRAP
-            elif website_name == 'racingpost':
+            if website_name == 'racingpost':
                 if not has_values(scannedDayColumn):
                         listOfLinks = getLinksAtScannedDayAtRacingpost(racingDate)
                         arrayOfLinks(listOfLinks)
@@ -249,6 +228,23 @@ with connect() as conn:
                     else:
                         update_field_to_null(scannedDayColumn)
                         sys.exit()
+#            # TIMEFORM SCRAP
+#            elif website_name == 'timeform':
+#                if not has_values(scannedDayColumn):
+#                    racingDate = getLastDay()
+#                    listOfLinks = getLinksAtScannedDayAtTimeform(racingDate)
+#                    arrayOfLinks(listOfLinks)
+#                    insert_or_update_value(scannedDayColumn, racingDate)
+#                else:
+#                    racingDate = get_scanned_day(scannedDayColumn)
+#                    if not racingDate == limitOfDateTimeform:
+#                        racingDate = goBackDay(racingDate)
+#                        listOfLinks = getLinksAtScannedDayAtTimeform(racingDate)
+#                        arrayOfLinks(listOfLinks)
+#                        insert_or_update_value(scannedDayColumn, racingDate)
+#                    else:
+#                        update_field_to_null(scannedDayColumn)
+#                        sys.exit()
 
         # Salvar alterações no banco de dados
         conn.commit()

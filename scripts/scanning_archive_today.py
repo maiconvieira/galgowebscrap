@@ -1,7 +1,6 @@
 # Funções importadas para o funcionamento do script
 from db import connect
 import datetime
-import sys
 import psycopg2
 from psycopg2 import sql
 from selenium import webdriver
@@ -35,7 +34,7 @@ with connect() as conn:
             'linkstoscam': """
                 CREATE TABLE IF NOT EXISTS linkstoscam (
                     id SERIAL PRIMARY KEY,
-                    url VARCHAR,
+                    url VARCHAR NOT NULL UNIQUE,
                     website VARCHAR(25),
                     scanned BOOLEAN
                 )
