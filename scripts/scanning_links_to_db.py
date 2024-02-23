@@ -161,7 +161,7 @@ with connect() as conn:
                 cursor.execute(select_query, (url,))
                 result = cursor.fetchone()
                 if result is not None:
-#                    print("URL já existe na tabela. Ignorando inserção.")
+                    print("URL já existe na tabela. Ignorando inserção.")
                     return
                 
                 # Insere os dados na tabela
@@ -372,9 +372,9 @@ with connect() as conn:
             try:
                 sectionHTML = driver.find_element(By.XPATH, '/html/body/main/section[2]')
                 trValue = sectionHTML.find_element(By.XPATH, 'section[2]/table/tbody')
-                
+
                 raceH1 = driver.find_element(By.XPATH, '//h1[@class="w-header"]').text
-                numOfSpace = contar_caracter(raceH1)           
+                numOfSpace = contar_caracter(raceH1)
                 raceTime = raceH1[0:numOfSpace].strip()
                 stadium = capitalize_words(raceH1[numOfSpace:].strip())
                 stadium_id = insert_or_get_id('stadium', 'name', stadium)
@@ -424,7 +424,7 @@ with connect() as conn:
                 listaGeral = []
                 # Variáveis raspadas do website referente ao resultado da corrida
                 try:
-                    positions = trValue.find_elements(By.XPATH, '//td[@class="rrb-pos al-center"]/span') #/html/body/main/section[2]/section[2]/table/tbody/tr[1]/td[1]
+                    positions = trValue.find_elements(By.XPATH, '//td[@class="rrb-pos al-center"]/span')
                     positionList = []
                     if positions:
                         for position in positions:
@@ -591,7 +591,6 @@ with connect() as conn:
                 for i in range(len(listaGeral[0])):
                     elementos_sequenciais.append([sublista[i] for sublista in listaGeral])
                 for elemento in elementos_sequenciais:
-#                    print(elemento)
                     # Verificar se a URL existe antes de inseri-la
                     try:
                         # greyhoundName = elemento[3], id_timeform = elemento[5] e greyhoundURL = elemento[4]
@@ -616,7 +615,7 @@ with connect() as conn:
                 sys.exit()
 
         # Atualiza o estados do link para escaneado igual True
-        update_scanned(url)    
+        update_scanned(url)
 
 # Fechar o cursor e a conexão com o banco de dados
 cursor.close()
