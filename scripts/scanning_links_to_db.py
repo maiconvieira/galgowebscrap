@@ -616,7 +616,7 @@ with connect() as conn:
                 sys.exit()
 
         # Atualiza o estados do link para escaneado igual True
-#        update_scanned(url)    
+        update_scanned(url)    
 
 # Fechar o cursor e a conexão com o banco de dados
 cursor.close()
