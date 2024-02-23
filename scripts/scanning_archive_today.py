@@ -120,6 +120,7 @@ with connect() as conn:
             elif website_name == 'racingpost':
                 listOfLinks = getLinksAtScannedDayAtRacingpost(racingDateToday)
                 arrayOfLinks(listOfLinks)
+            driver.quit()
 
         # Salvar alterações no banco de dados
         conn.commit()

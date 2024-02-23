@@ -608,11 +608,11 @@ with connect() as conn:
                     insert_race_result_greyhound(raceResult_id, greyhound_id)
                     insert_race_result_trainer(raceResult_id, trainer_id)
 
-                print(f'{url}')
-
             except NoSuchElementException:
                 print("Elemento não encontrado na página.")
                 sys.exit()
+        
+        driver.quit()
 
         # Atualiza o estados do link para escaneado igual True
         update_scanned(url)

@@ -245,6 +245,7 @@ with connect() as conn:
                     else:
                         update_field_to_null(scannedDayColumn)
                         sys.exit()
+            driver.quit()
 
         # Salvar alterações no banco de dados
         conn.commit()
