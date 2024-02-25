@@ -185,7 +185,7 @@ def loop_scam():
 
 start_time = time.time()
 scam_today()
-for _ in range(10):
+for _ in range(15):
     loop_scam()
     logging.info('OK!')
 end_time = time.time()
