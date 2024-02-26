@@ -36,7 +36,7 @@ def has_values(cursor,column_name):
         cursor.execute(query)
         return cursor.fetchone()[0]
     except psycopg2.Error as e:
-        print("Erro ao verificar se a tabela tem valores:", e)
+        logging.error("Erro ao verificar se a tabela tem valores: %s", e)
         return False
 
 def get_scanned_day(cursor, column_name):
@@ -62,7 +62,7 @@ def insert_or_update_value(cursor, column_name, value):
             conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
-        print("Erro ao inserir ou atualizar valor:", e)
+        logging.error("Erro ao inserir ou atualizar valor: %s", e)
 
 def update_field_to_null(cursor, column_name):
     try:
@@ -72,7 +72,7 @@ def update_field_to_null(cursor, column_name):
             conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
-        print("Erro ao atualizar campo:", e)
+        logging.error("Erro ao atualizar campo: %s", e)
 
 def url_exists_in_table(cursor, url):
     try:

@@ -6,109 +6,16 @@ tables = {
     'lastscannedday': """
         CREATE TABLE IF NOT EXISTS lastscannedday (
             id SERIAL PRIMARY KEY,
-            timeform_scannedday VARCHAR(10),
-            racingpost_scannedday VARCHAR(10)
+            timeform_scannedday VARCHAR,
+            racingpost_scannedday VARCHAR
         )
     """,
     'linkstoscam': """
         CREATE TABLE IF NOT EXISTS linkstoscam (
             id SERIAL PRIMARY KEY,
             url VARCHAR NOT NULL UNIQUE,
-            website VARCHAR(25),
+            website VARCHAR,
             scanned BOOLEAN
-        )
-    """,
-    'stadium': """
-        CREATE TABLE IF NOT EXISTS stadium (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(25) NOT NULL UNIQUE,
-            url VARCHAR,
-            address VARCHAR(100),
-            email VARCHAR,
-            location VARCHAR
-        )
-    """,
-    'trainer': """
-        CREATE TABLE IF NOT EXISTS trainer (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(25) NOT NULL UNIQUE
-        )
-    """,
-    'greyhound': """
-        CREATE TABLE IF NOT EXISTS greyhound (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(60) NOT NULL,
-            born_date VARCHAR(12),
-            sex VARCHAR(10),
-            colour VARCHAR(15),
-            dam VARCHAR(20),
-            sire VARCHAR(20),
-            owner VARCHAR,
-            id_timeform INT,
-            id_racingpost INT,
-            id_trainer INT NOT NULL,
-            CONSTRAINT fk_trainer FOREIGN KEY (id_trainer) REFERENCES trainer (id)
-        )
-    """,
-    'race': """
-        CREATE TABLE IF NOT EXISTS race (
-            id SERIAL PRIMARY KEY,
-            date_race VARCHAR(10),
-            time_race VARCHAR(5),
-            grade VARCHAR(5),
-            distance INT,
-            racing_type VARCHAR,
-            tf_going VARCHAR,
-            going VARCHAR,
-            prize_total VARCHAR,
-            forecast VARCHAR,
-            tricast VARCHAR,
-            id_timeform INT,
-            id_racingpost INT,
-            race_comment VARCHAR,
-            race_comment_ptbr VARCHAR,
-            id_stadium INT NOT NULL,
-            CONSTRAINT fk_stadium FOREIGN KEY (id_stadium) REFERENCES stadium (id)
-        )
-    """,
-    'race_result': """
-        CREATE TABLE IF NOT EXISTS race_result (
-            id SERIAL PRIMARY KEY,
-            position VARCHAR(3),
-            bnt VARCHAR(5),
-            trap INT,
-            id_greyhound INT NOT NULL,
-            run_time VARCHAR,
-            sectional VARCHAR,
-            bend VARCHAR,
-            remarks_acronym VARCHAR,
-            remarks VARCHAR,
-            start_price VARCHAR,
-            betfair_price VARCHAR,
-            tf_rating VARCHAR,
-            id_race INT NOT NULL,
-            id_trainer INT NOT NULL,
-            CONSTRAINT fk_greyhound FOREIGN KEY (id_greyhound) REFERENCES greyhound (id),
-            CONSTRAINT fk_race FOREIGN KEY (id_race) REFERENCES race (id),
-            CONSTRAINT fk_trainer_race_result FOREIGN KEY (id_trainer) REFERENCES trainer (id)
-        )
-    """,
-    'race_result_trainer': """
-        CREATE TABLE IF NOT EXISTS race_result_trainer (
-            id_race_result INT NOT NULL,
-            id_trainer INT NOT NULL,
-            PRIMARY KEY (id_race_result, id_trainer),
-            CONSTRAINT fk_race_result FOREIGN KEY (id_race_result) REFERENCES race_result (id),
-            CONSTRAINT fk_trainer FOREIGN KEY (id_trainer) REFERENCES trainer (id)
-        )
-    """,
-    'race_result_greyhound': """
-        CREATE TABLE IF NOT EXISTS race_result_greyhound (
-            id_race_result INT NOT NULL,
-            id_greyhound INT NOT NULL,
-            PRIMARY KEY (id_race_result, id_greyhound),
-            CONSTRAINT fk_race_result FOREIGN KEY (id_race_result) REFERENCES race_result (id),
-            CONSTRAINT fk_greyhound FOREIGN KEY (id_greyhound) REFERENCES greyhound (id)
         )
     """,
     'greyhoundlinkstoscam': """
@@ -118,8 +25,89 @@ tables = {
             id_timeform int UNIQUE,
             id_racingpost int UNIQUE,
             url VARCHAR NOT NULL UNIQUE,
-            website VARCHAR(25),
+            website VARCHAR,
             scanned BOOLEAN
+        )
+    """,
+    'stadium': """
+        CREATE TABLE IF NOT EXISTS stadium (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR NOT NULL UNIQUE,
+            url VARCHAR,
+            address VARCHAR,
+            email VARCHAR,
+            location VARCHAR
+        )
+    """,
+    'trainer': """
+        CREATE TABLE IF NOT EXISTS trainer (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR NOT NULL UNIQUE
+        )
+    """,
+    'greyhound': """
+        CREATE TABLE IF NOT EXISTS greyhound (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR NOT NULL,
+            born_date VARCHAR,
+            genre VARCHAR,
+            colour VARCHAR,
+            dam VARCHAR,
+            sire VARCHAR,
+            owner VARCHAR,
+            timeform_id INT,
+            racingpost_id INT
+        )
+    """,
+    'trainer_greyhound': """
+        CREATE TABLE IF NOT EXISTS trainer_greyhound (
+            trainer_id INT NOT NULL,
+            greyhound_id INT NOT NULL,
+            PRIMARY KEY (trainer_id, greyhound_id),
+            CONSTRAINT fk_trainer FOREIGN KEY (trainer_id) REFERENCES trainer (id),
+            CONSTRAINT fk_greyhound FOREIGN KEY (greyhound_id) REFERENCES greyhound (id)
+        )
+    """,
+    'race': """
+        CREATE TABLE IF NOT EXISTS race (
+            id SERIAL PRIMARY KEY,
+            race_date VARCHAR,
+            race_time VARCHAR,
+            grade VARCHAR,
+            distance INT,
+            race_type VARCHAR,
+            tf_going VARCHAR,
+            going VARCHAR,
+            prize VARCHAR,
+            forecast VARCHAR,
+            tricast VARCHAR,
+            timeform_id INT,
+            racingpost_id INT,
+            race_comment VARCHAR,
+            race_comment_ptbr VARCHAR,
+            stadium_id INT NOT NULL,
+            CONSTRAINT fk_stadium FOREIGN KEY (stadium_id) REFERENCES stadium (id)
+        )
+    """,
+    'race_result': """
+        CREATE TABLE IF NOT EXISTS race_result (
+            id SERIAL PRIMARY KEY,
+            position INT,
+            bnt VARCHAR,
+            trap INT,
+            run_time VARCHAR,
+            sectional VARCHAR,
+            bend VARCHAR,
+            remarks_acronym VARCHAR,
+            remarks VARCHAR,
+            isp VARCHAR,
+            bsp VARCHAR,
+            tfr VARCHAR,
+            greyhound_weight  VARCHAR,
+            greyhound_id INT NOT NULL,
+            race_id INT NOT NULL,
+            CONSTRAINT fk_greyhound FOREIGN KEY (greyhound_id) REFERENCES greyhound (id),
+            CONSTRAINT fk_race FOREIGN KEY (race_id) REFERENCES race (id)
         )
     """
 }
