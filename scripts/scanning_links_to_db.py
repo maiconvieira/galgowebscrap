@@ -372,6 +372,7 @@ with connect() as conn:
             try:
                 sectionHTML = driver.find_element(By.XPATH, '/html/body/main/section[2]')
                 trValue = sectionHTML.find_element(By.XPATH, 'section[2]/table/tbody')
+                print(sectionHTML.text)
 
                 raceH1 = driver.find_element(By.XPATH, '//h1[@class="w-header"]').text
                 numOfSpace = contar_caracter(raceH1)

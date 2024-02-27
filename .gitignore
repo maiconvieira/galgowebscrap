@@ -2,3 +2,4 @@
 .venv/
 scripts/config.py
 scripts/__pycache__/
+*.sqlite

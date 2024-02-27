@@ -1,8 +1,11 @@
 # Funções importadas para o funcionamento do script
 from db import connect
-from tables import tables, connect, table_exists
+from tables import tables, table_exists
 import psycopg2
 import time
+import logging
+import requests
+import requests_cache
 from psycopg2 import sql
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,17 +14,24 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Captura o tempo de início
-start_time = time.time()
-###########################
+requests_cache.install_cache('race_cache', backend='sqlite', expire_after=3600)  # Cache expira após 1 hora
+logging.basicConfig(level=logging.INFO)
 
-# Configurações do Selenium
 options = Options()
 options.add_argument('--headless')
-options.add_argument('log-level=3') # INFO = 0 / WARNING = 1 / LOG_ERROR = 2 / LOG_FATAL = 3
+options.add_argument('log-level=3')
 options.add_argument('--disable-dev-shm-usage')
+driver =  webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Funções Auxiliares:
+def create_tables_if_not_exist():
+    with connect() as conn:
+        with conn.cursor() as cursor:
+            for table_name, create_table_query in tables.items():
+                if not table_exists(table_name):
+                    cursor.execute(create_table_query)
+                    conn.commit()
+
 def contar_caracter(texto):
     contador = 1
     for caractere in texto:
@@ -46,8 +56,7 @@ with connect() as conn:
     cursor.close()
 conn.close()
 
-
-def loopScam():
+def loop_scam():
     with connect() as conn:
         with conn.cursor() as cursor:
             cursor.execute("SELECT url, website, scanned FROM linkstoscam WHERE website = 'timeform' AND scanned = FALSE ORDER BY SUBSTRING(url FROM '[0-9]{4}-[0-9]{2}-[0-9]{2}')::DATE LIMIT 1")       
@@ -56,30 +65,29 @@ def loopScam():
             # Função para inserir dados na tabela
             def update_scanned(url):
                 try:
-                    # Verifica se a URL existe e atualiza o campo scanned para True
                     update_query = "UPDATE linkstoscam SET scanned = TRUE WHERE url = %s"
                     cursor.execute(update_query, (url,))
                     conn.commit()
                 except psycopg2.Error as e:
-                    print("Erro ao atualizar o status scanned:", e)
+                    logging.error('Erro ao atualizar o status scanned: %s', e)
 
             def insert_data(name, website_id, url):
                 try:
                     # Verifica se a URL já existe na tabela
-                    select_query = "SELECT id_timeform FROM greyhoundlinkstoscam WHERE url = %s"
+                    select_query = "SELECT timeform_id FROM greyhoundlinkstoscam WHERE url = %s"
                     cursor.execute(select_query, (url,))
                     result = cursor.fetchone()
                     if result is not None:
-#                        print("URL já existe na tabela. Ignorando inserção.")
+                        logging.error('URL já existe na tabela. Ignorando inserção.')
                         return
                     
                     # Insere os dados na tabela
-                    insert_query = "INSERT INTO greyhoundlinkstoscam (name, id_timeform, url, website, scanned) VALUES (%s, %s, %s, 'timeform', FALSE)"
+                    insert_query = "INSERT INTO greyhoundlinkstoscam (name, timeform_id, url, website, scanned) VALUES (%s, %s, %s, 'timeform', FALSE)"
                     cursor.execute(insert_query, (name, website_id, url))
                     conn.commit()
                 except psycopg2.Error as e:
                     conn.rollback()
-                    print("Erro ao inserir dados:", e)
+                    logging.error('Erro ao inserir dados: %s', e)
 
             def insert_or_get_id(table_name, column_name, value):
                 try:
@@ -104,30 +112,27 @@ def loopScam():
 
                 except psycopg2.Error as e:
                     conn.rollback()
-                    print(f"Erro ao inserir ou obter ID da tabela {table_name}: {e}")
+                    logging.error(f'Erro ao inserir ou obter ID da tabela {table_name}: %s', e)
                     return None
             
-            def insert_race_if_not_exists(date_race, time_race, grade, distance, racing_type, tf_going, going, prizes, forecast, tricast, race_comment, id_timeform, id_stadium):
+            def insert_race_if_not_exists(race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id):
                 try:
-                    # Verifica se já existe uma linha com os valores especificados
                     select_query = sql.SQL("""
                         SELECT id FROM race
-                        WHERE date_race = %s AND time_race = %s AND id_stadium = %s
+                        WHERE race_date = %s AND race_time = %s AND stadium_id = %s
                     """)
-                    cursor.execute(select_query, (date_race, time_race, id_stadium))
+                    cursor.execute(select_query, (race_date, race_time, stadium_id))
                     existing_race_id = cursor.fetchone()
 
                     if existing_race_id:
-                        # Retorna o ID da corrida existente
                         return existing_race_id[0]
 
-                    # Se não existir, insere os dados na tabela
                     insert_query = sql.SQL("""
-                        INSERT INTO race (date_race, time_race, grade, distance, racing_type, tf_going, going, prize_total, forecast, tricast, race_comment, id_timeform, id_stadium)
+                        INSERT INTO race (race_date, race_time, grade, distance, race_type, tf_going, going, prize, forecast, tricast, race_comment, timeform_id, stadium_id)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING id
                     """)
-                    cursor.execute(insert_query, (date_race, time_race, grade, distance, racing_type, tf_going, going, prizes, forecast, tricast, race_comment, id_timeform, id_stadium))
+                    cursor.execute(insert_query, (race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id))
                     race_id = cursor.fetchone()[0]
                     conn.commit()
 
@@ -136,17 +141,17 @@ def loopScam():
                 except Exception as e:
                     # Trata qualquer exceção e imprime uma mensagem de erro
                     print(f"Erro ao inserir corrida: {e}")
-                    conn.rollback()  # Desfaz qualquer mudança no banco de dados
+                    conn.rollback()
                     return None
 
-            def insert_or_get_greyhound_id(name, sex, id_timeform, id_trainer):
+            def insert_or_get_greyhound_id(name, genre, timeform_id):
                 try:
                     # Verifica se já existe uma linha com os valores especificados
                     select_query = sql.SQL("""
                         SELECT id FROM greyhound
-                        WHERE name = %s AND sex = %s AND id_timeform = %s AND id_trainer = %s
+                        WHERE name = %s AND genre = %s AND timeform_id = %s
                     """)
-                    cursor.execute(select_query, (name, sex, id_timeform, id_trainer))
+                    cursor.execute(select_query, (name, genre, timeform_id))
                     result = cursor.fetchone()
 
                     if result:
@@ -155,11 +160,11 @@ def loopScam():
 
                     # Se não existir, insere os dados na tabela
                     insert_query = sql.SQL("""
-                        INSERT INTO greyhound (name, sex, id_timeform, id_trainer)
-                        VALUES (%s, %s, %s, %s)
+                        INSERT INTO greyhound (name, genre, timeform_id)
+                        VALUES (%s, %s, %s)
                         RETURNING id
                     """)
-                    cursor.execute(insert_query, (name, sex, id_timeform, id_trainer))
+                    cursor.execute(insert_query, (name, genre, timeform_id))
                     conn.commit()
                     greyhound_id = cursor.fetchone()[0]
                     return greyhound_id
@@ -169,28 +174,28 @@ def loopScam():
                     print("Erro ao inserir ou obter greyhound:", e)
                     return None
 
-            def insert_or_get_race_result_id(position, bnt, trap, id_greyhound, run_time, sectional, bend, remarks_acronym, start_price, betfair_price, tf_rating, id_race, id_trainer):
+            def insert_or_get_race_result_id(position, bnt, trap, run_time, sectional, bend, remarks_acronym, isp, bsp, tfr, greyhound_id, race_id):
                 try:
                     # Verifica se já existe uma linha com os valores especificados
                     select_query = sql.SQL("""
                         SELECT id FROM race_result
-                        WHERE id_greyhound = %s AND id_race = %s
+                        WHERE greyhound_id = %s AND race_id = %s
                     """)
-                    cursor.execute(select_query, (id_greyhound, id_race))
+                    cursor.execute(select_query, (greyhound_id, race_id))
                     result = cursor.fetchone()
 
                     if result:
                         race_result_id = result[0]
-#                        print("Esses dados já existem na tabela.")
+                        print("Esses dados já existem na tabela.")
                         return race_result_id
 
                     # Se não existir, insere os dados na tabela
                     insert_query = sql.SQL("""
-                        INSERT INTO race_result (position, bnt, trap, id_greyhound, run_time, sectional, bend, remarks_acronym, start_price, betfair_price, tf_rating, id_race, id_trainer)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO race_result (position, bnt, trap, run_time, sectional, bend, remarks_acronym, isp, bsp, tfr, greyhound_id, race_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING id
                     """)
-                    cursor.execute(insert_query, (position, bnt, trap, id_greyhound, run_time, sectional, bend, remarks_acronym, start_price, betfair_price, tf_rating, id_race, id_trainer))
+                    cursor.execute(insert_query, (position, bnt, trap, run_time, sectional, bend, remarks_acronym, isp, bsp, tfr, greyhound_id, race_id))
                     conn.commit()
                     race_result_id = cursor.fetchone()[0]
                     return race_result_id
@@ -199,75 +204,44 @@ def loopScam():
                     conn.rollback()
                     print("Erro ao inserir ou obter resultado da corrida:", e)
 
-            def insert_race_result_trainer(id_race_result, id_trainer):
+            def insert_trainer_greyhound(trainer_id, greyhound_id):
                 try:
-                    # Verifica se o relacionamento já existe
                     select_query = sql.SQL("""
-                        SELECT 1 FROM race_result_trainer
-                        WHERE id_race_result = %s AND id_trainer = %s
+                        SELECT 1 FROM trainer_greyhound
+                        WHERE trainer_id = %s AND greyhound_id = %s
                     """)
-                    cursor.execute(select_query, (id_race_result, id_trainer))
+                    cursor.execute(select_query, (trainer_id, greyhound_id))
                     if cursor.fetchone():
- #                       print("Relacionamento já existe em race_result_trainer.")
+                        print("Relacionamento já existe em trainer_greyhound.")
                         return
 
-                    # Se não existir, insere o relacionamento
                     insert_query = sql.SQL("""
-                        INSERT INTO race_result_trainer (id_race_result, id_trainer)
+                        INSERT INTO trainer_greyhound (trainer_id, greyhound_id)
                         VALUES (%s, %s)
                     """)
-                    cursor.execute(insert_query, (id_race_result, id_trainer))
+                    cursor.execute(insert_query, (trainer_id, greyhound_id))
                     conn.commit()
-#                    print("Relacionamento inserido com sucesso em race_result_trainer.")
+                    print("Relacionamento inserido com sucesso em trainer_greyhound.")
 
                 except psycopg2.Error as e:
                     conn.rollback()
-                    print("Erro ao inserir relacionamento em race_result_trainer:", e)
-
-            def insert_race_result_greyhound(id_race_result, id_greyhound):
-                try:
-                    # Verifica se o relacionamento já existe
-                    select_query = sql.SQL("""
-                        SELECT 1 FROM race_result_greyhound
-                        WHERE id_race_result = %s AND id_greyhound = %s
-                    """)
-                    cursor.execute(select_query, (id_race_result, id_greyhound))
-                    if cursor.fetchone():
-#                        print("Relacionamento já existe em race_result_greyhound.")
-                        return
-
-                    # Se não existir, insere o relacionamento
-                    insert_query = sql.SQL("""
-                        INSERT INTO race_result_greyhound (id_race_result, id_greyhound)
-                        VALUES (%s, %s)
-                    """)
-                    cursor.execute(insert_query, (id_race_result, id_greyhound))
-                    conn.commit()
-#                    print("Relacionamento inserido com sucesso em race_result_greyhound.")
-
-                except psycopg2.Error as e:
-                    conn.rollback()
-                    print("Erro ao inserir relacionamento em race_result_greyhound:", e)
+                    print("Erro ao inserir relacionamento em trainer_greyhound:", e)
 
             # Verificar se encontrou um resultado e imprimir os valores
             if result:
                 url, website, scanned = result
                 partsOfRaceURL = url.split('/')
-                dateRace = partsOfRaceURL[7]
-                tfRace_id = partsOfRaceURL[8]
-                driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+                race_date = partsOfRaceURL[7]
+                timeform_id = partsOfRaceURL[8]
+                response = requests.get(url)
                 driver.get(url)
+                driver.implicitly_wait(3.0)
 
-                print(f'{url}')
+
 
                 body_element = driver.find_element(By.TAG_NAME, 'body')
                 if not body_element.text == 'For data, please visit https://www.globalsportsapi.com/':
-
-                    try:
-                        sectionHTML = driver.find_element(By.XPATH, '/html/body/main/section[2]')
-                    except NoSuchElementException:
-                        print('Elemento: sectionHTML não localizado')
-                        sectionHTML = None
+                    sectionHTML = driver.find_element(By.XPATH, '/html/body/main/section[2]')
                     try:
                         trValue = sectionHTML.find_element(By.XPATH, 'section[2]/table/tbody')
                     except NoSuchElementException:
@@ -276,7 +250,7 @@ def loopScam():
                     try:
                         raceH1 = driver.find_element(By.XPATH, '//h1[@class="w-header"]').text
                         numOfSpace = contar_caracter(raceH1)
-                        raceTime = raceH1[0:numOfSpace].strip()
+                        race_time = raceH1[0:numOfSpace].strip()
                         stadium = capitalize_words(raceH1[numOfSpace:].strip())
                         stadium_id = insert_or_get_id('stadium', 'name', stadium)
                     except NoSuchElementException:
@@ -297,42 +271,42 @@ def loopScam():
                         print('Elemento: distance não localizado')
                         distance = None
                     try:
-                        racing = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[3]/b[3]').text
+                        race_type = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[3]/b[3]').text
                     except NoSuchElementException:
                         print('Elemento: racing não localizado')
-                        racing = None
+                        race_type = None
                     try:
-                        tfGoing = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[5]/b[1]').text
+                        tf_going = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[5]/b[1]').text
                     except NoSuchElementException:
                         print('Elemento: tfGoing não localizado')
-                        tfGoing = None
+                        tf_going = None
                     try:
                         going = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[5]/b[2]').text
                     except NoSuchElementException:
                         print('Elemento: going não localizado')
                         going = None
                     try:
-                        prizeTotal = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[4]/b[2]').text
+                        prizes = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[4]/b[2]').text
                     except NoSuchElementException:
                         print('Elemento: prizeTotal não localizado')
-                        prizeTotal = None
+                        prizes = None
                     try:
                         forecast = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[6]/b[1]').text
                     except NoSuchElementException:
                         print('Elemento: forecast não localizado')
-                        tricast = None
+                        forecast = None
                     try:
                         tricast = sectionHTML.find_element(By.XPATH, 'section[1]/div[2]/div[6]/b[2]').text
                     except NoSuchElementException:
                         print('Elemento: tricast não localizado')
                         tricast = None
                     try:
-                        raceComments = sectionHTML.find_element(By.XPATH, 'section[3]/div').text
+                        race_comment = sectionHTML.find_element(By.XPATH, 'section[3]/div').text
                     except NoSuchElementException:
                         print('Elemento: raceComments não localizado')
-                        raceComments = None
+                        race_comment = None
 
-                    raceId = insert_race_if_not_exists(dateRace, raceTime, grade, distance, racing, tfGoing, going, prizeTotal, forecast, tricast, raceComments, tfRace_id, stadium_id)
+                    race_id = insert_race_if_not_exists(race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id)
 
                     listaGeral = []
                     # Variáveis raspadas do website referente ao resultado da corrida
@@ -341,7 +315,8 @@ def loopScam():
                         positionList = []
                         if positions:
                             for position in positions:
-                                positionList.append(position.text)
+                                position = position.text[0:1]
+                                positionList.append(position)
                         else:
                             print("Nenhum elemento encontrado com o XPath especificado")
                     except NoSuchElementException:
@@ -500,39 +475,31 @@ def loopScam():
                     listaGeral.append(positionList)
                     listaGeral.append(btnList)
                     listaGeral.append(imgList)
-                    listaGeral.append(greyhoundNameList)
-                    listaGeral.append(greyhoundURLList)
-                    listaGeral.append(idTimeformList)
-                    listaGeral.append(genreList)
+                    listaGeral.append(runTimeList)
+                    listaGeral.append(sectionalList)
                     listaGeral.append(bendList)
                     listaGeral.append(remarkList)
                     listaGeral.append(ispList)
-                    listaGeral.append(tfrList)
-                    listaGeral.append(runTimeList)
-                    listaGeral.append(sectionalList)
-                    listaGeral.append(trainerList)
                     listaGeral.append(bspList)
+                    listaGeral.append(tfrList)
+                    listaGeral.append(genreList)
+                    listaGeral.append(trainerList)
+                    listaGeral.append(greyhoundURLList)
+                    listaGeral.append(idTimeformList)
+                    listaGeral.append(greyhoundNameList)
 
                     elementos_sequenciais = []
                     for i in range(len(listaGeral[0])):
                         elementos_sequenciais.append([sublista[i] for sublista in listaGeral])
                     for elemento in elementos_sequenciais:
-                        # Verificar se a URL existe antes de inseri-la
                         try:
-                            # greyhoundName = elemento[3], id_timeform = elemento[5] e greyhoundURL = elemento[4]
-                            insert_data(elemento[3], elemento[5], elemento[4])
+                            insert_data(elemento[14], elemento[13], elemento[12])
                         except psycopg2.IntegrityError as e:
                             print("A URL já existe na tabela:", e)
-                    # trainer = elemento[13]
-                        trainer_id = insert_or_get_id('trainer', 'name', elemento[13])
-                        # greyhoundName = elemento[3], genre = elemento[6] e id_timeform = elemento[5]
-                        greyhound_id = insert_or_get_greyhound_id(elemento[3], elemento[6], elemento[5], trainer_id)
-                        # position = elemento[0], bnt = elemento[1], trap = elemento[2], bend = elemento[7], remarks_acronym = elemento[8], 
-                        # start_price = elemento[9], tf_rating = elemento[10], run_time = elemento[11], sectional = elemento[12], betfair_price = elemento[14]
-                        raceResult_id = insert_or_get_race_result_id(elemento[0], elemento[1], elemento[2], greyhound_id, elemento[11], elemento[12], elemento[7], elemento[8], elemento[9], elemento[10], elemento[11], raceId, trainer_id)
-
-                        insert_race_result_greyhound(raceResult_id, greyhound_id)
-                        insert_race_result_trainer(raceResult_id, trainer_id)
+                        trainer_id = insert_or_get_id('trainer', 'name', elemento[11])
+                        greyhound_id = insert_or_get_greyhound_id(elemento[14], elemento[10], elemento[13])
+                        insert_or_get_race_result_id(elemento[0], elemento[1], elemento[2], elemento[3], elemento[4], elemento[5], elemento[6], elemento[7], elemento[8], elemento[9], greyhound_id, race_id)
+                        insert_trainer_greyhound(trainer_id, greyhound_id)
                 else:
                     print('For data, please visit https://www.globalsportsapi.com/')
 
@@ -545,16 +512,11 @@ def loopScam():
         cursor.close()
     conn.close()
 
-x = 0
-for _ in range(20):
-    x += 1
-    loopScam()
-    print(f'{x} - OK!')
-
-# Captura o tempo de fim
+start_time = time.time()
+loop_scam()
+#for _ in range(2):
+#    logging.info('OK!')
+#    time.sleep(30)
 end_time = time.time()
-
-# Calcula o tempo total de execução
 execution_time = end_time - start_time
-
-print(f"Tempo de execução: {execution_time} segundos")
+logging.info(f"Tempo de execução: {execution_time} segundos")
