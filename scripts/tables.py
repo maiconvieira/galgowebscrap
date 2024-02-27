@@ -22,8 +22,8 @@ tables = {
         CREATE TABLE IF NOT EXISTS greyhoundlinkstoscam (
             id SERIAL PRIMARY KEY,
             name VARCHAR,
-            id_timeform int UNIQUE,
-            id_racingpost int UNIQUE,
+            timeform_id int UNIQUE,
+            racingpost_id int UNIQUE,
             url VARCHAR NOT NULL UNIQUE,
             website VARCHAR,
             scanned BOOLEAN
