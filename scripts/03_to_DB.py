@@ -145,6 +145,35 @@ def loop_scam():
                     conn.rollback()
                     return None
 
+            def insert_race_if_not_exists(race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id):
+                try:
+                    select_query = sql.SQL("""
+                        SELECT id FROM race
+                        WHERE race_date = %s AND race_time = %s AND grade = %s AND distance = %s AND timeform_id = %s AND stadium_id = %s
+                    """)
+                    cursor.execute(select_query, (race_date, race_time, grade, distance, timeform_id, stadium_id))
+                    existing_race_id = cursor.fetchone()
+
+                    if existing_race_id:
+                        return existing_race_id[0]
+
+                    insert_query = sql.SQL("""
+                        INSERT INTO race (race_date, race_time, grade, distance, race_type, tf_going, going, prize, forecast, tricast, race_comment, timeform_id, stadium_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        RETURNING id
+                    """)
+                    cursor.execute(insert_query, (race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id))
+                    race_id = cursor.fetchone()[0]
+                    conn.commit()
+
+                    return race_id
+
+                except Exception as e:
+                    # Trata qualquer exceção e imprime uma mensagem de erro
+                    print(f"Erro ao inserir corrida: {e}")
+                    conn.rollback()
+                    return None
+
             def insert_or_get_greyhound_id(name, genre, timeform_id):
                 try:
                     # Verifica se já existe uma linha com os valores especificados
@@ -236,7 +265,7 @@ def loop_scam():
                 timeform_id = partsOfRaceURL[8]
                 response = requests.get(url)
                 driver.get(url)
-                driver.implicitly_wait(3.0)
+                driver.implicitly_wait(0.5)
 
                 body_element = driver.find_element(By.TAG_NAME, 'body')
                 if not body_element.text == 'For data, please visit https://www.globalsportsapi.com/':

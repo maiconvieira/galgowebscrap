@@ -86,7 +86,20 @@ tables = {
             race_comment VARCHAR,
             race_comment_ptbr VARCHAR,
             stadium_id INT NOT NULL,
-            CONSTRAINT fk_stadium FOREIGN KEY (stadium_id) REFERENCES stadium (id)
+            CONSTRAINT fk_stadium FOREIGN KEY (stadium_id) REFERENCES stadium (id),
+            CONSTRAINT unique_race_data UNIQUE (
+                race_date,
+                race_time,
+                grade,
+                distance,
+                race_type,
+                tf_going,
+                going,
+                prize,
+                forecast,
+                tricast,
+                timeform_id
+            )
         )
     """,
     'race_result': """
