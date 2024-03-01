@@ -119,7 +119,7 @@ def loop_scam():
                 try:
                     select_query = sql.SQL("""
                         SELECT id FROM race
-                        WHERE race_date = %s AND race_time = %s AND grade = %s AND distance = %s AND race_type = %s AND tf_going = %s AND going = %s AND prizes = %s 
+                        WHERE race_date = %s AND race_time = %s AND grade = %s AND distance = %s AND race_type = %s AND tf_going = %s AND going = %s AND prize = %s 
                                            AND forecast = %s AND tricast = %s AND race_comment = %s AND timeform_id = %s AND stadium_id = %s
                     """)
                     cursor.execute(select_query, (race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id))
