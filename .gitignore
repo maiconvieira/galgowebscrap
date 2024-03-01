@@ -1,5 +1,7 @@
 # Environments
 .venv/
+CSV/
 scripts/config.py
 scripts/__pycache__/
+scripts_productions/
 *.sqlite

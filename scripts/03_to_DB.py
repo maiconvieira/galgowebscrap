@@ -119,9 +119,10 @@ def loop_scam():
                 try:
                     select_query = sql.SQL("""
                         SELECT id FROM race
-                        WHERE race_date = %s AND race_time = %s AND stadium_id = %s
+                        WHERE race_date = %s AND race_time = %s AND grade = %s AND distance = %s AND race_type = %s AND tf_going = %s AND going = %s AND prizes = %s 
+                                           AND forecast = %s AND tricast = %s AND race_comment = %s AND timeform_id = %s AND stadium_id = %s
                     """)
-                    cursor.execute(select_query, (race_date, race_time, stadium_id))
+                    cursor.execute(select_query, (race_date, race_time, grade, distance, race_type, tf_going, going, prizes, forecast, tricast, race_comment, timeform_id, stadium_id))
                     existing_race_id = cursor.fetchone()
 
                     if existing_race_id:
@@ -236,8 +237,6 @@ def loop_scam():
                 response = requests.get(url)
                 driver.get(url)
                 driver.implicitly_wait(3.0)
-
-
 
                 body_element = driver.find_element(By.TAG_NAME, 'body')
                 if not body_element.text == 'For data, please visit https://www.globalsportsapi.com/':
