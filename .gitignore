@@ -1,6 +1,6 @@
 # Environments
 .venv/
-CSV/
+arquivos/
 scripts/config.py
 scripts/__pycache__/
 scripts_productions/
