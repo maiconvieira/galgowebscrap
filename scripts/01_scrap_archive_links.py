@@ -101,20 +101,6 @@ def scrape_page(driver, racing_date):
         logging.error('Elemento: scrapedPage não localizado')
         return []
 
-def scam_today():
-    racing_date = datetime.datetime.now().strftime('%Y-%m-%d')
-    with connect() as conn:
-        create_tables_if_not_exist()
-        with conn.cursor() as cursor:
-            driver = get_driver()
-            scraped_page = scrape_page(driver, racing_date)
-            for i in scraped_page:
-                href_captured = i.get_attribute('href')
-                if not url_exists_in_table(cursor, href_captured):
-                    insert_url_into_table(conn, href_captured, 'timeform')
-            logging.info('Timeform - Today')
-    driver.quit()
-
 def loop_scam():
     def get_last_day():
         date_now = datetime.datetime.now()
@@ -184,7 +170,6 @@ def loop_scam():
     driver.quit()
 
 start_time = time.time()
-scam_today()
 for _ in range(15):
     loop_scam()
     logging.info('OK!')
