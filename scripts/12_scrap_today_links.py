@@ -71,8 +71,8 @@ with connect() as conn:
         for i in scraped_page:
             href_captured = i.get_attribute('href')
             if not url_exists_in_table(cursor, href_captured):
-                insert_url_into_table(conn, href_captured, 'timeform')
-        logging.info('Timeform - Today')
+                insert_url_into_table(conn, href_captured, 'racingpost')
+        logging.info('Racingpost - Today')
 driver.quit()
 
 logging.info('OK!')
