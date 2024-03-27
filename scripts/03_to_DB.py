@@ -59,16 +59,7 @@ conn.close()
 start_time = time.time()
 
 with connect() as conn:
-    with conn.cursor() as cursor:    
-        cursor.execute("SELECT url FROM linkstoscam WHERE website = 'timeform' AND scanned = true AND CAST(split_part(url, '/', 9) AS INTEGER) NOT IN (SELECT timeform_id FROM race)")
-        results = cursor.fetchall()
-        if results:
-            update_query = """
-            UPDATE linkstoscam SET scanned = false WHERE
-            website = 'timeform' AND scanned = true AND CAST(split_part(url, '/', 9) AS INTEGER) NOT IN (SELECT timeform_id FROM race);
-            """
-            cursor.execute(update_query)
-            conn.commit()
+    with conn.cursor() as cursor:
         cursor.execute("SELECT url, website, scanned FROM linkstoscam WHERE website = 'timeform' AND scanned = FALSE ORDER BY SUBSTRING(url FROM '[0-9]{4}-[0-9]{2}-[0-9]{2}')::DATE LIMIT 1")       
         result = cursor.fetchone()
 
