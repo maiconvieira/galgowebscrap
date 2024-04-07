@@ -170,7 +170,7 @@ def loop_scam():
     driver.quit()
 
 start_time = time.time()
-for _ in range(15):
+for _ in range(1):
     loop_scam()
     logging.info('OK!')
 end_time = time.time()
