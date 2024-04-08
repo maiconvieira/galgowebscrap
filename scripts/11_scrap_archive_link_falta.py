@@ -97,7 +97,7 @@ def insert_url_into_table(conn, url, website):
 
 def scrape_page(driver, racing_date):
     driver.get(f"https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}")
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(5)
     partialHTML = driver.find_elements(By.CLASS_NAME, 'results-race-list-row')
     for i in partialHTML:
         scannedLinks = i.find_elements(By.TAG_NAME, 'a')

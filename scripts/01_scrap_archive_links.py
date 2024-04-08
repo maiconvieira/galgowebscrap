@@ -95,84 +95,82 @@ def insert_url_into_table(conn, url, website):
 
 def scrape_page(driver, racing_date):
     driver.get(f"https://www.timeform.com/greyhound-racing/results/{racing_date}")
+    driver.implicitly_wait(2)
     try:
         return driver.find_elements(By.XPATH, "//a[@class='waf-header hover-opacity']")
     except NoSuchElementException:
         logging.error('Elemento: scrapedPage não localizado')
         return []
 
-def loop_scam():
-    def get_last_day():
-        date_now = datetime.datetime.now()
-        last_day = date_now - datetime.timedelta(days=1)
-        return last_day.strftime('%Y-%m-%d')
-
-    def go_back_day(parameter):
-        partsOfDate = parameter.split('-')
-        lastLineYear = int(partsOfDate[0])
-        lastLineMonth = int(partsOfDate[1])
-        lastLineDay = int(partsOfDate[2])
-        if lastLineDay == 26 and lastLineMonth == 12:
-            dayToScrap = str(lastLineDay - 2).zfill(2)
-            monthToScrap = str(lastLineMonth).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay > 1 and lastLineMonth > 1:
-            dayToScrap = str(lastLineDay - 1).zfill(2)
-            monthToScrap = str(lastLineMonth).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay > 1 and lastLineMonth == 1:
-            dayToScrap = str(lastLineDay - 1).zfill(2)
-            monthToScrap = str(lastLineMonth).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 == 0 and lastLineYear%100 != 0) or (lastLineYear%400 == 0)):
-            dayToScrap = str(29)
-            monthToScrap = str(lastLineMonth - 1).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 != 0 and lastLineYear%100 == 0) or (lastLineYear%400 != 0)):
-            dayToScrap = str(28)
-            monthToScrap = str(lastLineMonth - 1).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay == 1 and lastLineMonth in(2, 4, 6, 8, 9, 11):
-            dayToScrap = str(31)
-            monthToScrap = str(lastLineMonth - 1).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay == 1 and lastLineMonth in(5, 7, 10, 12):
-            dayToScrap = str(30)
-            monthToScrap = str(lastLineMonth - 1).zfill(2)
-            yearToScrap = str(lastLineYear).zfill(4)
-        elif lastLineDay == 1 and lastLineMonth == 1:
-            dayToScrap = str(31)
-            monthToScrap = str(12)
-            yearToScrap = str(lastLineYear -1).zfill(4)
-        racingDate = yearToScrap + '-' + monthToScrap + '-' + dayToScrap
-        return racingDate
-
-    with connect() as conn:
-        create_tables_if_not_exist()
-        with conn.cursor() as cursor:
-            if not has_values(cursor, 'timeform_scannedday'):
-                racing_date = get_last_day()
-            else:
-                racing_date = get_scanned_day(cursor, 'timeform_scannedday')
-                if racing_date == '2013-01-01':
-                    update_field_to_null(cursor, 'timeform_scannedday')
-                    sys.exit()
-                else:
-                    racing_date = go_back_day(racing_date)
-            driver = get_driver()
-            scraped_page = scrape_page(driver, racing_date)
-            for i in scraped_page:
-                href_captured = i.get_attribute('href')
-                if not url_exists_in_table(cursor, href_captured):
-                    insert_url_into_table(conn, href_captured, 'timeform')
-            insert_or_update_value(cursor, 'timeform_scannedday', racing_date)
-            logging.info('Timeform - Archive')
-    driver.quit()
-
 start_time = time.time()
-for _ in range(1):
-    loop_scam()
-    logging.info('OK!')
+def get_last_day():
+    date_now = datetime.datetime.now()
+    last_day = date_now - datetime.timedelta(days=1)
+    return last_day.strftime('%Y-%m-%d')
+
+def go_back_day(parameter):
+    partsOfDate = parameter.split('-')
+    lastLineYear = int(partsOfDate[0])
+    lastLineMonth = int(partsOfDate[1])
+    lastLineDay = int(partsOfDate[2])
+    if lastLineDay == 26 and lastLineMonth == 12:
+        dayToScrap = str(lastLineDay - 2).zfill(2)
+        monthToScrap = str(lastLineMonth).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay > 1 and lastLineMonth > 1:
+        dayToScrap = str(lastLineDay - 1).zfill(2)
+        monthToScrap = str(lastLineMonth).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay > 1 and lastLineMonth == 1:
+        dayToScrap = str(lastLineDay - 1).zfill(2)
+        monthToScrap = str(lastLineMonth).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 == 0 and lastLineYear%100 != 0) or (lastLineYear%400 == 0)):
+        dayToScrap = str(29)
+        monthToScrap = str(lastLineMonth - 1).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 != 0 and lastLineYear%100 == 0) or (lastLineYear%400 != 0)):
+        dayToScrap = str(28)
+        monthToScrap = str(lastLineMonth - 1).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay == 1 and lastLineMonth in(2, 4, 6, 8, 9, 11):
+        dayToScrap = str(31)
+        monthToScrap = str(lastLineMonth - 1).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay == 1 and lastLineMonth in(5, 7, 10, 12):
+        dayToScrap = str(30)
+        monthToScrap = str(lastLineMonth - 1).zfill(2)
+        yearToScrap = str(lastLineYear).zfill(4)
+    elif lastLineDay == 1 and lastLineMonth == 1:
+        dayToScrap = str(31)
+        monthToScrap = str(12)
+        yearToScrap = str(lastLineYear -1).zfill(4)
+    racingDate = yearToScrap + '-' + monthToScrap + '-' + dayToScrap
+    return racingDate
+
+with connect() as conn:
+    create_tables_if_not_exist()
+    with conn.cursor() as cursor:
+        if not has_values(cursor, 'timeform_scannedday'):
+            racing_date = get_last_day()
+        else:
+            racing_date = get_scanned_day(cursor, 'timeform_scannedday')
+            if racing_date == '2013-01-01':
+                update_field_to_null(cursor, 'timeform_scannedday')
+                sys.exit()
+            else:
+                racing_date = go_back_day(racing_date)
+        driver = get_driver()
+        scraped_page = scrape_page(driver, racing_date)
+        for i in scraped_page:
+            href_captured = i.get_attribute('href')
+            if not url_exists_in_table(cursor, href_captured):
+                insert_url_into_table(conn, href_captured, 'timeform')
+        insert_or_update_value(cursor, 'timeform_scannedday', racing_date)
+        logging.info('Timeform - Archive')
+driver.quit()
+
+logging.info('OK!')
 end_time = time.time()
 execution_time = end_time - start_time
 logging.info(f"Tempo de execução: {execution_time} segundos")
