@@ -267,6 +267,8 @@ with connect() as conn:
             response = requests.get(url)
             driver.get(url)
             driver.implicitly_wait(0.5)
+            
+            update_scanned(url)
 
             body_element = driver.find_element(By.TAG_NAME, 'body')
             if not body_element.text == 'For data, please visit https://www.globalsportsapi.com/':
@@ -533,7 +535,6 @@ with connect() as conn:
                 print('For data, please visit https://www.globalsportsapi.com/')
 
         driver.quit()
-        update_scanned(url)
 
     cursor.close()
 conn.close()
