@@ -260,7 +260,8 @@ with connect() as conn:
 
         # Verificar se encontrou um resultado e imprimir os valores
         if result:
-            url, website, scanned = result
+            url, website, scanned = result            
+            update_scanned(url)
             partsOfRaceURL = url.split('/')
             race_date = partsOfRaceURL[7]
             timeform_id = partsOfRaceURL[8]
@@ -533,9 +534,6 @@ with connect() as conn:
                 print('For data, please visit https://www.globalsportsapi.com/')
 
         driver.quit()
-            
-        update_scanned(url)
-
     cursor.close()
 conn.close()
 
