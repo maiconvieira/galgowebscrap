@@ -16,16 +16,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 logging.basicConfig(level=logging.INFO)
 
 def create_tables_if_not_exist():
-    try:
-        with connect() as conn:
-            with conn.cursor() as cursor:
-                for table_name, create_table_query in tables.items():
-                    if not table_exists(table_name):
-                        cursor.execute(create_table_query)
-                        conn.commit()
-    except Exception as e:
-        print(f"Erro ao conectar ao servidor: {e}")
-        sys.exit()
+    with connect() as conn:
+        with conn.cursor() as cursor:
+            for table_name, create_table_query in tables.items():
+                if not table_exists(table_name):
+                    cursor.execute(create_table_query)
+                    conn.commit()
 
 def get_driver():
     options = Options()

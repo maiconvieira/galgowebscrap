@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2, sys
 from config import *
 
 def connect():
@@ -13,3 +13,4 @@ def connect():
         return conn
     except psycopg2.Error as e:
         print("Erro ao conectar ao banco de dados:", e)
+        sys.exit()
