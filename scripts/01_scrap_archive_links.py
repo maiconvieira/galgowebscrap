@@ -13,7 +13,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 
 def create_tables_if_not_exist():
     with connect() as conn:
@@ -30,14 +30,26 @@ def get_driver():
     options.add_argument('--disable-dev-shm-usage')
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-def has_values(cursor,column_name):
+# Função para verificar se a tabela tem valores
+def has_values(cursor, column_name):
+    query = f"SELECT EXISTS(SELECT 1 FROM lastscannedday WHERE {column_name} IS NOT NULL)"
+    cursor.execute(query)
+    return cursor.fetchone()[0]
+
+def get_scanned_day(cursor, column_name):
     try:
-        query = sql.SQL(f"SELECT EXISTS(SELECT 1 FROM lastscannedday WHERE {column_name} IS NOT NULL)")
-        cursor.execute(query)
-        return cursor.fetchone()[0]
+        # Consultar o valor do campo scannedday
+        select_query = f"SELECT {column_name} FROM lastscannedday WHERE id = 1"
+        cursor.execute(select_query)
+        result = cursor.fetchone()
+        if result is not None:
+            return result[0]
+        else:
+            logging.warning("Nenhum resultado retornado da consulta.")
+            return None
     except psycopg2.Error as e:
-        logging.error("Erro ao verificar se a tabela tem valores: %s", e)
-        return False
+        logging.error("Erro ao consultar o campo scannedday: %s", e)
+        sys.exit()
 
 def get_scanned_day(cursor, column_name):
     # Consultar o valor do campo scannedday
@@ -64,15 +76,10 @@ def insert_or_update_value(cursor, column_name, value):
         conn.rollback()
         logging.error("Erro ao inserir ou atualizar valor: %s", e)
 
+# Função para atualizar um campo para NULL
 def update_field_to_null(cursor, column_name):
-    try:
-        with connect() as conn:
-            update_query = f"UPDATE lastscannedday SET {column_name} = NULL"
-            cursor.execute(update_query)
-            conn.commit()
-    except psycopg2.Error as e:
-        conn.rollback()
-        logging.error("Erro ao atualizar campo: %s", e)
+    update_query = f"UPDATE lastscannedday SET {column_name} = NULL"
+    cursor.execute(update_query)
 
 def url_exists_in_table(cursor, url):
     try:
@@ -101,53 +108,60 @@ def scrape_page(driver, racing_date):
     except NoSuchElementException:
         logging.error('Elemento: scrapedPage não localizado')
         return []
-
-start_time = time.time()
+    
+# Função para obter o último dia
 def get_last_day():
     date_now = datetime.datetime.now()
     last_day = date_now - datetime.timedelta(days=1)
     return last_day.strftime('%Y-%m-%d')
 
+# Função para voltar um dia
 def go_back_day(parameter):
-    partsOfDate = parameter.split('-')
-    lastLineYear = int(partsOfDate[0])
-    lastLineMonth = int(partsOfDate[1])
-    lastLineDay = int(partsOfDate[2])
-    if lastLineDay == 26 and lastLineMonth == 12:
-        dayToScrap = str(lastLineDay - 2).zfill(2)
-        monthToScrap = str(lastLineMonth).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay > 1 and lastLineMonth > 1:
-        dayToScrap = str(lastLineDay - 1).zfill(2)
-        monthToScrap = str(lastLineMonth).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay > 1 and lastLineMonth == 1:
-        dayToScrap = str(lastLineDay - 1).zfill(2)
-        monthToScrap = str(lastLineMonth).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 == 0 and lastLineYear%100 != 0) or (lastLineYear%400 == 0)):
-        dayToScrap = str(29)
-        monthToScrap = str(lastLineMonth - 1).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 != 0 and lastLineYear%100 == 0) or (lastLineYear%400 != 0)):
-        dayToScrap = str(28)
-        monthToScrap = str(lastLineMonth - 1).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay == 1 and lastLineMonth in(2, 4, 6, 8, 9, 11):
-        dayToScrap = str(31)
-        monthToScrap = str(lastLineMonth - 1).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay == 1 and lastLineMonth in(5, 7, 10, 12):
-        dayToScrap = str(30)
-        monthToScrap = str(lastLineMonth - 1).zfill(2)
-        yearToScrap = str(lastLineYear).zfill(4)
-    elif lastLineDay == 1 and lastLineMonth == 1:
-        dayToScrap = str(31)
-        monthToScrap = str(12)
-        yearToScrap = str(lastLineYear -1).zfill(4)
-    racingDate = yearToScrap + '-' + monthToScrap + '-' + dayToScrap
-    return racingDate
+    date = datetime.datetime.strptime(parameter, '%Y-%m-%d')
+    previous_date = date - datetime.timedelta(days=1)
+    return previous_date.strftime('%Y-%m-%d')
 
+#def go_back_day(parameter):
+#    partsOfDate = parameter.split('-')
+#    lastLineYear = int(partsOfDate[0])
+#    lastLineMonth = int(partsOfDate[1])
+#    lastLineDay = int(partsOfDate[2])
+#    if lastLineDay == 26 and lastLineMonth == 12:
+#        dayToScrap = str(lastLineDay - 2).zfill(2)
+#        monthToScrap = str(lastLineMonth).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay > 1 and lastLineMonth > 1:
+#        dayToScrap = str(lastLineDay - 1).zfill(2)
+#        monthToScrap = str(lastLineMonth).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay > 1 and lastLineMonth == 1:
+#        dayToScrap = str(lastLineDay - 1).zfill(2)
+#        monthToScrap = str(lastLineMonth).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 == 0 and lastLineYear%100 != 0) or (lastLineYear%400 == 0)):
+#        dayToScrap = str(29)
+#        monthToScrap = str(lastLineMonth - 1).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay == 1 and lastLineMonth == 3 and ((lastLineYear%4 != 0 and lastLineYear%100 == 0) or (lastLineYear%400 != 0)):
+#        dayToScrap = str(28)
+#        monthToScrap = str(lastLineMonth - 1).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay == 1 and lastLineMonth in(2, 4, 6, 8, 9, 11):
+#        dayToScrap = str(31)
+#        monthToScrap = str(lastLineMonth - 1).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay == 1 and lastLineMonth in(5, 7, 10, 12):
+#        dayToScrap = str(30)
+#        monthToScrap = str(lastLineMonth - 1).zfill(2)
+#        yearToScrap = str(lastLineYear).zfill(4)
+#    elif lastLineDay == 1 and lastLineMonth == 1:
+#        dayToScrap = str(31)
+#        monthToScrap = str(12)
+#        yearToScrap = str(lastLineYear -1).zfill(4)
+#    racingDate = yearToScrap + '-' + monthToScrap + '-' + dayToScrap
+#    return racingDate
+
+start_time = time.time()
 with connect() as conn:
     create_tables_if_not_exist()
     with conn.cursor() as cursor:

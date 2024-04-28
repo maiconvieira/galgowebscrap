@@ -151,7 +151,6 @@ def go_back_day(parameter):
     return racingDate
 
 start_time = time.time()
-
 with connect() as conn:
     create_tables_if_not_exist()
     with conn.cursor() as cursor:
