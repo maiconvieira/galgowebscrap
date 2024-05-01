@@ -1,140 +1,167 @@
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, Date, Time, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from db import connect
-import psycopg2
-from psycopg2 import sql
 
-tables = {
-    'lastscannedday': """
-        CREATE TABLE IF NOT EXISTS lastscannedday (
-            id SERIAL PRIMARY KEY,
-            timeform_scannedday VARCHAR,
-            racingpost_scannedday VARCHAR
-        )
-    """,
-    'linkstoscam': """
-        CREATE TABLE IF NOT EXISTS linkstoscam (
-            id SERIAL PRIMARY KEY,
-            url VARCHAR NOT NULL UNIQUE,
-            website VARCHAR,
-            scanned BOOLEAN
-        )
-    """,
-    'greyhoundlinkstoscam': """
-        CREATE TABLE IF NOT EXISTS greyhoundlinkstoscam (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR,
-            timeform_id int UNIQUE,
-            racingpost_id int UNIQUE,
-            url VARCHAR NOT NULL UNIQUE,
-            website VARCHAR,
-            scanned BOOLEAN
-        )
-    """,
-    'stadium': """
-        CREATE TABLE IF NOT EXISTS stadium (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR NOT NULL UNIQUE,
-            url VARCHAR,
-            address VARCHAR,
-            email VARCHAR,
-            location VARCHAR
-        )
-    """,
-    'trainer': """
-        CREATE TABLE IF NOT EXISTS trainer (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR NOT NULL UNIQUE
-        )
-    """,
-    'greyhound': """
-        CREATE TABLE IF NOT EXISTS greyhound (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR NOT NULL,
-            born_date VARCHAR,
-            genre VARCHAR,
-            colour VARCHAR,
-            dam VARCHAR,
-            sire VARCHAR,
-            owner VARCHAR,
-            timeform_id INT,
-            racingpost_id INT
-        )
-    """,
-    'trainer_greyhound': """
-        CREATE TABLE IF NOT EXISTS trainer_greyhound (
-            trainer_id INT NOT NULL,
-            greyhound_id INT NOT NULL,
-            PRIMARY KEY (trainer_id, greyhound_id),
-            CONSTRAINT fk_trainer FOREIGN KEY (trainer_id) REFERENCES trainer (id),
-            CONSTRAINT fk_greyhound FOREIGN KEY (greyhound_id) REFERENCES greyhound (id)
-        )
-    """,
-    'race': """
-        CREATE TABLE IF NOT EXISTS race (
-            id SERIAL PRIMARY KEY,
-            race_date VARCHAR,
-            race_time VARCHAR,
-            grade VARCHAR,
-            distance INT,
-            race_type VARCHAR,
-            tf_going VARCHAR,
-            going VARCHAR,
-            prize VARCHAR,
-            forecast VARCHAR,
-            tricast VARCHAR,
-            timeform_id INT,
-            racingpost_id INT,
-            race_comment VARCHAR,
-            race_comment_ptbr VARCHAR,
-            stadium_id INT NOT NULL,
-            CONSTRAINT fk_stadium FOREIGN KEY (stadium_id) REFERENCES stadium (id),
-            CONSTRAINT unique_race_data UNIQUE (
-                race_date,
-                race_time,
-                grade,
-                distance,
-                race_type,
-                tf_going,
-                going,
-                prize,
-                forecast,
-                tricast,
-                timeform_id
-            )
-        )
-    """,
-    'race_result': """
-        CREATE TABLE IF NOT EXISTS race_result (
-            id SERIAL PRIMARY KEY,
-            position INT,
-            bnt VARCHAR,
-            trap INT,
-            run_time VARCHAR,
-            sectional VARCHAR,
-            bend VARCHAR,
-            remarks_acronym VARCHAR,
-            remarks VARCHAR,
-            isp VARCHAR,
-            bsp VARCHAR,
-            tfr VARCHAR,
-            greyhound_weight  VARCHAR,
-            greyhound_id INT NOT NULL,
-            race_id INT NOT NULL,
-            CONSTRAINT fk_greyhound FOREIGN KEY (greyhound_id) REFERENCES greyhound (id),
-            CONSTRAINT fk_race FOREIGN KEY (race_id) REFERENCES race (id)
-        )
-    """
-}
+Base = declarative_base()
 
-def table_exists(table_name):
-    with connect() as conn:
-        with conn.cursor() as cursor:
-            exists_query = sql.SQL("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = %s)")
-            cursor.execute(exists_query, (table_name,))
-            return cursor.fetchone()[0]
+# Define as classes de modelo
 
-with connect() as conn:
-    with conn.cursor() as cursor:
-        for table_name, create_table_query in tables.items():
-            if not table_exists(table_name):
-                cursor.execute(create_table_query)
-                conn.commit()
+class PageSource(Base):
+    __tablename__ = 'page_source'
+
+    id = Column(Integer, primary_key=True)
+    dia = Column(Date)
+    url = Column(String)
+    site = Column(String)
+    scanned_level = Column(String)
+    html_source = Column(Text)
+
+class LastDate(Base):
+    __tablename__ = 'lastdate'
+
+    id = Column(Integer, primary_key=True)
+    dia = Column(Date)
+
+class LinksToScam(Base):
+    __tablename__ = 'linkstoscam'
+
+    id = Column(Integer, primary_key=True)
+    dia = Column(Date)
+    hora = Column(Time)
+    track = Column(String)
+    timeform_id = Column(Integer)
+    timeform_url = Column(String)
+    tf_scanned = Column(Boolean)
+    racingpost_id = Column(Integer)
+    racingpost_url = Column(String)
+    rp_scanned = Column(Boolean)
+
+class LinksToScamSemPar(Base):
+    __tablename__ = 'linkstoscam_sem_par'
+
+    id = Column(Integer, primary_key=True)
+    dia = Column(Date)
+    hora = Column(Time)
+    track = Column(String)
+    site = Column(String)
+    site_id = Column(Integer)
+    site_url = Column(String)
+    scanned = Column(Boolean)
+
+#class LastScannedDay(Base):
+#    __tablename__ = 'lastscannedday'
+#
+#    id = Column(Integer, primary_key=True)
+#    timeform_scannedday = Column(String)
+#    racingpost_scannedday = Column(String)
+#
+#class LinksToScam2(Base):
+#    __tablename__ = 'linkstoscam2'
+#
+#    id = Column(Integer, primary_key=True)
+#    url = Column(String, unique=True, nullable=False)
+#    website = Column(String)
+#    scanned = Column(Boolean)
+#
+class GreyhoundLinksToScam(Base):
+    __tablename__ = 'greyhoundlinkstoscam'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    timeform_id = Column(Integer, unique=True)
+    racingpost_id = Column(Integer, unique=True)
+    url = Column(String, nullable=False, unique=True)
+    website = Column(String)
+    scanned = Column(Boolean)
+
+class Stadium(Base):
+    __tablename__ = 'stadium'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, unique=True)
+    url = Column(String)
+    address = Column(String)
+    email = Column(String)
+    location = Column(String)
+
+class Trainer(Base):
+    __tablename__ = 'trainer'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, unique=True)
+
+class Greyhound(Base):
+    __tablename__ = 'greyhound'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    born_date = Column(Date)
+    genre = Column(String)
+    colour = Column(String)
+    dam = Column(String)
+    sire = Column(String)
+    owner = Column(String)
+    timeform_id = Column(Integer)
+    racingpost_id = Column(Integer)
+
+class TrainerGreyhound(Base):
+    __tablename__ = 'trainer_greyhound'
+
+    trainer_id = Column(Integer, ForeignKey('trainer.id'), primary_key=True)
+    greyhound_id = Column(Integer, ForeignKey('greyhound.id'), primary_key=True)
+
+    trainer = relationship('Trainer')
+    greyhound = relationship('Greyhound') 
+
+class Race(Base):
+    __tablename__ = 'race'
+
+    id = Column(Integer, primary_key=True)
+    race_date = Column(Date)
+    race_time = Column(Time)
+    grade = Column(String)
+    distance = Column(Integer)
+    race_type = Column(String)
+    tf_going = Column(String)
+    going = Column(String)
+    prize = Column(String)
+    forecast = Column(String)
+    tricast = Column(String)
+    timeform_id = Column(Integer)
+    racingpost_id = Column(Integer)
+    race_comment = Column(String)
+    race_comment_ptbr = Column(String)
+    stadium_id = Column(Integer, ForeignKey('stadium.id'), nullable=False)
+    stadium = relationship('Stadium')
+
+    __table_args__ = (
+        UniqueConstraint('race_date', 'race_time', 'grade', 'distance', 'race_type', 'tf_going', 'going', 'prize', 'forecast', 'tricast', 'timeform_id'),
+    )
+
+class RaceResult(Base):
+    __tablename__ = 'race_result'
+
+    id = Column(Integer, primary_key=True)
+    position = Column(Integer)
+    bnt = Column(String)
+    trap = Column(Integer)
+    run_time = Column(String)
+    sectional = Column(String)
+    bend = Column(String)
+    remarks_acronym = Column(String)
+    remarks = Column(String)
+    isp = Column(String)
+    bsp = Column(String)
+    tfr = Column(String)
+    greyhound_weight = Column(String)
+    greyhound_id = Column(Integer, ForeignKey('greyhound.id'), nullable=False)
+    race_id = Column(Integer, ForeignKey('race.id'), nullable=False)
+    greyhound = relationship('Greyhound')
+    race = relationship('Race')
+
+# Configura a conexão com o banco de dados
+engine = create_engine('postgresql+psycopg2://', creator=connect)
+
+# Cria as tabelas
+Base.metadata.create_all(engine)
