@@ -1,6 +1,7 @@
 # Environments
 .venv/
 arquivos/
+logs/
 scripts/config.py
 scripts/__pycache__/
 scripts_productions/
