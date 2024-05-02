@@ -35,7 +35,7 @@ logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log',
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
-logging.info(' Tabelas OK!')
+logging.info('Tabelas OK!')
 
 options = Options()
 options.add_argument('--headless')
@@ -139,10 +139,10 @@ try:
             racingpost_url = 'https://greyhoundbet.racingpost.com/' + link1
             rp_lista.append([dia, hora, track, racingpost_id, racingpost_url])
         else:
-            logging.info(f' URL: {racingpost_url} não corresponde ao padrão esperado.')
+            logging.info(f'URL: {racingpost_url} não corresponde ao padrão esperado.')
     source_lista.append([dia, rp_url, 'rp', src1])
 except NoSuchElementException:
-    logging.error(' Elemento não encontrado. Continuando sem realizar nenhuma ação.')
+    logging.error('Elemento não encontrado. Continuando sem realizar nenhuma ação.')
 
 driver1.quit()
 
@@ -172,10 +172,10 @@ try:
             timeform_url = 'https://www.timeform.com' + link2
             tf_lista.append([dia, hora, track, timeform_id, timeform_url])
         else:
-            logging.info(f' URL: {timeform_url} não corresponde ao padrão esperado.')
+            logging.info(f'URL: {timeform_url} não corresponde ao padrão esperado.')
     source_lista.append([dia, tf_url, 'tf', src2])
 except NoSuchElementException:
-    logging.error(' Elemento não encontrado. Continuando sem realizar nenhuma ação.')
+    logging.error('Elemento não encontrado. Continuando sem realizar nenhuma ação.')
 
 driver2.quit()
 
@@ -183,7 +183,6 @@ df_timeform = pd.DataFrame(tf_lista, columns=['dia', 'hora', 'track', 'timeform_
 df_timeform = df_timeform.drop_duplicates(subset=['dia', 'hora', 'track', 'timeform_id', 'timeform_url'])
 
 df_source = pd.DataFrame(source_lista, columns=['dia', 'url', 'site', 'html_source'])
-print()
 
 # Realizar a mesclagem com indicador
 df_merged = pd.merge(df_timeform, df_racingpost, on=['dia', 'hora', 'track'], how='outer', indicator=True)
@@ -240,9 +239,9 @@ if not df_source.empty:
             ignored_count += 1
 
     if ignored_count > 0:
-        logging.info(f' Número de dados de origem, que serão ignorados: {ignored_count}')
+        logging.info(f'Número de dados de origem, que serão ignorados: {ignored_count}')
 else:
-    logging.info(' O DataFrame df_source está vazio. Não há dados para inserir.')
+    logging.info('O DataFrame df_source está vazio. Não há dados para inserir.')
 
 if not df_merged.empty:
     # Itera sobre as linhas do DataFrame e insere na tabela
@@ -276,9 +275,9 @@ if not df_merged.empty:
             ignored_count += 1
 
     if ignored_count > 0:
-        logging.info(f' Número de link combinados, que serão ignorados: {ignored_count}')
+        logging.info(f'Número de link combinados, que serão ignorados: {ignored_count}')
 else:
-    logging.info(' O DataFrame df_merged está vazio. Não há dados para inserir.')
+    logging.info('O DataFrame df_merged está vazio. Não há dados para inserir.')
 
 if not racingpost.empty:
     # Itera sobre as linhas do DataFrame e insere na tabela
@@ -308,9 +307,9 @@ if not racingpost.empty:
             ignored_count += 1
 
     if ignored_count > 0:
-        logging.info(f' Número de link do site Racingpost, que serão ignorados: {ignored_count}')
+        logging.info(f'Número de link do site Racingpost, que serão ignorados: {ignored_count}')
 else:
-    logging.info(' O DataFrame racingpost está vazio. Não há dados para inserir.')
+    logging.info('O DataFrame racingpost está vazio. Não há dados para inserir.')
 
 if not timeform.empty:
     # Itera sobre as linhas do DataFrame e insere na tabela
@@ -340,9 +339,9 @@ if not timeform.empty:
             ignored_count += 1
 
     if ignored_count > 0:
-        logging.info(f' Número de link do site Timeform, que serão ignorados: {ignored_count}')
+        logging.info(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
 else:
-    logging.info(' O DataFrame timeform está vazio. Não há dados para inserir.')
+    logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
 
 # Verifica se a tabela LastDate está vazia
 empty_table = session.query(LastDate).count() == 0
@@ -361,10 +360,11 @@ session.commit()
 # Fecha a sessão
 session.close()
 
-logging.info(f' Data escaneada: {racing_date}')
+logging.info(f'Data escaneada: {racing_date}')
 
-logging.info('OK!')
+logging.info('Script Finalizado!')
 end_time = time.time()
 execution_time = end_time - start_time
-logging.info(f' Tempo de execução: {execution_time} segundos')
+logging.info(f'Tempo de execução: {execution_time} segundos')
+logging.info('')
 sys.exit()
