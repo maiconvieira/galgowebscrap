@@ -13,13 +13,22 @@ from selenium.common.exceptions import NoSuchElementException
 from db import connect
 from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageSource
 
+import platform
+
+# Verifica o sistema operacional
+if platform.system() == 'Windows':
+    log_dir = '../logs'
+elif platform.system() == 'Linux':
+    log_dir = '/home/maicon/galgowebscrap/logs'
+else:
+    print('Sistema operacional não reconhecido')
+
 # Verifica se o diretório logs existe, caso contrário, cria-o
-log_dir = "../logs"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename="../logs/01ScrapArchive.log", 
+logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO)
