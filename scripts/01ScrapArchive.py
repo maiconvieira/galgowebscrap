@@ -1,6 +1,7 @@
-import re, logging, time, sqlalchemy
-from datetime import date, timedelta, datetime
-from sqlalchemy import create_engine, exists, update, select, text, Column, Integer, String, Date, Text
+import re, logging, time, sys, os
+import pandas as pd
+from datetime import date, timedelta
+from sqlalchemy import create_engine, exists, update 
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from selenium.webdriver.common.by import By
@@ -11,9 +12,17 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from db import connect
 from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageSource
-import pandas as pd
 
-logging.basicConfig(level=logging.INFO)
+# Verifica se o diretório logs existe, caso contrário, cria-o
+log_dir = "../logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+# Configura o logger para escrever logs em um arquivo com nível INFO
+logging.basicConfig(filename="../logs/01ScrapArchive.log", 
+                    format='%(asctime)s %(message)s', 
+                    filemode='w',
+                    level=logging.INFO)
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
@@ -349,3 +358,4 @@ logging.info('OK!')
 end_time = time.time()
 execution_time = end_time - start_time
 logging.info(f' Tempo de execução: {execution_time} segundos')
+sys.exit()
