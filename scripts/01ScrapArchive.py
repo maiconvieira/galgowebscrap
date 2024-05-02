@@ -31,7 +31,8 @@ if not os.path.exists(log_dir):
 logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
-                    level=logging.INFO)
+                    level=logging.INFO,
+                    encoding='utf-8')
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
