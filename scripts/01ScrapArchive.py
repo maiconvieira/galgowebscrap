@@ -122,6 +122,7 @@ rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date
 driver1.get(rp_url)
 driver1.implicitly_wait(5)
 logging.info(f'Racingpost Link: {rp_url}')
+logging.info(f'')
 
 try:
     src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attribute('outerHTML')
@@ -150,6 +151,7 @@ tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
 driver2.get(tf_url)
 driver2.implicitly_wait(3)
 logging.info(f'Timeform Link: {tf_url}')
+logging.info(f'')
 
 try:
     src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
@@ -178,7 +180,6 @@ df_timeform = pd.DataFrame(tf_lista, columns=['dia', 'hora', 'track', 'timeform_
 df_timeform = df_timeform.drop_duplicates(subset=['dia', 'hora', 'track', 'timeform_id', 'timeform_url'])
 
 df_source = pd.DataFrame(source_lista, columns=['dia', 'url', 'site', 'html_source'])
-logging.info(f'{df_source}')
 
 # Realizar a mesclagem com indicador
 df_merged = pd.merge(df_timeform, df_racingpost, on=['dia', 'hora', 'track'], how='outer', indicator=True)
