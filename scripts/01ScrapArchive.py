@@ -13,6 +13,34 @@ from selenium.common.exceptions import NoSuchElementException
 from db import connect
 from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageSource
 
+# Verifica o sistema operacional
+if platform.system() == 'Windows':
+    log_dir = '../logs'
+elif platform.system() == 'Linux':
+    log_dir = '/home/maicon/galgowebscrap/logs'
+else:
+    print('Sistema operacional não reconhecido')
+
+# Verifica se o diretório logs existe, caso contrário, cria-o
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+# Configura o logger para escrever logs em um arquivo com nível INFO
+logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
+                    format='%(asctime)s %(message)s', 
+                    filemode='w',
+                    level=logging.INFO,
+                    encoding='utf-8')
+
+# Cria as tabelas
+Base.metadata.create_all(engine)
+logging.info('Tabelas OK!')
+
+options = Options()
+options.add_argument('--headless')
+options.add_argument('log-level=3')
+options.add_argument('--disable-dev-shm-usage')
+
 estadio = {
     '1'   : 'Crayford',
     '4'   : 'Monmore',
@@ -64,6 +92,11 @@ estadio = {
     '98'  : 'Towcester'
 }
 
+# Criar a conexão com o banco de dados usando SQLAlchemy
+engine = create_engine('postgresql+psycopg2://', creator=connect)
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
+
 # Cria a função para consultar o valor da coluna dia
 def get_lastdate(session):
     scanned_date = session.query(LastDate).first()
@@ -76,39 +109,6 @@ def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
     return ' '.join(capitalized_words)
-
-# Verifica o sistema operacional
-if platform.system() == 'Windows':
-    log_dir = '../logs'
-elif platform.system() == 'Linux':
-    log_dir = '/home/maicon/galgowebscrap/logs'
-else:
-    print('Sistema operacional não reconhecido')
-
-# Verifica se o diretório logs existe, caso contrário, cria-o
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
-
-# Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
-                    format='%(asctime)s %(message)s', 
-                    filemode='w',
-                    level=logging.INFO,
-                    encoding='utf-8')
-
-# Criar a conexão com o banco de dados usando SQLAlchemy
-engine = create_engine('postgresql+psycopg2://', creator=connect)
-Base = declarative_base()
-#Session = sessionmaker(bind=engine)
-
-# Cria as tabelas
-Base.metadata.create_all(engine)
-logging.info('Tabelas OK!')
-
-options = Options()
-options.add_argument('--headless')
-options.add_argument('log-level=3')
-options.add_argument('--disable-dev-shm-usage')
 
 # Cria a sessão
 Session = sessionmaker(bind=engine)
