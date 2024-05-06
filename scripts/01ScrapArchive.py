@@ -429,6 +429,7 @@ else:
     # Se a tabela não estiver vazia, faz um update
     #update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
     #session.execute(update_query)
+    conn = connect()
     query = sql.SQL("UPDATE LastDate SET dia = %s WHERE id = 1;")
     cur = conn.cursor()
     cur.execute(query, racing_date) 
