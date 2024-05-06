@@ -21,7 +21,7 @@ else:
     print('Sistema operacional não reconhecido')
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/02ScrapToday.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
@@ -95,24 +95,12 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Cria a função para consultar o valor da coluna dia
-def get_lastdate(session):
-    scanned_date = session.query(LastDate).first()
-    if scanned_date.dia.day == 26 and scanned_date.dia.month == 12:
-        last_date = date(scanned_date.dia.year, 12, 24)
-        return last_date
-    else:
-        if scanned_date is None or scanned_date.dia == date(1997, 1, 1):
-            return date.today() - timedelta(days=1)
-        last_date = scanned_date.dia - timedelta(days=1)
-        return last_date
-
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
     return ' '.join(capitalized_words)
 
-racing_date = get_lastdate(session)
+racing_date = date.today()
 logging.info(f'Racing_date: {racing_date}')
 
 rp_lista = []
@@ -416,18 +404,6 @@ else:
             logging.info(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
-
-# Verifica se a tabela LastDate está vazia
-empty_table = session.query(LastDate).count() == 0
-
-if empty_table:
-    # Se a tabela estiver vazia, faz um insert
-    new_entry = LastDate(dia=racing_date)
-    session.add(new_entry)
-else:
-    # Se a tabela não estiver vazia, faz um update
-    update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
-    session.execute(update_query)
 
 # Confirma a transação
 session.commit()
