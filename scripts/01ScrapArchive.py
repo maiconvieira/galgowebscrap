@@ -1,5 +1,7 @@
 import re, logging, time, sys, os, platform
 import pandas as pd
+import psycopg2
+from psycopg2 import sql
 from db import connect
 from selenium import webdriver
 from datetime import date, timedelta
@@ -427,13 +429,9 @@ else:
     # Se a tabela não estiver vazia, faz um update
     #update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
     #session.execute(update_query)
-    try:
-        with session.begin():
-            update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
-            session.execute(update_query)
-    except Exception as e:
-        # Se ocorrer algum erro, imprime o erro
-        print(f"Erro ao atualizar data: {e}")
+    query = sql.SQL("UPDATE LastDate SET dia = %s WHERE id = 1;")
+    cur = conn.cursor()
+    cur.execute(query, racing_date) 
 
 
 # Confirma a transação
