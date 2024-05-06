@@ -425,8 +425,16 @@ if empty_table:
     session.add(new_entry)
 else:
     # Se a tabela não estiver vazia, faz um update
-    update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
-    session.execute(update_query)
+    #update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
+    #session.execute(update_query)
+    try:
+        with session.begin():
+            update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
+            session.execute(update_query)
+    except Exception as e:
+        # Se ocorrer algum erro, imprime o erro
+        print(f"Erro ao atualizar data: {e}")
+
 
 # Confirma a transação
 session.commit()
