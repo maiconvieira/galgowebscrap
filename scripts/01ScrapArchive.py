@@ -432,7 +432,7 @@ else:
     conn = connect()
     query = sql.SQL("UPDATE LastDate SET dia = %s WHERE id = 1;")
     cur = conn.cursor()
-    cur.execute(query, racing_date) 
+    cur.execute(query, (racing_date,))
 
 
 # Confirma a transação
