@@ -97,15 +97,14 @@ session = Session()
 
 def get_lastdate(session):
     scanned_date = session.query(LastDate).first()
-
-    if scanned_date and scanned_date.dia.day == 26 and scanned_date.dia.month == 12:
-        last_date = scanned_date.dia.replace(year=scanned_date.dia.year - 1)
-    elif scanned_date and scanned_date.dia != date(1997, 1, 1):
-        last_date = scanned_date.dia - timedelta(days=1)
+    if scanned_date is None or scanned_date.dia == date(1997, 1, 1):
+        return date.today() - timedelta(days=1)
+    elif scanned_date.dia.day == 26 and scanned_date.dia.month == 12:
+        last_date = scanned_date.dia - timedelta(days=2)
+        return last_date
     else:
-        last_date = date.today() - timedelta(days=1)
-
-    return last_date
+        last_date = scanned_date.dia - timedelta(days=1)
+        return last_date
 
 def capitalize_words(sentence):
     words = sentence.split()
