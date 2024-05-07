@@ -1,13 +1,10 @@
-import re, logging, time, sys, os, platform
+import re, logging, time, platform
 import pandas as pd
-import psycopg2
-from psycopg2 import sql
 from db import connect
 from selenium import webdriver
-from datetime import date, timedelta
-from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 from selenium.webdriver.common.by import By
-from sqlalchemy import create_engine, exists, update
+from sqlalchemy import create_engine, exists
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -23,7 +20,7 @@ else:
     print('Sistema operacional não reconhecido')
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/{datetime.today().strftime('%Y-%m-%d')}_01ScrapArchive.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
