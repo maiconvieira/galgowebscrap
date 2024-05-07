@@ -21,7 +21,7 @@ else:
     print('Sistema operacional não reconhecido')
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{datetime.today().strftime('%Y-%m-%d')}_02ScrapToday.log', 
+logging.basicConfig(filename=f'{log_dir}/{datetime.today().strftime("%Y-%m-%d")}_02ScrapToday.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
