@@ -2,7 +2,7 @@ import re, logging, time, sys, os, platform
 import pandas as pd
 from db import connect
 from selenium import webdriver
-from datetime import date, timedelta
+from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists, update
@@ -95,12 +95,29 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
+def get_today(session):
+    try:
+        # Verifica se a data de hoje já existe na tabela LastDate
+        today = datetime.now().date()
+        existing_date = session.query(LastDate).filter(LastDate.dia == today).first()
+        if existing_date:
+            return today  # Retorna a data de hoje se ela já existir na tabela
+
+        # Se a data de hoje não existir, insere-a na tabela LastDate com scanned=True
+        new_date = LastDate(dia=today, scanned=True)
+        session.add(new_date)
+        session.commit()
+        return today  # Retorna a data de hoje após a inserção bem-sucedida
+    except Exception as e:
+        print(f"Erro ao inserir data: {e}")
+        session.rollback()
+
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
     return ' '.join(capitalized_words)
 
-racing_date = date.today()
+racing_date = get_today(session)
 logging.info(f'Racing_date: {racing_date}')
 
 rp_lista = []

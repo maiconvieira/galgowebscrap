@@ -98,15 +98,17 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 def get_lastdate(session):
-    scanned_date = session.query(LastDate).first()
-    if scanned_date is None or scanned_date.dia == date(1997, 1, 1):
-        return date.today() - timedelta(days=1)
-    elif scanned_date.dia.day == 26 and scanned_date.dia.month == 12:
-        last_date = scanned_date.dia - timedelta(days=2)
-        return last_date
-    else:
-        last_date = scanned_date.dia - timedelta(days=1)
-        return last_date
+    try:
+        # Seleciona a data mais antiga onde scanned é false
+        scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
+        if scanned_date:
+            # Atualiza o valor de scanned para true
+            scanned_date.scanned = True
+            session.commit()
+            return scanned_date.dia
+    except Exception as e:
+        print(f"Erro ao atualizar LastDate: {e}")
+        session.rollback()
 
 def capitalize_words(sentence):
     words = sentence.split()
@@ -419,21 +421,22 @@ else:
         logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
 
 # Verifica se a tabela LastDate está vazia
-empty_table = session.query(LastDate).count() == 0
-
-if empty_table:
+#empty_table = session.query(LastDate).count() == 0
+#
+#if empty_table:
     # Se a tabela estiver vazia, faz um insert
-    new_entry = LastDate(dia=racing_date)
-    session.add(new_entry)
-else:
+#    new_entry = LastDate(dia=racing_date)
+#    session.add(new_entry)
+#    print(2)
+#else:
     # Se a tabela não estiver vazia, faz um update
     #update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
     #session.execute(update_query)
-    conn = connect()
-    query = sql.SQL("UPDATE LastDate SET dia = %s WHERE id = 1;")
-    cur = conn.cursor()
-    cur.execute(query, (racing_date,))
-
+#    print(1)
+#    conn = connect()
+#    query = sql.SQL("UPDATE LastDate SET dia = %s WHERE id = 1;")
+#    cur = conn.cursor()
+#    cur.execute(query, (racing_date,))
 
 # Confirma a transação
 session.commit()

@@ -1,6 +1,8 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, Date, Time, Text
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, Date, Time, Text, text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import sessionmaker, Session, relationship
+from sqlalchemy.sql import func
+from psycopg2 import extras
 from db import connect
 
 Base = declarative_base()
@@ -21,7 +23,8 @@ class LastDate(Base):
     __tablename__ = 'lastdate'
 
     id = Column(Integer, primary_key=True)
-    dia = Column(Date)
+    dia = Column(Date, unique=True)
+    scanned = Column(Boolean, default=False)
 
 class LinksToScam(Base):
     __tablename__ = 'linkstoscam'
@@ -49,21 +52,6 @@ class LinksToScamSemPar(Base):
     site_url = Column(String)
     scanned = Column(Boolean)
 
-#class LastScannedDay(Base):
-#    __tablename__ = 'lastscannedday'
-#
-#    id = Column(Integer, primary_key=True)
-#    timeform_scannedday = Column(String)
-#    racingpost_scannedday = Column(String)
-#
-#class LinksToScam2(Base):
-#    __tablename__ = 'linkstoscam2'
-#
-#    id = Column(Integer, primary_key=True)
-#    url = Column(String, unique=True, nullable=False)
-#    website = Column(String)
-#    scanned = Column(Boolean)
-#
 class GreyhoundLinksToScam(Base):
     __tablename__ = 'greyhoundlinkstoscam'
 
@@ -160,8 +148,32 @@ class RaceResult(Base):
     greyhound = relationship('Greyhound')
     race = relationship('Race')
 
+def insert_dates(engine):
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    try:
+        # Insere as datas de 1997-01-01 até hoje na tabela lastdate
+        sql = text("""
+            INSERT INTO lastdate (dia, scanned)
+            SELECT dates.date, false
+            FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
+            WHERE NOT EXISTS (
+                SELECT 1 FROM lastdate WHERE dia = dates.date
+            );
+        """)
+        session.execute(sql)
+        session.commit()
+    except Exception as e:
+        print(f"Erro ao inserir datas: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
 # Configura a conexão com o banco de dados
 engine = create_engine('postgresql+psycopg2://', creator=connect)
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
+
+# Insere as datas na tabela lastdate
+insert_dates(engine)
