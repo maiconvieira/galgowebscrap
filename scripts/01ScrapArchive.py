@@ -19,16 +19,9 @@ elif platform.system() == 'Linux':
 else:
     print('Sistema operacional não reconhecido')
 
-# Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{datetime.today().strftime("%Y-%m-%d")}_01ScrapArchive.log', 
-                    format='%(asctime)s %(message)s', 
-                    filemode='w',
-                    level=logging.INFO,
-                    encoding='utf-8')
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
-logging.info('Tabelas OK!')
 
 options = Options()
 options.add_argument('--headless')
@@ -113,6 +106,13 @@ def capitalize_words(sentence):
     return ' '.join(capitalized_words)
 
 racing_date = get_lastdate(session)
+
+# Configura o logger para escrever logs em um arquivo com nível INFO
+logging.basicConfig(filename=f'{log_dir}/{racing_date}_01ScrapArchive.log', 
+                    format='%(asctime)s %(message)s', 
+                    filemode='w',
+                    level=logging.INFO,
+                    encoding='utf-8')
 logging.info(f'Racing_date: {racing_date}')
 
 rp_lista = []
