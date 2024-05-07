@@ -123,16 +123,25 @@ tf_lista = []
 source_lista = []
 
 start_time = time.time()
+
 driver1 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
 driver1.get(rp_url)
 driver1.implicitly_wait(5)
 logging.info(f'Racingpost Link: {rp_url}')
-logging.info(f'')
-
 src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attribute('outerHTML')
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
+
+driver2 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
+driver2.get(tf_url)
+driver2.implicitly_wait(3)
+logging.info(f'Timeform Link: {tf_url}')
+
+src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
+pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
+links2 = pattern2.findall(src2)
 
 rp_vazio = tf_vazio = False
 
@@ -172,17 +181,6 @@ else:
             html_source=src1
         )
         session.add(link)
-
-driver2 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
-driver2.get(tf_url)
-driver2.implicitly_wait(3)
-logging.info(f'Timeform Link: {tf_url}')
-logging.info(f'')
-
-src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
-pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
-links2 = pattern2.findall(src2)
 
 if not links2:
     logging.info(f'Não localizou nenhum link no site Timeform.')
@@ -226,9 +224,9 @@ else:
         session.add(link)
 
 if rp_vazio == True and tf_vazio == True:
-    pass
-
-if rp_vazio == True and tf_vazio == False:
+    logging.info('Não há links que sejam compativeis com a regex nos dois sites.')
+elif rp_vazio == True and tf_vazio == False:
+    logging.info('Há links compativeis com a regex do site TimeForm.')
     if not df_timeform.empty:
         # Itera sobre as linhas do DataFrame e insere na tabela
         ignored_count = 0
@@ -259,8 +257,8 @@ if rp_vazio == True and tf_vazio == False:
             logging.info(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
-
-if rp_vazio == False and tf_vazio == True:
+elif rp_vazio == False and tf_vazio == True:
+    logging.info('Há links compativeis com a regex do site RacingPost.')
     if not df_racingpost.empty:
         # Itera sobre as linhas do DataFrame e insere na tabela
         ignored_count = 0
@@ -291,7 +289,8 @@ if rp_vazio == False and tf_vazio == True:
             logging.info(f'Número de link do site Racingpost, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame racingpost está vazio. Não há dados para inserir.')
-else:
+elif rp_vazio == True and tf_vazio == True:
+    logging.info('Há links compativeis com a regex nos dois sites.')
     # Realizar a mesclagem com indicador
     df_merged = pd.merge(df_timeform, df_racingpost, on=['dia', 'hora', 'track'], how='outer', indicator=True)
 
@@ -419,7 +418,15 @@ else:
             logging.info(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
-
+else:
+    logging.info('Verificar erro!!!')
+    # Seleciona a data mais antiga onde scanned é false
+    scanned_date = session.query(LastDate).filter(LastDate.scanned == True).order_by(LastDate.dia).first()
+    if scanned_date:
+        # Atualiza o valor de scanned para true
+        scanned_date.scanned = False
+        session.commit()
+    
 # Verifica se a tabela LastDate está vazia
 #empty_table = session.query(LastDate).count() == 0
 #
