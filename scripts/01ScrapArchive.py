@@ -2,7 +2,6 @@ import re, logging, time, platform
 import pandas as pd
 from db import connect
 from selenium import webdriver
-from datetime import datetime
 from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists
 from selenium.webdriver.chrome.options import Options
@@ -123,7 +122,7 @@ source_lista = []
 
 start_time = time.time()
 
-driver1 = webdriver.Chrome(service=service, options=chrome_options)
+driver1 = driver2 = webdriver.Chrome(service=service, options=chrome_options)
 rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
 driver1.get(rp_url)
 driver1.implicitly_wait(5)
@@ -132,7 +131,7 @@ src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attri
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
 
-driver2 = webdriver.Chrome(service=service, options=chrome_options)
+#driver2 = webdriver.Chrome(service=service, options=chrome_options)
 tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
 driver2.get(tf_url)
 driver2.implicitly_wait(3)
@@ -288,7 +287,7 @@ elif rp_vazio == False and tf_vazio == True:
             logging.info(f'Número de link do site Racingpost, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame racingpost está vazio. Não há dados para inserir.')
-elif rp_vazio == True and tf_vazio == True:
+elif rp_vazio == False and tf_vazio == False:
     logging.info('Há links compativeis com a regex nos dois sites.')
     # Realizar a mesclagem com indicador
     df_merged = pd.merge(df_timeform, df_racingpost, on=['dia', 'hora', 'track'], how='outer', indicator=True)
