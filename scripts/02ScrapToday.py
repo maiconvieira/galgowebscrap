@@ -128,7 +128,7 @@ tf_lista = []
 source_lista = []
 
 start_time = time.time()
-driver1 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver1 = webdriver.Chrome(service=service, options=chrome_options)
 rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
 driver1.get(rp_url)
 driver1.implicitly_wait(5)
@@ -137,7 +137,7 @@ src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attri
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
 
-driver2 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver2 = webdriver.Chrome(service=service, options=chrome_options)
 tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
 driver2.get(tf_url)
 driver2.implicitly_wait(3)
