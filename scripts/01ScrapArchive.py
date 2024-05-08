@@ -7,26 +7,28 @@ from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from sqlalchemy.orm import sessionmaker, declarative_base
 from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageSource
 
 # Verifica o sistema operacional
 if platform.system() == 'Windows':
     log_dir = '../logs'
+    driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
 elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
+    driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.155/chromedriver-linux64/chromedriver'
 else:
     print('Sistema operacional não reconhecido')
-
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
 
-options = Options()
-options.add_argument('--headless')
-options.add_argument('log-level=3')
-options.add_argument('--disable-dev-shm-usage')
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+
+service = Service(driver_path)
 
 estadio = {
     '1'   : 'Crayford',
@@ -121,7 +123,7 @@ source_lista = []
 
 start_time = time.time()
 
-driver1 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver1 = webdriver.Chrome(service=service, options=chrome_options)
 rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
 driver1.get(rp_url)
 driver1.implicitly_wait(5)
@@ -130,7 +132,7 @@ src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attri
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
 
-driver2 = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver2 = webdriver.Chrome(service=service, options=chrome_options)
 tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
 driver2.get(tf_url)
 driver2.implicitly_wait(3)
