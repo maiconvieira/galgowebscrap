@@ -95,30 +95,30 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
-#def get_today(session):
-#    try:
-#        # Verifica se a data de hoje já existe na tabela LastDate
-#        today = datetime.now().date()
-#        existing_date = session.query(LastDate).filter(LastDate.dia == today).first()
-#        if existing_date:
-#            return today  # Retorna a data de hoje se ela já existir na tabela
-#
-#        # Se a data de hoje não existir, insere-a na tabela LastDate com scanned=True
-#        new_date = LastDate(dia=today, scanned=True)
-#        session.add(new_date)
-#        session.commit()
-#        return today  # Retorna a data de hoje após a inserção bem-sucedida
-#    except Exception as e:
-#        print(f"Erro ao inserir data: {e}")
-#        session.rollback()
+def get_today(session):
+    try:
+        # Verifica se a data de hoje já existe na tabela LastDate
+        today = datetime.now().date()
+        existing_date = session.query(LastDate).filter(LastDate.dia == today).first()
+        if existing_date:
+            return today  # Retorna a data de hoje se ela já existir na tabela
+
+        # Se a data de hoje não existir, insere-a na tabela LastDate com scanned=True
+        new_date = LastDate(dia=today, scanned=True)
+        session.add(new_date)
+        session.commit()
+        return today  # Retorna a data de hoje após a inserção bem-sucedida
+    except Exception as e:
+        print(f"Erro ao inserir data: {e}")
+        session.rollback()
 
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
     return ' '.join(capitalized_words)
 
-#racing_date = get_today(session)
-racing_date = datetime.now().date()
+racing_date = get_today(session)
+#racing_date = datetime.now().date()
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
 logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log', 
