@@ -17,7 +17,8 @@ elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
     if platform.node() == 'scraping':
         driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.155/chromedriver-linux64/chromedriver'
-        print(1)
+    else:
+        driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.91/chromedriver'
 else:
     print('Sistema operacional não reconhecido')
 
