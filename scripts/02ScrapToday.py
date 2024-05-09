@@ -21,6 +21,7 @@ elif platform.system() == 'Linux':
 else:
     print('Sistema operacional não reconhecido')
 
+print(platform.node())
 # Cria as tabelas
 Base.metadata.create_all(engine)
 
@@ -115,7 +116,7 @@ def capitalize_words(sentence):
 racing_date = get_today(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}_02ScrapToday.log', 
+logging.basicConfig(filename=f'{log_dir}/02ScrapToday.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,

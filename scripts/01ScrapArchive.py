@@ -15,7 +15,9 @@ if platform.system() == 'Windows':
     driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
 elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
-    driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.155/chromedriver-linux64/chromedriver'
+    if platform.node() == 'scraping':
+        driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.155/chromedriver-linux64/chromedriver'
+        print(1)
 else:
     print('Sistema operacional não reconhecido')
 
@@ -25,6 +27,7 @@ Base.metadata.create_all(engine)
 chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('log-level=3')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
 service = Service(driver_path)
@@ -109,7 +112,7 @@ def capitalize_words(sentence):
 racing_date = get_lastdate(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}_01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
