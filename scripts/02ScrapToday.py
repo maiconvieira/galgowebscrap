@@ -1,6 +1,7 @@
-import re, logging, datetime, time, platform
+import re, logging, time, platform
 import pandas as pd
 from db import connect
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists
@@ -11,7 +12,7 @@ from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageS
 
 # Verifica o sistema operacional
 if platform.system() == 'Windows':
-    log_dir = '../logs'
+    log_dir = 'D:/Projetos/galgowebscrap/logs'
     driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
 elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
@@ -27,6 +28,8 @@ Base.metadata.create_all(engine)
 
 chrome_options = Options()
 chrome_options.add_argument('--headless')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument('--disable-extensions')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('log-level=3')
 chrome_options.add_argument('--disable-dev-shm-usage')
@@ -92,29 +95,30 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
-def get_today(session):
-    try:
-        # Verifica se a data de hoje já existe na tabela LastDate
-        today = datetime.now().date()
-        existing_date = session.query(LastDate).filter(LastDate.dia == today).first()
-        if existing_date:
-            return today  # Retorna a data de hoje se ela já existir na tabela
-
-        # Se a data de hoje não existir, insere-a na tabela LastDate com scanned=True
-        new_date = LastDate(dia=today, scanned=True)
-        session.add(new_date)
-        session.commit()
-        return today  # Retorna a data de hoje após a inserção bem-sucedida
-    except Exception as e:
-        print(f"Erro ao inserir data: {e}")
-        session.rollback()
+#def get_today(session):
+#    try:
+#        # Verifica se a data de hoje já existe na tabela LastDate
+#        today = datetime.now().date()
+#        existing_date = session.query(LastDate).filter(LastDate.dia == today).first()
+#        if existing_date:
+#            return today  # Retorna a data de hoje se ela já existir na tabela
+#
+#        # Se a data de hoje não existir, insere-a na tabela LastDate com scanned=True
+#        new_date = LastDate(dia=today, scanned=True)
+#        session.add(new_date)
+#        session.commit()
+#        return today  # Retorna a data de hoje após a inserção bem-sucedida
+#    except Exception as e:
+#        print(f"Erro ao inserir data: {e}")
+#        session.rollback()
 
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
     return ' '.join(capitalized_words)
 
-racing_date = get_today(session)
+#racing_date = get_today(session)
+racing_date = datetime.now().date()
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
 logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log', 

@@ -11,7 +11,7 @@ from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageS
 
 # Verifica o sistema operacional
 if platform.system() == 'Windows':
-    log_dir = '../logs'
+    log_dir = 'D:/Projetos/galgowebscrap/logs'
     driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
 elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
@@ -27,6 +27,8 @@ Base.metadata.create_all(engine)
 
 chrome_options = Options()
 chrome_options.add_argument('--headless')
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument('--disable-extensions')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('log-level=3')
 chrome_options.add_argument('--disable-dev-shm-usage')
