@@ -1,4 +1,4 @@
-import re, logging, time, platform
+import re, logging, sys, time, platform
 import pandas as pd
 from db import connect
 from selenium import webdriver
@@ -98,6 +98,22 @@ def get_lastdate(session):
     try:
         # Seleciona a data mais antiga onde scanned é false
         scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
+        if not scanned_date:
+            print('Nenhuma data disponível para processamento. Encerrando o script.')
+            sys.exit(1)  # Encerra o script com código de erro 1
+        else:
+            # Atualiza o valor de scanned para true
+            scanned_date.scanned = True
+            session.commit()
+            return scanned_date.dia
+    except Exception as e:
+        print(f'Erro ao atualizar LastDate: {e}')
+        session.rollback()
+
+def get_lastdate(session):
+    try:
+        # Seleciona a data mais antiga onde scanned é false
+        scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
         if scanned_date:
             # Atualiza o valor de scanned para true
             scanned_date.scanned = True
@@ -115,7 +131,7 @@ def capitalize_words(sentence):
 racing_date = get_lastdate(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/{racing_date}-02ScrapArchive.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,

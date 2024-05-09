@@ -121,7 +121,7 @@ racing_date = get_today(session)
 #racing_date = datetime.now().date()
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapToday.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
