@@ -1,4 +1,4 @@
-import re, logging, time, platform
+import re, logging, datetime, time, platform
 import pandas as pd
 from db import connect
 from selenium import webdriver
