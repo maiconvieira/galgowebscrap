@@ -2,10 +2,12 @@ import re, logging, time, platform
 import pandas as pd
 from db import connect
 from selenium import webdriver
+from datetime import datetime
 from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from sqlalchemy.orm import sessionmaker, declarative_base
 from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageSource
 
@@ -15,20 +17,17 @@ if platform.system() == 'Windows':
     driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
 elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
-    if platform.node() == 'scraping':
-        driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.155/chromedriver-linux64/chromedriver'
-    else:
-        driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.91/chromedriver'
+    driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.155/chromedriver-linux64/chromedriver'
 else:
     print('Sistema operacional não reconhecido')
 
+print(platform.node())
 # Cria as tabelas
 Base.metadata.create_all(engine)
 
 chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('log-level=3')
 chrome_options.add_argument('--disable-dev-shm-usage')
 
 service = Service(driver_path)
@@ -117,21 +116,20 @@ def capitalize_words(sentence):
 racing_date = get_today(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/02ScrapToday.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
                     encoding='utf-8')
-logging.info(f'Dia escaneado: {racing_date}')
-print(f'Dia escaneado: {racing_date}')
+
+logging.info(f'Racing_date: {racing_date}')
 
 rp_lista = []
 tf_lista = []
-#source_lista = []
+source_lista = []
 
 start_time = time.time()
-
-driver1 = driver2 = webdriver.Chrome(service=service, options=chrome_options)
+driver1 = webdriver.Chrome(service=service, options=chrome_options)
 rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
 driver1.get(rp_url)
 driver1.implicitly_wait(5)
@@ -140,12 +138,11 @@ src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attri
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
 
-#driver2 = webdriver.Chrome(service=service, options=chrome_options)
+driver2 = webdriver.Chrome(service=service, options=chrome_options)
 tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
 driver2.get(tf_url)
 driver2.implicitly_wait(3)
 logging.info(f'Timeform Link: {tf_url}')
-
 src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
 pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
 links2 = pattern2.findall(src2)
@@ -297,7 +294,6 @@ elif rp_vazio == False and tf_vazio == True:
     else:
         logging.info('O DataFrame racingpost está vazio. Não há dados para inserir.')
 elif rp_vazio == False and tf_vazio == False:
-    logging.info('Há links compativeis com a regex nos dois sites.')
     # Realizar a mesclagem com indicador
     df_merged = pd.merge(df_timeform, df_racingpost, on=['dia', 'hora', 'track'], how='outer', indicator=True)
 
@@ -428,28 +424,11 @@ elif rp_vazio == False and tf_vazio == False:
 else:
     logging.info('Verificar erro!!!')
     # Seleciona a data mais antiga onde scanned é false
-    scanned_date = session.query(LastDate).filter(LastDate.dia == racing_date).first()
+    scanned_date = session.query(LastDate).filter(LastDate.scanned == True).order_by(LastDate.dia).first()
     if scanned_date:
+        # Atualiza o valor de scanned para true
         scanned_date.scanned = False
         session.commit()
-
-# Verifica se a tabela LastDate está vazia
-#empty_table = session.query(LastDate).count() == 0
-#
-#if empty_table:
-    # Se a tabela estiver vazia, faz um insert
-#    new_entry = LastDate(dia=racing_date)
-#    session.add(new_entry)
-#    print(2)
-#else:
-    # Se a tabela não estiver vazia, faz um update
-    #update_query = update(LastDate).where(LastDate.id == 1).values(dia=racing_date)
-    #session.execute(update_query)
-#    print(1)
-#    conn = connect()
-#    query = sql.SQL("UPDATE LastDate SET dia = %s WHERE id = 1;")
-#    cur = conn.cursor()
-#    cur.execute(query, (racing_date,))
 
 # Confirma a transação
 session.commit()

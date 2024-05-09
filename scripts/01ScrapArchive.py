@@ -118,11 +118,12 @@ logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log',
                     filemode='w',
                     level=logging.INFO,
                     encoding='utf-8')
-logging.info(f'Racing_date: {racing_date}')
+logging.info(f'Dia escaneado: {racing_date}')
+print(f'Dia escaneado: {racing_date}')
 
 rp_lista = []
 tf_lista = []
-source_lista = []
+#source_lista = []
 
 start_time = time.time()
 
