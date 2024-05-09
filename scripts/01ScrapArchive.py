@@ -113,7 +113,7 @@ def capitalize_words(sentence):
 racing_date = get_lastdate(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/01ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/{racing_date}-01ScrapArchive.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
