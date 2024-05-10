@@ -1,12 +1,48 @@
+from sqlalchemy import create_engine, text
+from db import connect
+import pandas as pd
 import re
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.automap import automap_base
 
-# Seu conteúdo HTML
-html_content = """<div class="scrollContent" style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, 0px) translateZ(0px);"><div class="level level-2 meetings"><form action="#" class="searchForm">    <div class="formBox">        <div class="holder">            <span>Dog Search (min 3 letters)</span>        </div>        <input type="text" class="searchField" autocomplete="off">        <input type="submit" value="Search" class="searchBtn">    </div></form><h2 id="latestResults" class="nextRaceOff" data-eventid="results_latest">Latest Results</h2><h3 class="headline">PGR</h3><ul class="appList raceList">        <li>                        <a href="#result-meeting/track_id=4&amp;r_date=2024-04-27&amp;r_time=10:47" data-eventid="results_meetings_click" data-eventlabel="Monmore" class="results-race-name">            <h4>Monmore</h4>            <h5>                        full meeting results available                        </h5>        </a>        <div class="results-race-list-wrapper with-arrow">            <div class="results-race-list-row">                                                <a href="#result-meeting-result/race_id=2051580&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=10:47">10:47</a>                                                                <a href="#result-meeting-result/race_id=2051581&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=11:02">11:02</a>                                                                <a href="#result-meeting-result/race_id=2051582&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=11:17">11:17</a>                                                                <a href="#result-meeting-result/race_id=2051583&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=11:32">11:32</a>                                                                <a href="#result-meeting-result/race_id=2051584&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=11:47">11:47</a>                                                                <a href="#result-meeting-result/race_id=2051585&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=12:02">12:02</a>                                                                <a href="#result-meeting-result/race_id=2051586&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=12:17">12:17</a>                                                                <a href="#result-meeting-result/race_id=2051587&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=12:32">12:32</a>                                                                <a href="#result-meeting-result/race_id=2051588&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=12:47">12:47</a>                                                                <a href="#result-meeting-result/race_id=2051589&amp;track_id=4&amp;r_date=2024-04-27&amp;r_time=13:02">1:02</a>                                                                <a href="#result-meeting-result/race_id=2051339&amp;track_id=45&amp;r_date=2024-04-27&amp;r_time=22:05">10:05</a>                                                                <a href="#result-meeting-result/race_id=2051340&amp;track_id=45&amp;r_date=2024-04-27&amp;r_time=22:20">10:20</a>                                            </div>        </div>                            </li>        <li>                        <a href="#result-meeting/track_id=49&amp;r_date=2024-04-27&amp;r_time=19:50" data-eventid="results_meetings_click" data-eventlabel="Galway" class="results-race-name">            <h4>Galway</h4>            <h5>                        full meeting results available                        </h5>        </a>        <div class="results-race-list-wrapper with-arrow">            <div class="results-race-list-row">                                                <a href="#result-meeting-result/race_id=2050353&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=19:50">7:50</a>                                                                <a href="#result-meeting-result/race_id=2051086&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=20:05">8:05</a>                                                                <a href="#result-meeting-result/race_id=2051087&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=20:20">8:20</a>                                                                <a href="#result-meeting-result/race_id=2051088&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=20:35">8:35</a>                                                                <a href="#result-meeting-result/race_id=2051089&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=20:50">8:50</a>                                                                <a href="#result-meeting-result/race_id=2051090&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=21:05">9:05</a>                                                                <a href="#result-meeting-result/race_id=2051091&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=21:20">9:20</a>                                                                <a href="#result-meeting-result/race_id=2051092&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=21:35">9:35</a>                                                                <a href="#result-meeting-result/race_id=2051093&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=21:50">9:50</a>                                                                <a href="#result-meeting-result/race_id=2051094&amp;track_id=49&amp;r_date=2024-04-27&amp;r_time=22:05">10:05</a>                                            </div>        </div>                            </li>    </ul></div></div>"""
+# Criar a conexão com o banco de dados usando SQLAlchemy
+engine = create_engine('postgresql+psycopg2://', creator=connect)
 
-# Expressão regular para capturar os links
-pattern = r'<a href="#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=\d{4}-\d{2}-\d{2}&amp;r_time=\d{2}:\d{2}">\d{1,2}:\d{2}</a>'
+# Criar a sessão
+Session = sessionmaker(bind=engine)
+session = Session()
 
-# Substituir os links capturados por 'conteudo N'
-new_content = re.sub(pattern, lambda match: f"'conteudo {match.start()}'", html_content)
+# Consulta SQL para atualizar a tabela
+update_query = """UPDATE page_source SET dia = SUBSTRING(url FROM '\d{4}-\d{2}-\d{2}')"""
 
-print(new_content)
+# Executar a atualização
+with engine.connect() as conn:
+    conn.execute(text(update_query))
+
+# Consulta SQL
+sql_query = text("SELECT dia, url, site, html_source FROM page_source")
+
+# Executar a query e converter o resultado em DataFrame
+df = pd.read_sql_query(sql_query, engine)
+
+# Filtrar os dados de interesse para anos finais
+cond_rp = (df['site'] == 'rp')
+
+# Aplicar a expressão regular em cada linha do DataFrame
+df.loc[cond_rp, 'html_source'] = df.loc[cond_rp, 'html_source'].apply(lambda x: re.findall(r'\s{48}<a href="(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=\d+-\d+-\d+&amp;r_time=\d+:\d+)">\d+:\d+</a>', x))
+
+# Filtrar os dados de interesse para anos finais
+cond_tf = (df['site'] == 'tf')
+
+# Aplicar a expressão regular em cada linha do DataFrame
+df.loc[cond_tf, 'html_source'] = df.loc[cond_tf, 'html_source'].apply(lambda x: re.findall(r'<a class="[a-z-\s]*" href="(/greyhound-racing/results/[\w-]*/\d+/\d+-\d+-\d+/\d+)">\d+:\d+</a>', x))
+
+# Atualizar o banco de dados
+for index, row in df.iterrows():
+    session.execute(
+        text("UPDATE page_source SET html_source=:html_source WHERE dia=:dia AND url=:url"),
+        {"html_source": row['html_source'], "dia": row['dia'], "url": row['url']}
+    )
+
+# Confirmar as alterações
+session.commit()
