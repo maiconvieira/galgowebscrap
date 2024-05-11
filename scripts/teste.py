@@ -13,7 +13,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Consulta SQL para atualizar a tabela
-update_query = """UPDATE page_source SET dia = SUBSTRING(url FROM '\d{4}-\d{2}-\d{2}')"""
+update_query = """UPDATE page_source SET dia = TO_DATE(SUBSTRING(url FROM '\d{4}-\d{2}-\d{2}'), 'YYYY-MM-DD')"""
 
 # Executar a atualização
 with engine.connect() as conn:
