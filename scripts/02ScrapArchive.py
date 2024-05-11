@@ -1,6 +1,7 @@
 import re, logging, sys, time, platform
 import pandas as pd
 from db import connect
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists
@@ -98,7 +99,8 @@ def get_lastdate(session):
     try:
         # Seleciona a data mais antiga onde scanned é false
         scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
-        if not scanned_date:
+        today = datetime.now().date()
+        if not scanned_date or scanned_date == today:
             print('Nenhuma data disponível para processamento. Encerrando o script.')
             sys.exit(1)  # Encerra o script com código de erro 1
         else:
