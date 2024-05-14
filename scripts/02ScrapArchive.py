@@ -102,7 +102,7 @@ def get_lastdate(session):
         today = datetime.now().date()
         print(scanned_date)
         print(today)
-        if not scanned_date or scanned_date == today:
+        if not scanned_date or scanned_date.dia == today:
             print('Nenhuma data disponível para processamento. Encerrando o script.')
             sys.exit(1)  # Encerra o script com código de erro 1
         else:
