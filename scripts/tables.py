@@ -156,7 +156,7 @@ def insert_dates(engine):
         sql = text("""
             INSERT INTO lastdate (dia, scanned)
             SELECT dates.date, false
-            FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
+            FROM generate_series('2013-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
             WHERE NOT EXISTS (
                 SELECT 1 FROM lastdate WHERE dia = dates.date
             );
