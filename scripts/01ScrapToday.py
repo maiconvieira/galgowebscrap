@@ -115,7 +115,11 @@ def get_today(session):
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
-    return ' '.join(capitalized_words)
+    capitalized_sentence = ' '.join(capitalized_words)
+    parts = capitalized_sentence.split("'")
+    for i in range(len(parts)):
+        parts[i] = parts[i][0].capitalize() + parts[i][1:]
+    return "'".join(parts)
 
 racing_date = get_today(session)
 #racing_date = datetime.now().date()

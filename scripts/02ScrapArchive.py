@@ -128,7 +128,11 @@ def get_lastdate(session):
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
-    return ' '.join(capitalized_words)
+    capitalized_sentence = ' '.join(capitalized_words)
+    parts = capitalized_sentence.split("'")
+    for i in range(len(parts)):
+        parts[i] = parts[i][0].capitalize() + parts[i][1:]
+    return "'".join(parts)
 
 racing_date = get_lastdate(session)
 
@@ -219,7 +223,7 @@ else:
                 hora = "0" + hora[0] + ":" + hora[1:]
             else:
                 hora = hora[:2] + ":" + hora[2:]
-            timeform_url = 'https://www.timeform.com' + link2
+            timeform_url = 'https://www.timeform.com/greyhound-racing/' + link2
             tf_lista.append([dia, hora, track, timeform_id, timeform_url])
         else:
             logging.info(f'URL: {timeform_url} não corresponde ao padrão esperado.')

@@ -1,9 +1,8 @@
-from sqlalchemy import create_engine, text
-from db import connect
-import pandas as pd
 import re
+import pandas as pd
+from db import connect
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.automap import automap_base
+from sqlalchemy import create_engine, text
 
 # Criar a conexão com o banco de dados usando SQLAlchemy
 engine = create_engine('postgresql+psycopg2://', creator=connect)
