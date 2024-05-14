@@ -112,19 +112,6 @@ def get_lastdate(session):
         print(f'Erro ao atualizar LastDate: {e}')
         session.rollback()
 
-def get_lastdate(session):
-    try:
-        # Seleciona a data mais antiga onde scanned é false
-        scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
-        if scanned_date:
-            # Atualiza o valor de scanned para true
-            scanned_date.scanned = True
-            session.commit()
-            return scanned_date.dia
-    except Exception as e:
-        print(f"Erro ao atualizar LastDate: {e}")
-        session.rollback()
-
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
