@@ -100,8 +100,6 @@ def get_lastdate(session):
         # Seleciona a data mais antiga onde scanned é false
         scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
         today = datetime.now().date()
-        print(scanned_date.dia)
-        print(today)
         if not scanned_date or scanned_date.dia == today:
             print('Nenhuma data disponível para processamento. Encerrando o script.')
             sys.exit(1)  # Encerra o script com código de erro 1
