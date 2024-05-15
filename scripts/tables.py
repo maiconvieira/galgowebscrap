@@ -33,11 +33,11 @@ class LinksToScam(Base):
     dia = Column(Date)
     hora = Column(Time)
     track = Column(String)
-    timeform_id = Column(Integer)
-    timeform_url = Column(String)
+    tf_id = Column(Integer)
+    tf_url = Column(String)
     tf_scanned = Column(Boolean)
-    racingpost_id = Column(Integer)
-    racingpost_url = Column(String)
+    rp_id = Column(Integer)
+    rp_url = Column(String)
     rp_scanned = Column(Boolean)
 
 class LinksToScamSemPar(Base):
@@ -57,8 +57,8 @@ class GreyhoundLinksToScam(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    timeform_id = Column(Integer, unique=True)
-    racingpost_id = Column(Integer, unique=True)
+    tf_id = Column(Integer, unique=True)
+    rp_id = Column(Integer, unique=True)
     url = Column(String, nullable=False, unique=True)
     website = Column(String)
     scanned = Column(Boolean)
@@ -90,8 +90,8 @@ class Greyhound(Base):
     dam = Column(String)
     sire = Column(String)
     owner = Column(String)
-    timeform_id = Column(Integer)
-    racingpost_id = Column(Integer)
+    tf_id = Column(Integer)
+    rp_id = Column(Integer)
 
 class TrainerGreyhound(Base):
     __tablename__ = 'trainer_greyhound'
@@ -106,25 +106,28 @@ class Race(Base):
     __tablename__ = 'race'
 
     id = Column(Integer, primary_key=True)
-    race_date = Column(Date)
-    race_time = Column(Time)
+    dia = Column(Date)
+    hora = Column(Time)
+    race_num = Column(Integer)
     grade = Column(String)
     distance = Column(Integer)
     race_type = Column(String)
     tf_going = Column(String)
+    rp_going = Column(String)
     going = Column(String)
+    prizes = Column(String)
     prize = Column(String)
     forecast = Column(String)
     tricast = Column(String)
-    timeform_id = Column(Integer)
-    racingpost_id = Column(Integer)
+    tf_id = Column(Integer)
+    rp_id = Column(Integer)
     race_comment = Column(String)
     race_comment_ptbr = Column(String)
     stadium_id = Column(Integer, ForeignKey('stadium.id'), nullable=False)
     stadium = relationship('Stadium')
 
     __table_args__ = (
-        UniqueConstraint('race_date', 'race_time', 'grade', 'distance', 'race_type', 'tf_going', 'going', 'prize', 'forecast', 'tricast', 'timeform_id'),
+        UniqueConstraint('dia', 'hora', 'race_num', 'grade', 'distance', 'race_type', 'tf_going', 'rp_going', 'going', 'prizes', 'prize', 'forecast', 'tricast', 'tf_id', 'rp_id'),
     )
 
 class RaceResult(Base):
@@ -152,7 +155,7 @@ def insert_dates(engine):
     Session = sessionmaker(bind=engine)
     session = Session()
     try:
-        # Insere as datas de 1997-01-01 até hoje na tabela lastdate
+        # Insere as datas de 2013-01-01 até hoje na tabela lastdate
         sql = text("""
             INSERT INTO lastdate (dia, scanned)
             SELECT dates.date, false
