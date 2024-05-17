@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, Date, Time, Text, text
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, UniqueConstraint, Date, Time, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.sql import func
@@ -26,8 +26,8 @@ class LastDate(Base):
     dia = Column(Date, unique=True)
     scanned = Column(Boolean, default=False)
 
-class LinksToScam(Base):
-    __tablename__ = 'linkstoscam'
+class RaceToScam(Base):
+    __tablename__ = 'racetoscam'
 
     id = Column(Integer, primary_key=True)
     dia = Column(Date)
@@ -40,8 +40,8 @@ class LinksToScam(Base):
     rp_url = Column(String)
     rp_scanned = Column(Boolean)
 
-class LinksToScamSemPar(Base):
-    __tablename__ = 'linkstoscam_sem_par'
+class RaceToScamSemPar(Base):
+    __tablename__ = 'racetoscam_sem_par'
 
     id = Column(Integer, primary_key=True)
     dia = Column(Date)
@@ -52,16 +52,27 @@ class LinksToScamSemPar(Base):
     site_url = Column(String)
     scanned = Column(Boolean)
 
-class GreyhoundLinksToScam(Base):
-    __tablename__ = 'greyhoundlinkstoscam'
+class DogToScam(Base):
+    __tablename__ = 'dogtoscam'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    tf_id = Column(Integer, unique=True)
-    rp_id = Column(Integer, unique=True)
-    url = Column(String, nullable=False, unique=True)
-    website = Column(String)
-    scanned = Column(Boolean)
+    dogName = Column(String)
+    tfDogId = Column(Integer)
+    tf_url = Column(String)
+    tf_scanned = Column(Boolean)
+    rpDogId = Column(Integer)
+    rp_url = Column(String)
+    rp_scanned = Column(Boolean)
+
+class DogToScamSemPar(Base):
+    __tablename__ = 'dogtoscam_sem_par'
+
+    id = Column(Integer, primary_key=True)
+    dogName = Column(String)
+    site = Column(String)
+    dog_id = Column(Integer)
+    dog_url = Column(String)
+    dog_scanned = Column(Boolean)
 
 class Stadium(Base):
     __tablename__ = 'stadium'
@@ -72,6 +83,13 @@ class Stadium(Base):
     address = Column(String)
     email = Column(String)
     location = Column(String)
+
+    def __init__(self, name, url=None, address=None, email=None, location=None):
+        self.name = name
+        self.url = url
+        self.address = address
+        self.email = email
+        self.location = location
 
 class Trainer(Base):
     __tablename__ = 'trainer'
@@ -84,7 +102,7 @@ class Greyhound(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    born_date = Column(Date)
+    born_date = Column(String)
     genre = Column(String)
     colour = Column(String)
     dam = Column(String)
@@ -135,7 +153,7 @@ class RaceResult(Base):
 
     id = Column(Integer, primary_key=True)
     position = Column(Integer)
-    bnt = Column(String)
+    btn = Column(String)
     trap = Column(Integer)
     run_time = Column(String)
     sectional = Column(String)
@@ -151,32 +169,8 @@ class RaceResult(Base):
     greyhound = relationship('Greyhound')
     race = relationship('Race')
 
-def insert_dates(engine):
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    try:
-        # Insere as datas de 2013-01-01 até hoje na tabela lastdate
-        sql = text("""
-            INSERT INTO lastdate (dia, scanned)
-            SELECT dates.date, false
-            FROM generate_series('2013-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
-            WHERE NOT EXISTS (
-                SELECT 1 FROM lastdate WHERE dia = dates.date
-            );
-        """)
-        session.execute(sql)
-        session.commit()
-    except Exception as e:
-        print(f"Erro ao inserir datas: {e}")
-        session.rollback()
-    finally:
-        session.close()
-
 # Configura a conexão com o banco de dados
 engine = create_engine('postgresql+psycopg2://', creator=connect)
 
 # Cria as tabelas
 Base.metadata.create_all(engine)
-
-# Insere as datas na tabela lastdate
-insert_dates(engine)

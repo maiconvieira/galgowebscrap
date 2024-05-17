@@ -1,4 +1,4 @@
-import re, logging, time, platform
+import re, logging, platform
 import pandas as pd
 from db import connect
 from bs4 import BeautifulSoup
@@ -9,7 +9,8 @@ from sqlalchemy import create_engine, exists
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from sqlalchemy.orm import sessionmaker, declarative_base
-from tables import Base, engine, PageSource, Stadium, Race
+from sqlalchemy.exc import IntegrityError
+from tables import Base, engine, PageSource, Stadium, Trainer, Greyhound, Race, DogToScam, RaceResult, TrainerGreyhound, DogToScamSemPar
 from sqlalchemy.orm.exc import NoResultFound
 
 # Verifica o sistema operacional
@@ -98,7 +99,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Consulta SQL
-sql_query = text('SELECT id, dia, hora, track, tf_id, tf_url, rp_id, rp_url FROM linkstoscam WHERE tf_scanned = FALSE and rp_scanned = FALSE ORDER BY dia ASC LIMIT 1')
+sql_query = text('SELECT id, dia, hora, track, tf_id, tf_url, rp_id, rp_url FROM racetoscam WHERE tf_scanned = FALSE and rp_scanned = FALSE ORDER BY dia ASC LIMIT 1')
 
 # Executar a query e salvar o resultado em variáveis
 with engine.connect() as connection:
@@ -110,19 +111,18 @@ with engine.connect() as connection:
         print("Nenhum resultado encontrado.")
 
 # Inicializar race_result2 como um DataFrame vazio
-race_result = pd.DataFrame(columns=[
-    'dia', 'hora', 'track', 'position', 'btn', 'trap', 'tfDogId', 'dogName', 'dogAge', 'dogSex', 'bend', 'comments', 'startPrice', 'tfRate', 'runTime', 'sectional', 'trainer', 'bsp'
-])
-race_result2 = pd.DataFrame(columns=['dog_color', 'sire', 'dam', 'born', 'comment'])
+race_result = pd.DataFrame()
+race_result2 = pd.DataFrame()
 
+hora = str(hora)[:5]
 hora2 = str(hora).replace(':', '_')
 track_log = str(track).replace(' ', '_').lower()
 
-## Atualizar campos tf_scanned e rp_scanned para TRUE
-#session.execute(
-#    text('UPDATE linkstoscam SET rp_scanned=true, tf_scanned=TRUE WHERE id=:id'),
-#    {'id': links_banco['id'].iloc[0]}
-#)
+# Atualizar campos tf_scanned e rp_scanned para TRUE
+session.execute(
+    text('UPDATE racetoscam SET rp_scanned=true, tf_scanned=TRUE WHERE id=:id'),
+    {'id': id_}
+)
 
 def capitalize_words(sentence):
     words = sentence.split()
@@ -150,16 +150,13 @@ try:
     stadium_id = existing_stadium.id
     print(f"Estádio já estão na tabela! ID: {stadium_id}")
 except NoResultFound:
-    # Se não encontrar, adicione a nova linha
     new_stadium = Stadium(track)
     session.add(new_stadium)
-    session.commit()  # Confirma a transação para obter o ID
+    session.commit()
     stadium_id = new_stadium.id
     print(f"Novo estádio adicionado com ID: {stadium_id}")
 
-driver1 = driver2 = webdriver.Chrome(service=service, options=chrome_options)
-
-#rp_url = 'https://greyhoundbet.racingpost.com/#result-meeting-result/race_id=2053454&track_id=34&r_date=2024-05-07&r_time=10:47'
+driver1 = webdriver.Chrome(service=service, options=chrome_options)
 driver1.get(rp_url)
 print(rp_url)
 driver1.implicitly_wait(5)
@@ -169,10 +166,6 @@ driver1.quit()
 
 # Cria um objeto BeautifulSoup
 soup = BeautifulSoup(src1, 'html.parser')
-anchor_elements = soup.find_all('a')
-for element in anchor_elements:
-    href=element.get('href')
-    print(href)
 
 race_info = str(soup.find('span', class_='button'))
 match_race = re.search(r'^.+Race (\d).+Going: (.+)<\/span>$', race_info)
@@ -181,32 +174,42 @@ rpGoing = match_race.group(2) if match_race else None
 
 containner_elements = soup.find_all('div', class_='container')
 for element in containner_elements:
+    place = str(element.find('div', class_='place').text.strip())
     dog_color = str(element.find('span', class_='dog-color').text.strip())
     sire_dam = str(element.find('span', class_='dog-sire-dam').text.strip())
     born = str(element.find('span', class_='dog-date-of-birth').text.strip())
     comment = str(element.find('p', class_='comment').text.strip())
+    href = str(element.find('a').get('href'))
+
+    match_place = re.search(r'^(\d).*$', place)
     match_dog_color = re.search(r'^(.+)$', dog_color)
     match_sire_dam = re.search(r'^(.+)-(.+)$', sire_dam)
     match_born = re.search(r'^(.+)$', born)
     match_comment = re.search(r'^\(\d+.\d+\)\s+([\w\s,]+)$', comment)
+    match_href = re.search(r'^(.+dog_id=(\d+)&.+)$', href)
+
+    place = match_place.group(1) if match_place else None
     dog_color = match_dog_color.group(1) if match_dog_color else None
     sire = match_sire_dam.group(1) if match_sire_dam.group(1) else None
     dam = match_sire_dam.group(2) if match_sire_dam.group(2) else None
     born = match_born.group(1) if match_born else None
     comment = match_comment.group(1) if match_comment else None
+    href = match_href.group(1) if match_href.group(1) else None
+    rpDogId = match_href.group(2) if match_href.group(2) else None
 
     # Adicionar o resultado como uma nova linha no DataFrame
     new_row = pd.DataFrame([{
+        'position': place,
         'dog_color': dog_color,
-        'sire': sire,
-        'dam': dam,
+        'sire': capitalize_words(sire),
+        'dam': capitalize_words(dam),
         'born': born,
-        'comment': comment
+        'comment': comment,
+        'rpDogId': rpDogId,
+        'rp_url': 'https://greyhoundbet.racingpost.com/' + href
     }])
     
     race_result2 = pd.concat([race_result2, new_row], ignore_index=True)
-
-print(race_result2)
 
 # Verifica se a linha já existe no banco de dados
 exists_query = session.query(exists().where(
@@ -229,17 +232,36 @@ if not exists_query:
 else:
     print('Dados já estão na tabela!')
 
-#tf_url = 'https://www.timeform.com/greyhound-racing/results/crayford/1307/2018-12-01/632080'
-
 driver2 = webdriver.Chrome(service=service, options=chrome_options)
 driver2.get(tf_url)
 print(tf_url)
 driver2.implicitly_wait(3)
 logging.info(f'Timeform Link: {tf_url}')
-
-# Obtém o conteúdo HTML da página
 src2 = driver2.find_element(By.XPATH, "//section[@class='mb-bfw-result mb-bfw']").get_attribute('outerHTML')
 driver2.quit()
+
+if not exists_query:
+    link = PageSource(
+        dia=dia,
+        url=tf_url,
+        site='tf',
+        scanned_level='obter_corrida',
+        html_source=src2
+    )
+    session.add(link)
+else:
+    print('Dados já estão na tabela!')
+
+# Verifica se a linha já existe no banco de dados
+exists_query = session.query(exists().where(
+    (PageSource.dia == dia) &
+    (PageSource.url == tf_url) &
+    (PageSource.site == 'tf') &
+    (PageSource.scanned_level == 'obter_corrida') &
+    (PageSource.html_source == src2)
+)).scalar()
+
+print('')
 
 # Cria um objeto BeautifulSoup
 soup = BeautifulSoup(src2, 'html.parser')
@@ -279,7 +301,6 @@ for p in p_elements:
 comments = comments.replace('\n', '')
 comments = re.sub(r'\s{2,}', ' ', comments)
 comments = comments.strip()
-#race['comments'] = comments
 
 try:
     # Tente buscar a linha que já existe no banco de dados
@@ -300,13 +321,11 @@ try:
         race_comment=comments,
         tf_id=tf_id,
         rp_id=rp_id,
-        #tf_id=links_banco['tf_id'].iloc[0],
-        #rp_id=links_banco['rp_id'].iloc[0],
         stadium_id=stadium_id
     ).one()
     # Se encontrar, retorne o id da linha existente
     race_id = existing_race.id
-    print(f"Dados já estão na tabela! ID: {race_id}")
+    print(f"Dados da corrida já estão na tabela! ID: {race_id}")
 except NoResultFound:
     # Se não encontrar, adicione a nova linha
     new_race = Race(
@@ -327,8 +346,6 @@ except NoResultFound:
         race_comment_ptbr=None,
         tf_id=tf_id,
         rp_id=rp_id,
-        #tf_id=links_banco['tf_id'].iloc[0],
-        #rp_id=links_banco['rp_id'].iloc[0],
         stadium_id=stadium_id
     )
     session.add(new_race)
@@ -336,16 +353,12 @@ except NoResultFound:
     race_id = new_race.id
     print(f"Novo dado adicionado com ID: {race_id}")
 
+print('')
+
 #print(race)
 
 # Pega dados da tag Table
 tbody = str(section.find('tbody', class_='rrb'))
-
-anchor_elements = section.find('tbody', class_='rrb').find_all('a')
-
-for element in anchor_elements:
-    href=element.get('href')
-    print(href)
 
 # Sua expressão regular
 regex = r'((^.+span>(\d)<.+$\n^.+">(.+)<\/td>$\n^.+$\n^.+$\n^.+-(\d) hover-opacity" href="(.+\/(\d+))".+$\n^\s+(.+)$\n^.+$\n^.+$\n^.+">(\d)*(\w)*<\/td>$\n^.+">([\d\w\s-]*)<\/span><\/td>$\n^.+$\n^\s+(.*)$\n^.+$\n^.+$\n^.+$\n^.*$\n^.+$\n^.+$\n^<td.+">(.*)<\/span><\/td>$\n^<td.+">(.*)<\/span>$\n^.+$\n^.+$\n^.+$\n^<td.*">(.*)<\/span>$\n^.+$\n^<td.*">(.*)<\/span>$\n^.+$\n^<td.*">(.*)<\/span><\/td>$))'
@@ -363,6 +376,20 @@ for match in matches:
         runTime = match[14]
         sectional = None
 
+    try:
+        # Verifique se o treinador já existe no banco de dados com base no nome
+        existing_trainer = session.query(Trainer).filter_by(name=match[15]).one()
+        # Se encontrar, retorne o id da linha existente
+        trainer_id = existing_trainer.id
+        print(f"Treinador já está na tabela! ID: {trainer_id}")
+    except NoResultFound:
+        # Se não encontrar, adicione a nova linha
+        new_trainer = Trainer(name=match[15])
+        session.add(new_trainer)
+        session.commit()
+        trainer_id = new_trainer.id
+        print(f"Novo treinador adicionado com ID: {trainer_id}")
+
     # Adicionar o resultado como uma nova linha no DataFrame
     new_row = pd.DataFrame([{
         'dia': dia,
@@ -371,6 +398,7 @@ for match in matches:
         'position': match[2],
         'btn': match[3],
         'trap': match[4],
+        'tf_url': 'https://www.timeform.com' + match[5],
         'tfDogId': match[6],
         'dogName': capitalize_words(match[7]),
         'dogAge': match[8],
@@ -381,65 +409,132 @@ for match in matches:
         'tfRate': match[13],
         'runTime': runTime,
         'sectional': sectional,
-        'trainer': match[15],
-        'bsp': match[16]
+        'trainerId': trainer_id,
+        'bsp': match[16],
+        'raceId': race_id
     }])
 
     race_result = pd.concat([race_result, new_row], ignore_index=True)
 
+# Realizar a junção com base na coluna 'position'
+race_result = pd.merge(race_result, race_result2, on='position', how='inner')
 
-#    race_result.loc[0, 'dia'] = dia
-#    race_result['hora'] = hora
-#    race_result['track'] = track
-#    race_result['position'] = match[2]
-#    race_result['btn'] = match[3]
-#    race_result['trap'] = match[4]
-#    race_result['tfDogId'] = match[6]
-#    race_result['dogName'] = capitalize_words(match[7])
-#    race_result['dogAge'] = match[8]
-#    race_result['dogSex'] = match[9]
-#    race_result['bend'] = match[10]
-#    race_result['comments'] = match[11]
-#    race_result['startPrice'] = match[12]
-#    race_result['tfRate'] = match[13]
-#    if re.search(r'^\d+\.\d+\s\(\d+\.\d+\)$', match[14]):
-#        run_time = re.match(r'^(\d+\.\d+)\s\((\d+\.\d+)\)$', match[14])
-#        race_result['runTime'] = run_time.group(1) if run_time else match[14]
-#        race_result['sectional'] = run_time.group(2) if run_time else None
-#    race_result['trainer'] = capitalize_words(match[15])
-#    race_result['bsp'] = match[16]
+dogScamColumns = ['dogName', 'tfDogId', 'tf_url', 'rpDogId', 'rp_url']
+dogToScam = race_result.loc[:, dogScamColumns]
+ignored_count = 0
+for index, row in dogToScam.iterrows():
+    # Verifique se a linha já está no banco de dados
+    existing_entry = session.query(DogToScam).filter_by(dogName=row['dogName'], tfDogId=row['tfDogId'], rpDogId=row['rpDogId']).first()
+    if not existing_entry:
+        dog_to_scam = DogToScam(
+            dogName=row['dogName'],
+            tfDogId=row['tfDogId'],
+            tf_url=row['tf_url'],
+            tf_scanned=False,
+            rpDogId=row['rpDogId'],
+            rp_url=row['rp_url'],
+            rp_scanned=False
+        )
+        try:
+            session.add(dog_to_scam)
+            session.commit()
+            print(f"{row['dogName']} inserido com sucesso.")
+        except IntegrityError:
+            session.rollback()
+    else:
+        ignored_count += 1
+if ignored_count > 0:
+    print(f'Número de link combinados, que serão ignorados: {ignored_count}')
 
-    # Adicionar o resultado como um dicionário à lista
-#    race_result2.append({
-#        'dog_color': dog_color,
-#        'sire': sire,
-#        'dam': dam,
-#        'born': born,
-#        'comment': comment
-#    })
+for index, row in race_result.iterrows():
+    try:
+        # Verifique se o greyhound já existe no banco de dados com base no nome
+        existing_greyhound = session.query(Greyhound).filter_by(name=row['dogName']).first()
+        if existing_greyhound:
+            # Se encontrar, retorne o id da linha existente
+            greyhound_id = existing_greyhound.id
+            print(f"Greyhound já está na tabela! ID: {greyhound_id}")
+        else:
+            raise NoResultFound
+    except NoResultFound:
+        # Se não encontrar, adicione a nova linha
+        new_greyhound = Greyhound(
+            name = row['dogName'],
+            born_date = row['born'],
+            genre = row['dogSex'],
+            colour = row['dog_color'],
+            dam = row['dam'],
+            sire = row['sire'],
+            owner = None,
+            tf_id = row['tfDogId'],
+            rp_id = row['rpDogId']
+        )
+        session.add(new_greyhound)
+        session.commit()
+        greyhound_id = new_greyhound.id
+        print(f"Novo greyhound adicionado com ID: {greyhound_id}")
 
-print(race_result)
+#    # Atualize a coluna 'dogId' no DataFrame
+#    race_result.at[index, 'dogId'] = greyhound_id
 
-# Verifica se a linha já existe no banco de dados
-exists_query = session.query(exists().where(
-    (PageSource.dia == dia) &
-    (PageSource.url == tf_url) &
-    (PageSource.site == 'tf') &
-    (PageSource.scanned_level == 'obter_corrida') &
-    (PageSource.html_source == src2)
-)).scalar()
+    try:
+        existing_race_result = session.query(RaceResult).filter_by(
+            position=row['position'],
+            btn=row['btn'],
+            trap=row['trap'],
+            run_time=row['runTime'],
+            sectional=row['sectional'],
+            bend=row['bend'],
+            remarks_acronym=row['comments'],
+            remarks=row['comment'],
+            isp=row['startPrice'],
+            bsp=row['bsp'],
+            tfr=row['tfRate'],
+            greyhound_weight=None,
+            greyhound_id=greyhound_id,
+            race_id=row['raceId']
+        ).first()
+        if existing_race_result:
+            race_result_id = existing_race_result.id
+            print(f"Resultado da corrida já está na tabela! ID: {race_result_id}")
+        else:
+            raise NoResultFound
+    except NoResultFound:
+        race_result_instance = RaceResult(
+            position=row['position'],
+            btn=row['btn'],
+            trap=row['trap'],
+            run_time=row['runTime'],
+            sectional=row['sectional'],
+            bend=row['bend'],
+            remarks_acronym=row['comments'],
+            remarks=row['comment'],
+            isp=row['startPrice'],
+            bsp=row['bsp'],
+            tfr=row['tfRate'],
+            greyhound_weight=None,
+            greyhound_id=greyhound_id,
+            race_id=row['raceId']
+        )
+        session.add(race_result_instance)
+        session.commit()
+        print(f"Novo resultado da corrida adicionado com ID: {race_result_instance.id}")
 
-if not exists_query:
-    link = PageSource(
-        dia=dia,
-        url=tf_url,
-        site='tf',
-        scanned_level='obter_corrida',
-        html_source=src2
-    )
-    session.add(link)
-else:
-    print('Dados já estão na tabela!')
+    try:
+        existing_pair = session.query(TrainerGreyhound).filter_by(trainer_id=row['trainerId'], greyhound_id=greyhound_id).first()
+        if existing_pair:
+            pair_id = (existing_pair.trainer_id, existing_pair.greyhound_id)  # Usar a tupla como ID
+            print(f"Par (treinador/greyhound) já está na tabela! ID: {pair_id}")
+        else:
+            raise NoResultFound
+    except NoResultFound:
+        trainer_greyhound_instance = TrainerGreyhound(
+            trainer_id=row['trainerId'],
+            greyhound_id=greyhound_id
+        )
+        session.add(trainer_greyhound_instance)
+        session.commit()
+        print(f"Novo par (treinador/greyhound) da corrida adicionado com ID: {race_result_instance.id}")
 
 # Confirma a transação
 session.commit()

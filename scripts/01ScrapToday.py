@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, exists
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from sqlalchemy.orm import sessionmaker, declarative_base
-from tables import Base, engine, LastDate, LinksToScam, LinksToScamSemPar, PageSource
+from tables import Base, engine, LastDate, RaceToScam, RaceToScamSemPar, PageSource
 
 # Verifica o sistema operacional
 if platform.system() == 'Windows':
@@ -138,19 +138,18 @@ tf_lista = []
 start_time = time.time()
 
 driver1 = driver2 = webdriver.Chrome(service=service, options=chrome_options)
-rp_url = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
-driver1.get(rp_url)
+rp_href = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
+driver1.get(rp_href)
 driver1.implicitly_wait(5)
-logging.info(f'Racingpost Link: {rp_url}')
+logging.info(f'Racingpost Link: {rp_href}')
 src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attribute('outerHTML')
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
 
-#driver2 = webdriver.Chrome(service=service, options=chrome_options)
-tf_url = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
-driver2.get(tf_url)
+tf_href = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
+driver2.get(tf_href)
 driver2.implicitly_wait(3)
-logging.info(f'Timeform Link: {tf_url}')
+logging.info(f'Timeform Link: {tf_href}')
 
 src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
 pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
@@ -179,7 +178,7 @@ else:
     # Verifica se a linha já existe no banco de dados
     exists_query = session.query(exists().where(
         (PageSource.dia == dia) &
-        (PageSource.url == rp_url) &
+        (PageSource.url == rp_href) &
         (PageSource.site == 'rp') &
         (PageSource.scanned_level == 'obter_links') &
         (PageSource.html_source == src1)
@@ -188,7 +187,7 @@ else:
     if not exists_query:
         link = PageSource(
             dia=dia,
-            url=rp_url,
+            url=rp_href,
             site='rp',
             scanned_level='obter_links',
             html_source=src1
@@ -209,7 +208,7 @@ else:
                 hora = "0" + hora[0] + ":" + hora[1:]
             else:
                 hora = hora[:2] + ":" + hora[2:]
-            tf_url = 'https://www.timeform.com' + link2
+            tf_url = 'https://www.timeform.com/greyhound-racing' + link2
             tf_lista.append([dia, hora, track, tf_id, tf_url])
         else:
             logging.info(f'URL: {tf_url} não corresponde ao padrão esperado.')
@@ -220,7 +219,7 @@ else:
     # Verifica se a linha já existe no banco de dados
     exists_query = session.query(exists().where(
         (PageSource.dia == dia) &
-        (PageSource.url == tf_url) &
+        (PageSource.url == tf_href) &
         (PageSource.site == 'tf') &
         (PageSource.scanned_level == 'obter_links') &
         (PageSource.html_source == src2)
@@ -229,7 +228,7 @@ else:
     if not exists_query:
         link = PageSource(
             dia=dia,
-            url=tf_url,
+            url=tf_href,
             site='tf',
             scanned_level='obter_links',
             html_source=src2
@@ -246,15 +245,15 @@ elif rp_vazio == True and tf_vazio == False:
         for index, row in df_tf.iterrows():
             # Verifica se a linha já existe no banco de dados
             exists_query = session.query(exists().where(
-                (LinksToScamSemPar.dia == row['dia']) &
-                (LinksToScamSemPar.hora == row['hora']) &
-                (LinksToScamSemPar.track == row['track']) &
-                (LinksToScamSemPar.site_id == row['timeform_id']) &
-                (LinksToScamSemPar.site_url == row['timeform_url'])
+                (RaceToScamSemPar.dia == row['dia']) &
+                (RaceToScamSemPar.hora == row['hora']) &
+                (RaceToScamSemPar.track == row['track']) &
+                (RaceToScamSemPar.site_id == row['timeform_id']) &
+                (RaceToScamSemPar.site_url == row['timeform_url'])
             )).scalar()
 
             if not exists_query:
-                link = LinksToScamSemPar(
+                link = RaceToScamSemPar(
                     dia=row['dia'],
                     hora=row['hora'],
                     track=row['track'],
@@ -278,15 +277,15 @@ elif rp_vazio == False and tf_vazio == True:
         for index, row in df_rp.iterrows():
             # Verifica se a linha já existe no banco de dados
             exists_query = session.query(exists().where(
-                (LinksToScamSemPar.dia == row['dia']) &
-                (LinksToScamSemPar.hora == row['hora']) &
-                (LinksToScamSemPar.track == row['track']) &
-                (LinksToScamSemPar.site_id == row['rp_id']) &
-                (LinksToScamSemPar.site_url == row['rp_url'])
+                (RaceToScamSemPar.dia == row['dia']) &
+                (RaceToScamSemPar.hora == row['hora']) &
+                (RaceToScamSemPar.track == row['track']) &
+                (RaceToScamSemPar.site_id == row['rp_id']) &
+                (RaceToScamSemPar.site_url == row['rp_url'])
             )).scalar()
 
             if not exists_query:
-                link = LinksToScamSemPar(
+                link = RaceToScamSemPar(
                     dia=row['dia'],
                     hora=row['hora'],
                     track=row['track'],
@@ -340,17 +339,17 @@ elif rp_vazio == False and tf_vazio == False:
         for index, row in df_merged.iterrows():
             # Verifica se a linha já existe no banco de dados
             exists_query = session.query(exists().where(
-                (LinksToScam.dia == row['dia']) &
-                (LinksToScam.hora == row['hora']) &
-                (LinksToScam.track == row['track']) &
-                (LinksToScam.tf_id == row['tf_id']) &
-                (LinksToScam.tf_url == row['tf_url']) &
-                (LinksToScam.rp_id == row['rp_id']) &
-                (LinksToScam.rp_url == row['rp_url'])
+                (RaceToScam.dia == row['dia']) &
+                (RaceToScam.hora == row['hora']) &
+                (RaceToScam.track == row['track']) &
+                (RaceToScam.tf_id == row['tf_id']) &
+                (RaceToScam.tf_url == row['tf_url']) &
+                (RaceToScam.rp_id == row['rp_id']) &
+                (RaceToScam.rp_url == row['rp_url'])
             )).scalar()
 
             if not exists_query:
-                link = LinksToScam(
+                link = RaceToScam(
                     dia=row['dia'],
                     hora=row['hora'],
                     track=row['track'],
@@ -375,15 +374,15 @@ elif rp_vazio == False and tf_vazio == False:
         for index, row in rp.iterrows():
             # Verifica se a linha já existe no banco de dados
             exists_query = session.query(exists().where(
-                (LinksToScamSemPar.dia == row['dia']) &
-                (LinksToScamSemPar.hora == row['hora']) &
-                (LinksToScamSemPar.track == row['track']) &
-                (LinksToScamSemPar.site_id == row['rp_id']) &
-                (LinksToScamSemPar.site_url == row['rp_url'])
+                (RaceToScamSemPar.dia == row['dia']) &
+                (RaceToScamSemPar.hora == row['hora']) &
+                (RaceToScamSemPar.track == row['track']) &
+                (RaceToScamSemPar.site_id == row['rp_id']) &
+                (RaceToScamSemPar.site_url == row['rp_url'])
             )).scalar()
 
             if not exists_query:
-                link = LinksToScamSemPar(
+                link = RaceToScamSemPar(
                     dia=row['dia'],
                     hora=row['hora'],
                     track=row['track'],
@@ -407,15 +406,15 @@ elif rp_vazio == False and tf_vazio == False:
         for index, row in tf.iterrows():
             # Verifica se a linha já existe no banco de dados
             exists_query = session.query(exists().where(
-                (LinksToScamSemPar.dia == row['dia']) &
-                (LinksToScamSemPar.hora == row['hora']) &
-                (LinksToScamSemPar.track == row['track']) &
-                (LinksToScamSemPar.site_id == row['tf_id']) &
-                (LinksToScamSemPar.site_url == row['tf_url'])
+                (RaceToScamSemPar.dia == row['dia']) &
+                (RaceToScamSemPar.hora == row['hora']) &
+                (RaceToScamSemPar.track == row['track']) &
+                (RaceToScamSemPar.site_id == row['tf_id']) &
+                (RaceToScamSemPar.site_url == row['tf_url'])
             )).scalar()
 
             if not exists_query:
-                link = LinksToScamSemPar(
+                link = RaceToScamSemPar(
                     dia=row['dia'],
                     hora=row['hora'],
                     track=row['track'],

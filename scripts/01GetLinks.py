@@ -1,14 +1,14 @@
-import re, logging, sys, time, platform
-import pandas as pd
 from db import connect
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from sqlalchemy import create_engine, exists
+from sqlalchemy import create_engine, exists, text
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from sqlalchemy.orm import sessionmaker, declarative_base
 from tables import Base, engine, LastDate, RaceToScam, RaceToScamSemPar, PageSource
+import re, logging, sys, time, platform
+import pandas as pd
 
 # Verifica o sistema operacional
 if platform.system() == 'Windows':
@@ -95,22 +95,8 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
-def get_lastdate(session):
-    try:
-        # Seleciona a data mais antiga onde scanned é false
-        scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
-        today = datetime.now().date()
-        if not scanned_date or scanned_date.dia == today:
-            print('Nenhuma data disponível para processamento. Encerrando o script.')
-            sys.exit(1)  # Encerra o script com código de erro 1
-        else:
-            # Atualiza o valor de scanned para true
-            scanned_date.scanned = True
-            session.commit()
-            return scanned_date.dia
-    except Exception as e:
-        print(f'Erro ao atualizar LastDate: {e}')
-        session.rollback()
+# Iniciar cronometro
+start_time = time.time()
 
 def capitalize_words(sentence):
     words = sentence.split()
@@ -121,8 +107,31 @@ def capitalize_words(sentence):
         parts[i] = parts[i][0].capitalize() + parts[i][1:]
     return "'".join(parts)
 
-racing_date = '2014-11-04'
-#racing_date = get_lastdate(session)
+def get_date(session):
+    try:
+        sql = text("""
+            INSERT INTO lastdate (dia, scanned)
+            SELECT dates.date, false
+            FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
+            WHERE NOT EXISTS (
+                SELECT 1 FROM lastdate WHERE dia = dates.date
+            );
+        """)
+        session.execute(sql)
+        today = datetime.now().date()
+        scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
+        if not scanned_date or scanned_date.dia == today:
+            scanned_date = today
+            return scanned_date
+        else:
+            scanned_date.scanned = True
+            session.commit()
+            return scanned_date.dia
+    except Exception as e:
+        print(f'Erro ao atualizar LastDate: {e}')
+        session.rollback()
+
+racing_date = get_date(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
 logging.basicConfig(filename=f'{log_dir}/{racing_date}-02ScrapArchive.log', 
@@ -135,28 +144,16 @@ print(f'Dia escaneado: {racing_date}')
 
 rp_lista = []
 tf_lista = []
-#source_lista = []
 
-start_time = time.time()
-
-driver1 = driver2 = webdriver.Chrome(service=service, options=chrome_options)
+driver1 = webdriver.Chrome(service=service, options=chrome_options)
 rp_href = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
 driver1.get(rp_href)
 driver1.implicitly_wait(5)
-logging.info(f'Racingpost Link: {rp_href}')
 src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attribute('outerHTML')
 pattern1 = re.compile(r'(#result-meeting-result/race_id=\d+&amp;track_id=\d+&amp;r_date=[\d-]+&amp;r_time=[\d:]+)')
 links1 = pattern1.findall(src1)
-
-#driver2 = webdriver.Chrome(service=service, options=chrome_options)
-tf_href = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
-driver2.get(tf_href)
-driver2.implicitly_wait(3)
-logging.info(f'Timeform Link: {tf_href}')
-
-src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
-pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
-links2 = pattern2.findall(src2)
+logging.info(f'Racingpost Link: {rp_href}')
+print(f'Racingpost Link: {rp_href}')
 
 rp_vazio = tf_vazio = False
 
@@ -173,12 +170,10 @@ else:
             rp_lista.append([dia, hora, track, rp_id, rp_url])
         else:
             logging.info(f' URL: {rp_url} não corresponde ao padrão esperado.')
-    driver1.quit()
+            print(f' URL: {rp_url} não corresponde ao padrão esperado.')
     df_rp = pd.DataFrame(rp_lista, columns=['dia', 'hora', 'track', 'rp_id', 'rp_url'])
     df_rp = df_rp.drop_duplicates(subset=['dia', 'hora', 'track', 'rp_id', 'rp_url'])
     df_rp['track'] = df_rp['track'].map(estadio)
-
-    # Verifica se a linha já existe no banco de dados
     exists_query = session.query(exists().where(
         (PageSource.dia == dia) &
         (PageSource.url == rp_href) &
@@ -186,16 +181,26 @@ else:
         (PageSource.scanned_level == 'obter_links') &
         (PageSource.html_source == src1)
     )).scalar()
-
     if not exists_query:
         link = PageSource(
-            dia=dia,
+            dia=racing_date,
             url=rp_href,
             site='rp',
             scanned_level='obter_links',
             html_source=src1
         )
         session.add(link)
+driver1.quit()
+
+driver2 = webdriver.Chrome(service=service, options=chrome_options)
+tf_href = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
+driver2.get(tf_href)
+driver2.implicitly_wait(3)
+src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
+pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
+links2 = pattern2.findall(src2)
+logging.info(f'Timeform Link: {tf_href}')
+print(f'Timeform Link: {tf_href}')
 
 if not links2:
     logging.info(f'Não localizou nenhum link no site Timeform.')
@@ -215,19 +220,16 @@ else:
             tf_lista.append([dia, hora, track, tf_id, tf_url])
         else:
             logging.info(f'URL: {tf_url} não corresponde ao padrão esperado.')
-    driver2.quit()
+            print(f'URL: {tf_url} não corresponde ao padrão esperado.')
     df_tf = pd.DataFrame(tf_lista, columns=['dia', 'hora', 'track', 'tf_id', 'tf_url'])
     df_tf = df_tf.drop_duplicates(subset=['dia', 'hora', 'track', 'tf_id', 'tf_url'])
-
-    # Verifica se a linha já existe no banco de dados
     exists_query = session.query(exists().where(
-        (PageSource.dia == dia) &
+        (PageSource.dia == racing_date) &
         (PageSource.url == tf_href) &
         (PageSource.site == 'tf') &
         (PageSource.scanned_level == 'obter_links') &
         (PageSource.html_source == src2)
     )).scalar()
-
     if not exists_query:
         link = PageSource(
             dia=dia,
@@ -237,94 +239,31 @@ else:
             html_source=src2
         )
         session.add(link)
+driver2.quit()
 
 if rp_vazio == True and tf_vazio == True:
     logging.info('Não há links que sejam compativeis com a regex nos dois sites.')
-elif rp_vazio == True and tf_vazio == False:
-    logging.info('Há links compativeis com a regex do site TimeForm.')
-    if not df_tf.empty:
-        # Itera sobre as linhas do DataFrame e insere na tabela
-        ignored_count = 0
-        for index, row in df_tf.iterrows():
-            # Verifica se a linha já existe no banco de dados
-            exists_query = session.query(exists().where(
-                (RaceToScamSemPar.dia == row['dia']) &
-                (RaceToScamSemPar.hora == row['hora']) &
-                (RaceToScamSemPar.track == row['track']) &
-                (RaceToScamSemPar.site_id == row['tf_id']) &
-                (RaceToScamSemPar.site_url == row['tf_url'])
-            )).scalar()
+    print('Não há links que sejam compativeis com a regex nos dois sites.')
+    session.commit()
+    session.close()
+    sys.exit('Encerrado por não possuir dados para inserir no banco!')
 
-            if not exists_query:
-                link = RaceToScamSemPar(
-                    dia=row['dia'],
-                    hora=row['hora'],
-                    track=row['track'],
-                    site='tf',
-                    site_id=row['tf_id'],
-                    site_url=row['tf_url'],
-                    scanned=False
-                )
-                session.add(link)
-            else:
-                ignored_count += 1
-        if ignored_count > 0:
-            logging.info(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
-    else:
-        logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
-elif rp_vazio == False and tf_vazio == True:
-    logging.info('Há links compativeis com a regex do site RacingPost.')
-    if not df_rp.empty:
-        # Itera sobre as linhas do DataFrame e insere na tabela
-        ignored_count = 0
-        for index, row in df_rp.iterrows():
-            # Verifica se a linha já existe no banco de dados
-            exists_query = session.query(exists().where(
-                (RaceToScamSemPar.dia == row['dia']) &
-                (RaceToScamSemPar.hora == row['hora']) &
-                (RaceToScamSemPar.track == row['track']) &
-                (RaceToScamSemPar.site_id == row['rp_id']) &
-                (RaceToScamSemPar.site_url == row['rp_url'])
-            )).scalar()
-
-            if not exists_query:
-                link = RaceToScamSemPar(
-                    dia=row['dia'],
-                    hora=row['hora'],
-                    track=row['track'],
-                    site='rp',
-                    site_id=row['rp_id'],
-                    site_url=row['rp_url'],
-                    scanned=False
-                )
-                session.add(link)
-            else:
-                ignored_count += 1
-        if ignored_count > 0:
-            logging.info(f'Número de link do site Racingpost, que serão ignorados: {ignored_count}')
-    else:
-        logging.info('O DataFrame racingpost está vazio. Não há dados para inserir.')
-elif rp_vazio == False and tf_vazio == False:
-    logging.info('Há links compativeis com a regex nos dois sites.')
-    # Realizar a mesclagem com indicador
+if rp_vazio == False and tf_vazio == False:
     df_merged = pd.merge(df_tf, df_rp, on=['dia', 'hora', 'track'], how='outer', indicator=True)
 
-    # Filtrar as linhas que estão apenas em df_timeform
-    tf = df_merged[df_merged['_merge'] == 'left_only'].drop(['_merge', 'rp_id', 'rp_url'], axis=1)
-    tf = tf.reset_index(drop=True)
+    #for var in df_merged['track'].unique():
+    #    filtrado = df_merged[df_merged['track'] == var].sort_values(by=['dia', 'hora'])
+    #    print(filtrado)
 
-    # Filtrar as linhas que estão apenas em df_racingpost
-    rp = df_merged[df_merged['_merge'] == 'right_only'].drop(['_merge', 'tf_id', 'tf_url'], axis=1)
-    rp = rp.reset_index(drop=True)
-
-    # Filtrar as linhas onde '_merge' é igual a 'both'
+    df_tf = df_merged[df_merged['_merge'] == 'left_only'].drop(['_merge', 'rp_id', 'rp_url'], axis=1)
+    df_tf = df_tf.reset_index(drop=True)
+    df_rp = df_merged[df_merged['_merge'] == 'right_only'].drop(['_merge', 'tf_id', 'tf_url'], axis=1)
+    df_rp = df_rp.reset_index(drop=True)
     df_merged = df_merged.loc[df_merged['_merge'] == 'both']
 
-    # Remover a coluna '_merge'
     df_merged = df_merged.drop('_merge', axis=1)
     df_merged = df_merged.reset_index(drop=True)
 
-    # Remove registros duplicados com base nas colunas 'date', 'time', 'track', 'timeform_id' e 'timeform_url'
     df_merged = df_merged.drop_duplicates(subset=['dia', 'hora', 'track', 'tf_id', 'tf_url', 'rp_id', 'rp_url'])
 
     # Mostar o nome das Pistas do site Timeform
@@ -332,15 +271,13 @@ elif rp_vazio == False and tf_vazio == False:
     #    print(track_value)
 
     # Mostrar o link das corridas que o estadio estiver como NaN
-    rp_nan = rp.loc[rp['track'].isna(), ['rp_url']]
+    rp_nan = df_rp.loc[df_rp['track'].isna(), ['rp_url']]
     for url in rp_nan['rp_url']:
         print(url)
 
     if not df_merged.empty:
-        # Itera sobre as linhas do DataFrame e insere na tabela
         ignored_count = 0
         for index, row in df_merged.iterrows():
-            # Verifica se a linha já existe no banco de dados
             exists_query = session.query(exists().where(
                 (RaceToScam.dia == row['dia']) &
                 (RaceToScam.hora == row['hora']) &
@@ -350,7 +287,6 @@ elif rp_vazio == False and tf_vazio == False:
                 (RaceToScam.rp_id == row['rp_id']) &
                 (RaceToScam.rp_url == row['rp_url'])
             )).scalar()
-
             if not exists_query:
                 link = RaceToScam(
                     dia=row['dia'],
@@ -368,14 +304,18 @@ elif rp_vazio == False and tf_vazio == False:
                 ignored_count += 1
         if ignored_count > 0:
             logging.info(f'Número de link combinados, que serão ignorados: {ignored_count}')
+            print(f'Número de link combinados, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame df_merged está vazio. Não há dados para inserir.')
+        print('O DataFrame df_merged está vazio. Não há dados para inserir.')
+    print('')
 
-    if not rp.empty:
-        # Itera sobre as linhas do DataFrame e insere na tabela
+if rp_vazio == False:
+    logging.info('Há links compativeis com a regex do site RacingPost.')
+    print('Há links compativeis com a regex do site RacingPost.')
+    if not df_rp.empty:
         ignored_count = 0
-        for index, row in rp.iterrows():
-            # Verifica se a linha já existe no banco de dados
+        for index, row in df_rp.iterrows():
             exists_query = session.query(exists().where(
                 (RaceToScamSemPar.dia == row['dia']) &
                 (RaceToScamSemPar.hora == row['hora']) &
@@ -383,7 +323,6 @@ elif rp_vazio == False and tf_vazio == False:
                 (RaceToScamSemPar.site_id == row['rp_id']) &
                 (RaceToScamSemPar.site_url == row['rp_url'])
             )).scalar()
-
             if not exists_query:
                 link = RaceToScamSemPar(
                     dia=row['dia'],
@@ -397,17 +336,20 @@ elif rp_vazio == False and tf_vazio == False:
                 session.add(link)
             else:
                 ignored_count += 1
-
         if ignored_count > 0:
             logging.info(f'Número de link do site Racingpost, que serão ignorados: {ignored_count}')
+            print(f'Número de link do site Racingpost, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame racingpost está vazio. Não há dados para inserir.')
+        print('O DataFrame racingpost está vazio. Não há dados para inserir.')
+    print('')
 
-    if not tf.empty:
-        # Itera sobre as linhas do DataFrame e insere na tabela
+if tf_vazio == False:
+    logging.info('Há links compativeis com a regex do site TimeForm.')
+    print('Há links compativeis com a regex do site TimeForm.')
+    if not df_tf.empty:
         ignored_count = 0
-        for index, row in tf.iterrows():
-            # Verifica se a linha já existe no banco de dados
+        for index, row in df_tf.iterrows():
             exists_query = session.query(exists().where(
                 (RaceToScamSemPar.dia == row['dia']) &
                 (RaceToScamSemPar.hora == row['hora']) &
@@ -415,7 +357,6 @@ elif rp_vazio == False and tf_vazio == False:
                 (RaceToScamSemPar.site_id == row['tf_id']) &
                 (RaceToScamSemPar.site_url == row['tf_url'])
             )).scalar()
-
             if not exists_query:
                 link = RaceToScamSemPar(
                     dia=row['dia'],
@@ -431,26 +372,30 @@ elif rp_vazio == False and tf_vazio == False:
                 ignored_count += 1
         if ignored_count > 0:
             logging.info(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
+            print(f'Número de link do site Timeform, que serão ignorados: {ignored_count}')
     else:
         logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
-else:
-    logging.info('Verificar erro!!!')
-    # Seleciona a data mais antiga onde scanned é false
-    scanned_date = session.query(LastDate).filter(LastDate.scanned == True).order_by(LastDate.dia).first()
-    if scanned_date:
-        # Atualiza o valor de scanned para true
-        scanned_date.scanned = False
-        session.commit()
+        print('O DataFrame timeform está vazio. Não há dados para inserir.')
+    print('')
 
-# Confirma a transação
+#logging.info('Verificar erro!!!')
+#print('Verificar erro!!!')
+## Seleciona a data mais antiga onde scanned é false
+#scanned_date = session.query(LastDate).filter(LastDate.scanned == True).order_by(LastDate.dia).first()
+#if scanned_date:
+#    # Atualiza o valor de scanned para true
+#    scanned_date.scanned = False
+
+# Confirma a transação e fecha conexão.
 session.commit()
-# Fecha a sessão
 session.close()
 
 logging.info(f'Data escaneada: {racing_date}')
-
+print(f'Data escaneada: {racing_date}')
 logging.info('Finalizado!')
+print('Finalizado!')
+
 end_time = time.time()
 execution_time = end_time - start_time
 logging.info(f'Tempo de execução: {execution_time} segundos')
-logging.info('')
+print(f'Tempo de execução: {execution_time} segundos')
