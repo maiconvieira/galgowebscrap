@@ -118,6 +118,7 @@ def get_date(session):
             );
         """)
         session.execute(sql)
+        session.commit()
         today = datetime.now().date()
         scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
         if not scanned_date or scanned_date.dia == today:
