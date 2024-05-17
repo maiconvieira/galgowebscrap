@@ -104,7 +104,8 @@ sql = text("""
     FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
     WHERE NOT EXISTS (
         SELECT 1 FROM lastdate WHERE dia = dates.date
-    );
+    )
+    ON CONFLICT (dia) DO NOTHING;
 """)
 session.execute(sql)
 session.commit()
