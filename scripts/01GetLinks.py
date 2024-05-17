@@ -2,7 +2,7 @@ from db import connect
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from sqlalchemy import create_engine, exists, text
+from sqlalchemy import create_engine, exists, text, func
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -122,14 +122,15 @@ def capitalize_words(sentence):
 def get_date(session):
     try:
         today = datetime.now().date()
-        scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
-        if not scanned_date or scanned_date.dia == today:
+        scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
+        if not scanned_date or scanned_date == today:
             scanned_date = today
             return scanned_date
         else:
-            scanned_date.scanned = True
+            # Atualiza o registro para indicar que foi escaneado
+            session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
             session.commit()
-            return scanned_date.dia
+            return scanned_date
     except Exception as e:
         print(f'Erro ao atualizar LastDate: {e}')
         session.rollback()
