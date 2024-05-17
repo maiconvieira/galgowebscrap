@@ -134,7 +134,7 @@ def capitalize_words(sentence):
     return "'".join(parts)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{dia}-{hora2}-{track_log}-04GetLinkAndScrap.log', 
+logging.basicConfig(filename=f'{log_dir}/{dia}-{hora2}-{track_log}-02GetInfoAndDogLinks.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,

@@ -134,7 +134,7 @@ def get_date(session):
 racing_date = get_date(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}-02ScrapArchive.log', 
+logging.basicConfig(filename=f'{log_dir}/{racing_date}-01GetLinks.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
