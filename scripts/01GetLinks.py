@@ -98,6 +98,17 @@ session = Session()
 # Iniciar cronometro
 start_time = time.time()
 
+sql = text("""
+    INSERT INTO lastdate (dia, scanned)
+    SELECT dates.date, false
+    FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
+    WHERE NOT EXISTS (
+        SELECT 1 FROM lastdate WHERE dia = dates.date
+    );
+""")
+session.execute(sql)
+session.commit()
+
 def capitalize_words(sentence):
     words = sentence.split()
     capitalized_words = [word.capitalize() for word in words]
@@ -109,16 +120,6 @@ def capitalize_words(sentence):
 
 def get_date(session):
     try:
-        sql = text("""
-            INSERT INTO lastdate (dia, scanned)
-            SELECT dates.date, false
-            FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
-            WHERE NOT EXISTS (
-                SELECT 1 FROM lastdate WHERE dia = dates.date
-            );
-        """)
-        session.execute(sql)
-        session.commit()
         today = datetime.now().date()
         scanned_date = session.query(LastDate).filter(LastDate.scanned == False).order_by(LastDate.dia).first()
         if not scanned_date or scanned_date.dia == today:
