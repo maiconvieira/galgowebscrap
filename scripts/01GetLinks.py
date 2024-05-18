@@ -124,8 +124,9 @@ def get_date(session):
         today = datetime.now().date()
         scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
         if not scanned_date or scanned_date == today:
-            scanned_date = today
-            return scanned_date
+            logging.info('Links escaneados até ontem. Amanhã será escaneado o dia de hoje.')
+            print('Links escaneados até ontem. Amanhã será escaneado o dia de hoje.')
+            sys.exit('Encerrado por não possuir dia para escanear!')
         else:
             # Atualiza o registro para indicar que foi escaneado
             session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
