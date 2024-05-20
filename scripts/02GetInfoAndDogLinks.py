@@ -123,6 +123,7 @@ session.execute(
     text('UPDATE racetoscam SET rp_scanned=true, tf_scanned=TRUE WHERE id=:id'),
     {'id': id_}
 )
+session.commit()
 
 def capitalize_words(sentence):
     words = sentence.split()
@@ -229,6 +230,7 @@ if not exists_query:
         html_source=src1
     )
     session.add(link)
+    session.commit()
 else:
     print('Dados já estão na tabela!')
 
@@ -240,6 +242,15 @@ logging.info(f'Timeform Link: {tf_url}')
 src2 = driver2.find_element(By.XPATH, "//section[@class='mb-bfw-result mb-bfw']").get_attribute('outerHTML')
 driver2.quit()
 
+# Verifica se a linha já existe no banco de dados
+exists_query = session.query(exists().where(
+    (PageSource.dia == dia) &
+    (PageSource.url == tf_url) &
+    (PageSource.site == 'tf') &
+    (PageSource.scanned_level == 'obter_corrida') &
+    (PageSource.html_source == src2)
+)).scalar()
+
 if not exists_query:
     link = PageSource(
         dia=dia,
@@ -249,17 +260,9 @@ if not exists_query:
         html_source=src2
     )
     session.add(link)
+    session.commit()
 else:
     print('Dados já estão na tabela!')
-
-# Verifica se a linha já existe no banco de dados
-exists_query = session.query(exists().where(
-    (PageSource.dia == dia) &
-    (PageSource.url == tf_url) &
-    (PageSource.site == 'tf') &
-    (PageSource.scanned_level == 'obter_corrida') &
-    (PageSource.html_source == src2)
-)).scalar()
 
 print('')
 
@@ -349,13 +352,11 @@ except NoResultFound:
         stadium_id=stadium_id
     )
     session.add(new_race)
-    session.commit()  # Confirma a transação para obter o ID
+    session.commit()
     race_id = new_race.id
     print(f"Novo dado adicionado com ID: {race_id}")
 
 print('')
-
-#print(race)
 
 # Pega dados da tag Table
 tbody = str(section.find('tbody', class_='rrb'))

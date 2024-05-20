@@ -195,6 +195,7 @@ else:
             html_source=src1
         )
         session.add(link)
+        session.commit()
 driver1.quit()
 
 driver2 = webdriver.Chrome(service=service, options=chrome_options)
@@ -244,6 +245,7 @@ else:
             html_source=src2
         )
         session.add(link)
+        session.commit()
 driver2.quit()
 
 if rp_vazio == True and tf_vazio == True:
@@ -305,6 +307,7 @@ if rp_vazio == False and tf_vazio == False:
                     rp_scanned=False
                 )
                 session.add(link)
+                session.commit()
             else:
                 ignored_count += 1
         if ignored_count > 0:
@@ -339,6 +342,7 @@ if rp_vazio == False:
                     scanned=False
                 )
                 session.add(link)
+                session.commit()
             else:
                 ignored_count += 1
         if ignored_count > 0:
@@ -373,6 +377,7 @@ if tf_vazio == False:
                     scanned=False
                 )
                 session.add(link)
+                session.commit()
             else:
                 ignored_count += 1
         if ignored_count > 0:
@@ -382,14 +387,6 @@ if tf_vazio == False:
         logging.info('O DataFrame timeform está vazio. Não há dados para inserir.')
         print('O DataFrame timeform está vazio. Não há dados para inserir.')
     print('')
-
-#logging.info('Verificar erro!!!')
-#print('Verificar erro!!!')
-## Seleciona a data mais antiga onde scanned é false
-#scanned_date = session.query(LastDate).filter(LastDate.scanned == True).order_by(LastDate.dia).first()
-#if scanned_date:
-#    # Atualiza o valor de scanned para true
-#    scanned_date.scanned = False
 
 # Confirma a transação e fecha conexão.
 session.commit()
