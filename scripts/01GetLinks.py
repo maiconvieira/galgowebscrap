@@ -185,7 +185,7 @@ else:
     df_rp = df_rp.drop_duplicates(subset=['dia', 'hora', 'track', 'rp_id', 'rp_url'])
     df_rp['track'] = df_rp['track'].map(estadio)
     exists_query = session.query(exists().where(
-        (PageSource.dia == dia) &
+        (PageSource.dia == racing_date) &
         (PageSource.url == rp_href) &
         (PageSource.site == 'rp') &
         (PageSource.scanned_level == 'obter_links') &
@@ -243,7 +243,7 @@ else:
     )).scalar()
     if not exists_query:
         link = PageSource(
-            dia=dia,
+            dia=racing_date,
             url=tf_href,
             site='tf',
             scanned_level='obter_links',
