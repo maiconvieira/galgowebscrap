@@ -98,17 +98,18 @@ session = Session()
 # Iniciar cronometro
 start_time = time.time()
 
-sql = text("""
-    INSERT INTO lastdate (dia, scanned)
-    SELECT dates.date, false
-    FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
-    WHERE NOT EXISTS (
-        SELECT 1 FROM lastdate WHERE dia = dates.date
-    )
-    ON CONFLICT (dia) DO NOTHING;
-""")
-session.execute(sql)
-session.commit()
+#sql = text("""
+#    INSERT INTO lastdate (dia, scanned)
+#    SELECT dates.date, false
+#    FROM generate_series('1997-01-01'::date, CURRENT_DATE, '1 day'::interval) AS dates(date)
+#    WHERE NOT EXISTS (
+#        SELECT 1 FROM lastdate WHERE dia = dates.date
+#    )
+#    ON CONFLICT (dia) DO NOTHING;
+#""")
+
+#session.execute(sql)
+#session.commit()
 
 def capitalize_words(sentence):
     words = sentence.split()
@@ -122,13 +123,17 @@ def capitalize_words(sentence):
 def get_date(session):
     try:
         today = datetime.now().date()
+        if not session.query(session.query(LastDate).filter(LastDate.dia == today).exists()).scalar():
+            new_date = LastDate(dia=today, scanned=False)
+            session.add(new_date)
+            session.commit()
+
         scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
-        if not scanned_date or scanned_date == today:
-            logging.info('Links escaneados até ontem. Amanhã será escaneado o dia de hoje.')
-            print('Links escaneados até ontem. Amanhã será escaneado o dia de hoje.')
+        if not scanned_date:
+            logging.info('Todos os dias na tabela foram escaneados!')
+            print('Todos os dias na tabela foram escaneados!')
             sys.exit('Encerrado por não possuir dia para escanear!')
         else:
-            # Atualiza o registro para indicar que foi escaneado
             session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
             session.commit()
             return scanned_date
@@ -139,7 +144,7 @@ def get_date(session):
 racing_date = get_date(session)
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}-01GetLinks.log', 
+logging.basicConfig(filename=f'{log_dir}/{racing_date}-GetLinks.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,

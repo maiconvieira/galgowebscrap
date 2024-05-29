@@ -29,7 +29,7 @@ class LastDate(Base):
 class RaceToScam(Base):
     __tablename__ = 'racetoscam'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     dia = Column(Date)
     hora = Column(Time)
     track = Column(String)
@@ -43,7 +43,7 @@ class RaceToScam(Base):
 class RaceToScamSemPar(Base):
     __tablename__ = 'racetoscam_sem_par'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     dia = Column(Date)
     hora = Column(Time)
     track = Column(String)
@@ -55,7 +55,7 @@ class RaceToScamSemPar(Base):
 class DogToScam(Base):
     __tablename__ = 'dogtoscam'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     dogName = Column(String)
     tfDogId = Column(Integer)
     tf_url = Column(String)
@@ -67,7 +67,7 @@ class DogToScam(Base):
 class DogToScamSemPar(Base):
     __tablename__ = 'dogtoscam_sem_par'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     dogName = Column(String)
     site = Column(String)
     dog_id = Column(Integer)
