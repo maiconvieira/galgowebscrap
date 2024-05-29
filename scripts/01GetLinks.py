@@ -1,4 +1,5 @@
 from db import connect
+from bs4 import BeautifulSoup
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -120,6 +121,23 @@ def capitalize_words(sentence):
         parts[i] = parts[i][0].capitalize() + parts[i][1:]
     return "'".join(parts)
 
+def extract_links_html(html_source):
+    soup = BeautifulSoup(html_source, 'html.parser')
+    links = set()
+    for a_tag in soup.find_all('a', href=True):
+        links.add(a_tag['href'])
+    return list(links)
+
+def extract_links_html2(html_source):
+    soup = BeautifulSoup(html_source, 'lxml')
+    li_tags = soup.find_all('li')
+    links = set()
+    for li in li_tags:
+        a_tag = li.find('a')
+        if a_tag and 'href' in a_tag.attrs:
+            links.add(a_tag['href'])
+    return list(links)
+
 def get_date(session):
     try:
         today = datetime.now().date()
@@ -184,23 +202,33 @@ else:
     df_rp = pd.DataFrame(rp_lista, columns=['dia', 'hora', 'track', 'rp_id', 'rp_url'])
     df_rp = df_rp.drop_duplicates(subset=['dia', 'hora', 'track', 'rp_id', 'rp_url'])
     df_rp['track'] = df_rp['track'].map(estadio)
-    exists_query = session.query(exists().where(
-        (PageSource.dia == racing_date) &
-        (PageSource.url == rp_href) &
-        (PageSource.site == 'rp') &
-        (PageSource.scanned_level == 'obter_links') &
-        (PageSource.html_source == src1)
-    )).scalar()
-    if not exists_query:
-        link = PageSource(
-            dia=racing_date,
-            url=rp_href,
-            site='rp',
-            scanned_level='obter_links',
-            html_source=src1
-        )
-        session.add(link)
-        session.commit()
+        
+    # Extrair links do HTML
+    links = extract_links_html(src1)
+
+    # Iterar sobre cada link e salvar no banco de dados
+    for link_href in links:
+        exists_query = session.query(exists().where(
+            (PageSource.dia == racing_date) &
+            (PageSource.url == rp_href) &
+            (PageSource.site == 'rp') &
+            (PageSource.scanned_level == 'obter_links') &
+            (PageSource.html_source == link_href)
+        )).scalar()
+        
+        if not exists_query:
+            link = PageSource(
+                dia=racing_date,
+                url=rp_href,
+                site='rp',
+                scanned_level='obter_links',
+                html_source=link_href
+            )
+            session.add(link)
+
+    # Confirmar as alterações no banco de dados
+    session.commit()
+    session.close()
 driver1.quit()
 
 driver2 = webdriver.Chrome(service=service, options=chrome_options)
@@ -234,24 +262,36 @@ else:
             print(f'URL: {tf_url} não corresponde ao padrão esperado.')
     df_tf = pd.DataFrame(tf_lista, columns=['dia', 'hora', 'track', 'tf_id', 'tf_url'])
     df_tf = df_tf.drop_duplicates(subset=['dia', 'hora', 'track', 'tf_id', 'tf_url'])
-    exists_query = session.query(exists().where(
-        (PageSource.dia == racing_date) &
-        (PageSource.url == tf_href) &
-        (PageSource.site == 'tf') &
-        (PageSource.scanned_level == 'obter_links') &
-        (PageSource.html_source == src2)
-    )).scalar()
-    if not exists_query:
-        link = PageSource(
-            dia=racing_date,
-            url=tf_href,
-            site='tf',
-            scanned_level='obter_links',
-            html_source=src2
-        )
-        session.add(link)
-        session.commit()
+        
+    # Extrair links do HTML
+    links = extract_links_html2(src2)
+
+    # Iterar sobre cada link e salvar no banco de dados
+    for link_href in links:
+        exists_query = session.query(exists().where(
+            (PageSource.dia == racing_date) &
+            (PageSource.url == rp_href) &
+            (PageSource.site == 'rp') &
+            (PageSource.scanned_level == 'obter_links') &
+            (PageSource.html_source == link_href)
+        )).scalar()
+        
+        if not exists_query:
+            link = PageSource(
+                dia=racing_date,
+                url=rp_href,
+                site='rp',
+                scanned_level='obter_links',
+                html_source=link_href
+            )
+            session.add(link)
+
+    # Confirmar as alterações no banco de dados
+    session.commit()
+    session.close()
 driver2.quit()
+
+print('')
 
 if rp_vazio == True and tf_vazio == True:
     logging.info('Não há links que sejam compativeis com a regex nos dois sites.')
