@@ -160,6 +160,7 @@ def get_date(session):
         session.rollback()
 
 racing_date = get_date(session)
+#racing_date = '2024-04-20'
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
 logging.basicConfig(filename=f'{log_dir}/{racing_date}-GetLinks.log', 
@@ -271,7 +272,7 @@ else:
         exists_query = session.query(exists().where(
             (PageSource.dia == racing_date) &
             (PageSource.url == rp_href) &
-            (PageSource.site == 'rp') &
+            (PageSource.site == 'tf') &
             (PageSource.scanned_level == 'obter_links') &
             (PageSource.html_source == link_href)
         )).scalar()
@@ -280,7 +281,7 @@ else:
             link = PageSource(
                 dia=racing_date,
                 url=rp_href,
-                site='rp',
+                site='tf',
                 scanned_level='obter_links',
                 html_source=link_href
             )
@@ -312,7 +313,6 @@ if rp_vazio == False and tf_vazio == False:
     df_rp = df_merged[df_merged['_merge'] == 'right_only'].drop(['_merge', 'tf_id', 'tf_url'], axis=1)
     df_rp = df_rp.reset_index(drop=True)
     df_merged = df_merged.loc[df_merged['_merge'] == 'both']
-
     df_merged = df_merged.drop('_merge', axis=1)
     df_merged = df_merged.reset_index(drop=True)
 
@@ -330,6 +330,7 @@ if rp_vazio == False and tf_vazio == False:
     if not df_merged.empty:
         ignored_count = 0
         for index, row in df_merged.iterrows():
+            print(row)
             exists_query = session.query(exists().where(
                 (RaceToScam.dia == row['dia']) &
                 (RaceToScam.hora == row['hora']) &
@@ -369,6 +370,7 @@ if rp_vazio == False:
     if not df_rp.empty:
         ignored_count = 0
         for index, row in df_rp.iterrows():
+            print(row)
             exists_query = session.query(exists().where(
                 (RaceToScamSemPar.dia == row['dia']) &
                 (RaceToScamSemPar.hora == row['hora']) &
@@ -404,6 +406,7 @@ if tf_vazio == False:
     if not df_tf.empty:
         ignored_count = 0
         for index, row in df_tf.iterrows():
+            print(row)
             exists_query = session.query(exists().where(
                 (RaceToScamSemPar.dia == row['dia']) &
                 (RaceToScamSemPar.hora == row['hora']) &
