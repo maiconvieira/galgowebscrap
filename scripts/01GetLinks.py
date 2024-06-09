@@ -129,13 +129,10 @@ def extract_links_html(html_source):
     return list(links)
 
 def extract_links_html2(html_source):
-    soup = BeautifulSoup(html_source, 'lxml')
-    li_tags = soup.find_all('li')
+    soup = BeautifulSoup(html_source, 'html.parser')
     links = set()
-    for li in li_tags:
-        a_tag = li.find('a')
-        if a_tag and 'href' in a_tag.attrs:
-            links.add(a_tag['href'])
+    for a_tag in soup.find_all('a', class_='waf-header hover-opacity', href=True):
+        links.add(a_tag['href'])
     return list(links)
 
 def get_date(session):
@@ -152,15 +149,14 @@ def get_date(session):
             print('Todos os dias na tabela foram escaneados!')
             sys.exit('Encerrado por não possuir dia para escanear!')
         else:
-            #session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
-            #session.commit()
+            session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
+            session.commit()
             return scanned_date
     except Exception as e:
         print(f'Erro ao atualizar LastDate: {e}')
         session.rollback()
 
 racing_date = get_date(session)
-#racing_date = '2024-04-20'
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
 logging.basicConfig(filename=f'{log_dir}/{racing_date}-GetLinks.log', 
@@ -217,7 +213,7 @@ else:
             (PageSource.html_source == link_href)
         )).scalar()
         
-        if not exists_query:
+        if not exists_query and re.match(r'^#result-meeting-result/race_id=\d+&track_id=\d+&r_date=\d+-\d+-\d+&r_time=\d+:\d+', link_href):
             link = PageSource(
                 dia=racing_date,
                 url=rp_href,
@@ -277,7 +273,7 @@ else:
             (PageSource.html_source == link_href)
         )).scalar()
         
-        if not exists_query:
+        if not exists_query and re.match(r'^/greyhound-racing/results/\w+/\d+/\d+-\d+-\d+/\d+', link_href):
             link = PageSource(
                 dia=racing_date,
                 url=rp_href,
@@ -330,7 +326,6 @@ if rp_vazio == False and tf_vazio == False:
     if not df_merged.empty:
         ignored_count = 0
         for index, row in df_merged.iterrows():
-            print(row)
             exists_query = session.query(exists().where(
                 (RaceToScam.dia == row['dia']) &
                 (RaceToScam.hora == row['hora']) &
@@ -370,7 +365,6 @@ if rp_vazio == False:
     if not df_rp.empty:
         ignored_count = 0
         for index, row in df_rp.iterrows():
-            print(row)
             exists_query = session.query(exists().where(
                 (RaceToScamSemPar.dia == row['dia']) &
                 (RaceToScamSemPar.hora == row['hora']) &
@@ -406,7 +400,6 @@ if tf_vazio == False:
     if not df_tf.empty:
         ignored_count = 0
         for index, row in df_tf.iterrows():
-            print(row)
             exists_query = session.query(exists().where(
                 (RaceToScamSemPar.dia == row['dia']) &
                 (RaceToScamSemPar.hora == row['hora']) &
