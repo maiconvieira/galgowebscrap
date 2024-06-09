@@ -152,8 +152,8 @@ def get_date(session):
             print('Todos os dias na tabela foram escaneados!')
             sys.exit('Encerrado por não possuir dia para escanear!')
         else:
-            session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
-            session.commit()
+            #session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
+            #session.commit()
             return scanned_date
     except Exception as e:
         print(f'Erro ao atualizar LastDate: {e}')
