@@ -12,6 +12,7 @@ import re, logging, sys, time, platform
 import pandas as pd
 
 # Verifica o sistema operacional
+log_dir, driver_path = '', ''
 if platform.system() == 'Windows':
     log_dir = 'D:/Projetos/galgowebscrap/logs'
     driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
@@ -23,6 +24,7 @@ elif platform.system() == 'Linux':
         driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/124.0.6367.91/chromedriver'
 else:
     print('Sistema operacional não reconhecido')
+    exit(1)
 
 # Cria as tabelas
 Base.metadata.create_all(engine)

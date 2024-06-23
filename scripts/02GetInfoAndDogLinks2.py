@@ -1,7 +1,6 @@
 import logging
 import platform
 import re
-
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -53,9 +52,6 @@ def capitalize_words(sentence):
     for i in range(len(parts)):
         parts[i] = parts[i][0].capitalize() + parts[i][1:]
     return "'".join(parts) 
-
-# Configuração do logger
-logging.basicConfig(filename=f'{log_dir}/script.log', format='%(asctime)s %(message)s', filemode='w', level=logging.INFO, encoding='utf-8')
 
 # Função para executar uma consulta SQL e obter o resultado
 def execute_query(session, query):
@@ -112,18 +108,22 @@ def main():
     
     sql_query = text('SELECT id, dia, hora, track, tf_id, tf_url, rp_id, rp_url FROM racetoscam WHERE tf_scanned = FALSE and rp_scanned = FALSE ORDER BY dia ASC LIMIT 1')
     result = execute_query(session, sql_query)
-    
+
     if not result:
         print("Nenhum resultado encontrado.")
         return
     
     id_, dia, hora, track, tf_id, tf_url, rp_id, rp_url = result
     
+    hora_str = str(hora)[:5]
+    hora_formatada = str(hora_str).replace(":", "_")
+    track_log = str(track).replace(' ', '_').lower()
+
+    # Configuração do logger
+    logging.basicConfig(filename=f'{log_dir}/{dia}-{hora_formatada}-{track}-GetInfo.log', format='%(asctime)s %(message)s', filemode='w', level=logging.INFO, encoding='utf-8')
+    
     session.execute(text('UPDATE racetoscam SET rp_scanned=TRUE, tf_scanned=TRUE WHERE id=:id'), {'id': id_})
     session.commit()
-    
-    hora_str = str(hora)[:5]
-    track_log = str(track).replace(' ', '_').lower()
     
     logging.info(f'Corrida escaneada: {dia} {hora_str} {track}')
     print(f'Corrida escaneada: {dia} {hora_str} {track}')
