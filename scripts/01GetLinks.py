@@ -1,6 +1,6 @@
 from db import connect
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from sqlalchemy import create_engine, exists, text, func
@@ -137,43 +137,41 @@ def extract_links_html2(html_source):
         links.add(a_tag['href'])
     return list(links)
 
-def get_date(session):
-    try:
-        today = datetime.now().date()
-        if not session.query(session.query(LastDate).filter(LastDate.dia == today).exists()).scalar():
-            new_date = LastDate(dia=today, scanned=False)
-            session.add(new_date)
-            session.commit()
+today = datetime.now().date()
+if not session.query(session.query(LastDate).filter(LastDate.dia == today).exists()).scalar():
+    new_date = LastDate(dia=today, scanned=False)
+    session.add(new_date)
+    session.commit()
 
-        scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
-        if not scanned_date:
-            logging.info('Todos os dias na tabela foram escaneados!')
-            print('Todos os dias na tabela foram escaneados!')
-            sys.exit('Encerrado por não possuir dia para escanear!')
-        else:
-            session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
-            session.commit()
-            return scanned_date
-    except Exception as e:
-        print(f'Erro ao atualizar LastDate: {e}')
-        session.rollback()
+yesterday = today - timedelta(days=1)
+if not session.query(session.query(LastDate).filter(LastDate.dia == yesterday).exists()).scalar():
+    new_date = LastDate(dia=yesterday, scanned=False)
+    session.add(new_date)
+    session.commit()
 
-racing_date = get_date(session)
+scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
+if not scanned_date:
+    logging.info('Todos os dias na tabela foram escaneados!')
+    print('Todos os dias na tabela foram escaneados!')
+    sys.exit('Encerrado por não possuir dia para escanear!')
+else:
+    session.query(LastDate).filter(LastDate.dia == scanned_date).update({LastDate.scanned: True})
+    session.commit()
 
 # Configura o logger para escrever logs em um arquivo com nível INFO
-logging.basicConfig(filename=f'{log_dir}/{racing_date}-GetLinks.log', 
+logging.basicConfig(filename=f'{log_dir}/{scanned_date}-GetLinks.log', 
                     format='%(asctime)s %(message)s', 
                     filemode='w',
                     level=logging.INFO,
                     encoding='utf-8')
-logging.info(f'Dia escaneado: {racing_date}')
-print(f'Dia escaneado: {racing_date}')
+logging.info(f'Dia escaneado: {scanned_date}')
+print(f'Dia escaneado: {scanned_date}')
 
 rp_lista = []
 tf_lista = []
 
 driver1 = webdriver.Chrome(service=service, options=chrome_options)
-rp_href = f'https://greyhoundbet.racingpost.com/#results-list/r_date={racing_date}'
+rp_href = f'https://greyhoundbet.racingpost.com/#results-list/r_date={scanned_date}'
 driver1.get(rp_href)
 driver1.implicitly_wait(5)
 src1 = driver1.find_element(By.XPATH, "//div[@class='scrollContent']").get_attribute('outerHTML')
@@ -208,7 +206,7 @@ else:
     # Iterar sobre cada link e salvar no banco de dados
     for link_href in links:
         exists_query = session.query(exists().where(
-            (PageSource.dia == racing_date) &
+            (PageSource.dia == scanned_date) &
             (PageSource.url == rp_href) &
             (PageSource.site == 'rp') &
             (PageSource.scanned_level == 'obter_links') &
@@ -217,7 +215,7 @@ else:
         
         if not exists_query and re.match(r'^#result-meeting-result/race_id=\d+&track_id=\d+&r_date=\d+-\d+-\d+&r_time=\d+:\d+', link_href):
             link = PageSource(
-                dia=racing_date,
+                dia=scanned_date,
                 url=rp_href,
                 site='rp',
                 scanned_level='obter_links',
@@ -231,7 +229,7 @@ else:
 driver1.quit()
 
 driver2 = webdriver.Chrome(service=service, options=chrome_options)
-tf_href = f'https://www.timeform.com/greyhound-racing/results/{racing_date}'
+tf_href = f'https://www.timeform.com/greyhound-racing/results/{scanned_date}'
 driver2.get(tf_href)
 driver2.implicitly_wait(3)
 src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
@@ -268,7 +266,7 @@ else:
     # Iterar sobre cada link e salvar no banco de dados
     for link_href in links:
         exists_query = session.query(exists().where(
-            (PageSource.dia == racing_date) &
+            (PageSource.dia == scanned_date) &
             (PageSource.url == rp_href) &
             (PageSource.site == 'tf') &
             (PageSource.scanned_level == 'obter_links') &
@@ -277,7 +275,7 @@ else:
         
         if not exists_query and re.match(r'^/greyhound-racing/results/\w+/\d+/\d+-\d+-\d+/\d+', link_href):
             link = PageSource(
-                dia=racing_date,
+                dia=scanned_date,
                 url=rp_href,
                 site='tf',
                 scanned_level='obter_links',
@@ -435,8 +433,8 @@ if tf_vazio == False:
 session.commit()
 session.close()
 
-logging.info(f'Data escaneada: {racing_date}')
-print(f'Data escaneada: {racing_date}')
+logging.info(f'Data escaneada: {scanned_date}')
+print(f'Data escaneada: {scanned_date}')
 logging.info('Finalizado!')
 print('Finalizado!')
 
