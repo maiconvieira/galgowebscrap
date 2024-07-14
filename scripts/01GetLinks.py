@@ -156,7 +156,7 @@ if not session.query(session.query(LastDate).filter(LastDate.dia == tomorrow).ex
     session.commit()
 
 scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
-if not scanned_date:
+if not scanned_date or scanned_date > today:
     logging.info('Todos os dias na tabela foram escaneados!')
     print('Todos os dias na tabela foram escaneados!')
     sys.exit('Encerrado por não possuir dia para escanear!')
