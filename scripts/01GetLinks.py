@@ -149,6 +149,12 @@ if not session.query(session.query(LastDate).filter(LastDate.dia == yesterday).e
     session.add(new_date)
     session.commit()
 
+tomorrow = today + timedelta(days=1)
+if not session.query(session.query(LastDate).filter(LastDate.dia == tomorrow).exists()).scalar():
+    new_date = LastDate(dia=tomorrow, scanned=False)
+    session.add(new_date)
+    session.commit()
+
 scanned_date = session.query(func.min(LastDate.dia)).filter(LastDate.scanned == False).scalar()
 if not scanned_date:
     logging.info('Todos os dias na tabela foram escaneados!')
@@ -267,7 +273,7 @@ else:
     for link_href in links:
         exists_query = session.query(exists().where(
             (PageSource.dia == scanned_date) &
-            (PageSource.url == rp_href) &
+            (PageSource.url == tf_href) &
             (PageSource.site == 'tf') &
             (PageSource.scanned_level == 'obter_links') &
             (PageSource.html_source == link_href)
@@ -276,7 +282,7 @@ else:
         if not exists_query and re.match(r'^/greyhound-racing/results/\w+/\d+/\d+-\d+-\d+/\d+', link_href):
             link = PageSource(
                 dia=scanned_date,
-                url=rp_href,
+                url=tf_href,
                 site='tf',
                 scanned_level='obter_links',
                 html_source=link_href
