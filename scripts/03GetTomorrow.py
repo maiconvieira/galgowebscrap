@@ -234,13 +234,29 @@ src3 = driver3.find_element(By.XPATH, "//div[@class='webAppPage card']").get_att
 rp_soup = BeautifulSoup(src3, 'html.parser')
 driver3.quit()
 
-driver4 = webdriver.Chrome(service=service, options=chrome_options)    
+driver4 = webdriver.Chrome(service=service, options=chrome_options)
 #driver4.get(row['tf_url'])
-driver4.get('https://www.timeform.com/greyhound-racing/racecards/towcester/2052/2024-07-28/1211053')
-#driver4.get('https://www.timeform.com/greyhound-racing/racecards/yarmouth/1152/2024-07-28/1211882')
-driver4.implicitly_wait(5)
-src4 = driver4.find_element(By.XPATH, "//section[@class='mb-bfw-racecard mb-bfw']").get_attribute('outerHTML')
-tf_soup = BeautifulSoup(src4, 'html.parser')
+tf_url = 'https://www.timeform.com/greyhound-racing/racecards/towcester/2052/2024-07-28/1211053'
+#tf_url = 'https://www.timeform.com/greyhound-racing/racecards/yarmouth/1152/2024-07-28/1211882'
+driver4.get(tf_url)
+
+target_string = 'For data, please visit https://www.globalsportsapi.com/'
+max_retries = 5
+retry_count = 0
+
+while retry_count < max_retries:
+    body_text = driver4.find_element(By.TAG_NAME, 'body').text
+    if body_text == target_string:
+        print(f'String encontrada, aguardando 5 segundos... (Tentativa {retry_count+1}/{max_retries})')
+        time.sleep(5)
+        retry_count += 1
+        driver4.refresh()
+    else:
+        print('String não encontrada, continuando com o script...')
+        driver4.implicitly_wait(5)
+        src4 = driver4.find_element(By.XPATH, "//section[@class='mb-bfw-racecard mb-bfw']").get_attribute('outerHTML')
+        tf_soup = BeautifulSoup(src4, 'html.parser')
+        break
 driver4.quit()
 
 div_track = rp_soup.find('div', class_='pageHeader')
