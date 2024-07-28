@@ -15,7 +15,7 @@ import pandas as pd
 log_dir, driver_path = '', ''
 if platform.system() == 'Windows':
     log_dir = 'D:/Projetos/galgowebscrap/logs'
-    driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/124.0.6367.155/chromedriver-win32/chromedriver.exe'
+    driver_path = 'C:/Users/maico/.wdm/drivers/chromedriver/win64/127.0.6533.72/chromedriver.exe'
 elif platform.system() == 'Linux':
     log_dir = '/home/maicon/galgowebscrap/logs'
     driver_path = '/home/maicon/.wdm/drivers/chromedriver/linux64/127.0.6533.72/chromedriver'
@@ -234,10 +234,25 @@ driver1.quit()
 driver2 = webdriver.Chrome(service=service, options=chrome_options)
 tf_href = f'https://www.timeform.com/greyhound-racing/results/{scanned_date}'
 driver2.get(tf_href)
-driver2.implicitly_wait(3)
-src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
-pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
-links2 = pattern2.findall(src2)
+
+target_string = 'For data, please visit https://www.globalsportsapi.com/'
+max_retries = 5
+retry_count = 0
+
+while retry_count < max_retries:
+    body_text = driver2.find_element(By.TAG_NAME, 'body').text
+    if body_text == target_string:
+        print(f'String encontrada, aguardando 5 segundos... (Tentativa {retry_count+1}/{max_retries})')
+        time.sleep(5)
+        retry_count += 1
+        driver2.refresh()
+    else:
+        print('String não encontrada, continuando com o script...')
+        driver2.implicitly_wait(3)
+        src2 = driver2.find_element(By.XPATH, "//section[@class='w-archive-full']").get_attribute('outerHTML')
+        pattern2 = re.compile(r'(/results/[\w-]+/\d+/[\d-]+/\d+)')
+        links2 = pattern2.findall(src2)
+        break
 logging.info(f'Timeform Link: {tf_href}')
 print(f'Timeform Link: {tf_href}')
 
