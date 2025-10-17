@@ -1,0 +1,16 @@
+/py3.12_galgo/
+venv/
+*.venv
+
+__pycache__/
+*.pyc
+
+.env
+*.env
+
+*.pem
+ca_sinsej.pem
+ca_maicon.pem
+
+.vscode/
+.idea/

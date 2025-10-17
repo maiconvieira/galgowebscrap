@@ -1,0 +1,7 @@
+sqlalchemy
+psycopg2-binary
+selenium
+alembic
+python-dotenv
+webdriver-manager
+beautifulsoup4
