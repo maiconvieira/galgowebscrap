@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, Date, Text, ForeignKey, UniqueConstraint, DateTime, Table
 from sqlalchemy.orm import relationship
-from conexao import Base
+from .conexao import Base
 from datetime import datetime, UTC
 
 
@@ -128,7 +128,7 @@ class HistoricoCorrida(Base):
     categoria = Column(String(20))
     eye = Column(String(10))
     proxy = Column(String(10))
-    faixa = Column(Integer)
+    faixa = Column(String(10))
     tf_sec = Column(Numeric(5, 2))
     bend = Column(Integer)
     fin = Column(Integer)
@@ -146,7 +146,10 @@ class HistoricoCorrida(Base):
     gng = Column(String(20))
     wght = Column(String(20))
     caltm = Column(Numeric(5, 2))
-    video_url = Column(String(500))
+    video_href_raw = Column(String(500), nullable=True)
+    video_url = Column(String(500), nullable=True)
+    video_status = Column(String(20), nullable=False, default='pending', index=True)
+    # Status possíveis: 'pending', 'resolved', 'not_found', 'error'
     
     # Relacionamento
     galgo = relationship("Galgo", back_populates="historico")

@@ -6,12 +6,14 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 from app.db.conexao import Base
+from app.db import modelos
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
 def get_url():
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
