@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 from app.db.conexao import Base
-from app.db import modelos
+from app.core import schemas
 
 config = context.config
 if config.config_file_name is not None:

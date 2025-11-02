@@ -10,13 +10,11 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 
 # Importa as funções auxiliares e configurações
 from app.core import config
-from app.utils.helpers import padronizar_data, analisar_posicao_final
+from app.core.helpers import padronizar_data, analisar_posicao_final, _limpar_rating_para_int
 
 def extrair_links_tf(driver, data_para_buscar):
-    data_url = data_para_buscar.strftime('%Y-%m-%d')
     url_diaria = f"{config.URL_BASE_TF}/greyhound-racing/racecards"
-    
-    logging.info(f"Acessando Timeform para a data: {data_url}")
+    logging.info(f"Acessando Timeform para a data: {data_para_buscar.strftime('%Y-%m-%d')}")
     
     try:
         driver.get(url_diaria)
@@ -25,10 +23,6 @@ def extrair_links_tf(driver, data_para_buscar):
     except TimeoutException:
         logging.error("A página do Timeform não carregou a lista de corridas a tempo.")
         return []
-
-    sort_time_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-setting='GreyhoundsRacecardSort']")))
-    driver.execute_script("arguments[0].click();", sort_time_button)
-    time.sleep(1)
 
     ##############################################################################
     #try:
@@ -118,8 +112,7 @@ def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: in
                     dados_da_corrida['premios'] = ' '.join(texto_corrigido.split())
 
                 perfil_el = details_el.find('p', class_='rph-track-profile')
-                if perfil_el:
-                    dados_da_corrida['perfil_pista'] = perfil_el.get_text(strip=True).replace("Track Profile:", "").strip()
+                dados_da_corrida['perfil_pista'] = perfil_el.get_text(strip=True).replace("Track Profile:", "").strip() if perfil_el else None
 
             favoritos_el = soup.find('p', class_='rpf-betting-forecast')
             if favoritos_el:
@@ -157,10 +150,10 @@ def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: in
                     if traprec_el: dados_participante['trap_rec'] = traprec_el.get_text(strip=True)
 
                     mstr_el = faixa_corrida.find('div', class_='rpb-rating rpb-final-rating')
-                    if mstr_el: dados_participante['mstr'] = mstr_el.get_text(strip=True)
+                    if mstr_el: dados_participante['mstr'] = int(mstr_el.get_text(strip=True))
 
                     sect_el = faixa_corrida.find('div', class_='rpb-rating rpb-sectional-rating')
-                    if sect_el: dados_participante['sect'] = sect_el.get_text(strip=True)
+                    if sect_el: dados_participante['sect'] = int(sect_el.get_text(strip=True))
 
                     form_el = faixa_corrida.find('span', title='The previous 5 finishing positions of this greyhound')
                     if form_el: dados_participante['form'] = form_el.get_text(strip=True)
@@ -171,7 +164,7 @@ def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: in
                         if '(' in trainer_full:
                             partes = trainer_full.split(' (', 1)
                             dados_participante['treinador'] = partes[0].strip().title()
-                            dados_participante['strike_rate'] = partes[1].replace(')', '').strip() if len(partes) > 1 else None
+                            dados_participante['strike_rate'] = float(partes[1].replace('%)', '').strip()) if len(partes) > 1 else None
                         else:
                             dados_participante['treinador'] = trainer_full.strip().title()
 
@@ -191,7 +184,7 @@ def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: in
                     if seed_el: dados_participante['seed'] = seed_el.get_text(strip=True)
 
                     comment_el = faixa_corrida.find('b', title="Timeform's comment summing up the prospect for each greyhound in this race")
-                    if comment_el: dados_participante['comment'] = comment_el.get_text(strip=True)
+                    if comment_el: dados_participante['comment_tf'] = comment_el.get_text(strip=True)
 
                     # --- Extração do Histórico deste Galgo ---
 
@@ -224,24 +217,36 @@ def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: in
                                 except (ValueError, TypeError):
                                     dados_linha_hist['distancia'] = None
                                 dados_linha_hist['categoria'] = tds[4].get_text(strip=True)
-                                dados_linha_hist['eye'] = tds[5].get_text(strip=True)
-                                dados_linha_hist['proxy'] = tds[6].get_text(strip=True)
-                                dados_linha_hist['faixa'] = tds[7].get_text(strip=True)
+                                try:
+                                    dados_linha_hist['proxy'] = int(tds[6].get_text(strip=True))
+                                except (ValueError, TypeError):
+                                    dados_linha_hist['proxy'] = None
+                                try:
+                                    dados_linha_hist['faixa'] = int(tds[7].get_text(strip=True))
+                                except (ValueError, TypeError):
+                                    dados_linha_hist['faixa'] = None
                                 try:
                                     dados_linha_hist['tf_sec'] = float(tds[8].get_text(strip=True))
                                 except (ValueError, TypeError):
                                     dados_linha_hist['tf_sec'] = None
-                                dados_linha_hist['bend'] = tds[9].get_text(strip=True)
+                                dados_linha_hist['bend'] = tds[9].get_text(strip=True) if tds[9].get_text(strip=True) != "" else None
                                 dados_linha_hist['fin'] = analisar_posicao_final(tds[10].get_text(strip=True))
                                 dados_linha_hist['btn_by'] = tds[11].get_text(strip=True)
-                                dados_linha_hist['tf_going'] = tds[12].get_text(strip=True)
+                                try:
+                                    dados_linha_hist['tf_going'] = float(tds[12].get_text(strip=True))
+                                except (ValueError, TypeError):
+                                    dados_linha_hist['tf_going'] = None
                                 dados_linha_hist['isp'] = tds[13].get_text(strip=True)
                                 try:
                                     dados_linha_hist['tf_time'] = float(tds[14].get_text(strip=True))
                                 except (ValueError, TypeError):
                                     dados_linha_hist['tf_time'] = None
-                                dados_linha_hist['sec_rtg'] = tds[15].get_text(strip=True)
-                                dados_linha_hist['rtg'] = tds[16].get_text(strip=True)
+                                
+                                texto_sec_rtg = tds[15].get_text(strip=True)
+                                texto_rtg     = tds[16].get_text(strip=True)
+
+                                dados_linha_hist['sec_rtg'] = _limpar_rating_para_int(texto_sec_rtg)
+                                dados_linha_hist['rtg']     = _limpar_rating_para_int(texto_rtg)
 
                                 historico_deste_galgo.append(dados_linha_hist)
 

@@ -33,6 +33,7 @@ def obter_data_alvo():
     if agora.time() >= config.HORARIO_CORTE_BUSCA:
         return hoje + timedelta(days=1)
     else:
+        #return hoje + timedelta(days=1)
         return hoje
 
 def analisar_posicao_final(texto_data):
@@ -52,12 +53,11 @@ def json_serializador_de_data(o):
         return o.isoformat()
     raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
 
-def salvar_dados_em_json(dados_para_salvar: list, nome_fonte: str, sufixo_arquivo: str):
+def salvar_dados_em_json(dados_para_salvar: list, nome_fonte: str, sufixo_arquivo: str, data_alvo: date):
     if not dados_para_salvar:
         logging.warning(f"Nenhum dado detalhado do {nome_fonte} foi recebido para salvar.")
         return
 
-    data_alvo = obter_data_alvo()
     data_alvo_str = data_alvo.strftime('%Y-%m-%d')
     nome_arquivo = f"{data_alvo_str}_scraped_{sufixo_arquivo}.json"
     caminho_saida = os.path.join(config.PASTA_DE_DADOS, nome_arquivo)
@@ -95,3 +95,40 @@ def salvar_dados_em_json(dados_para_salvar: list, nome_fonte: str, sufixo_arquiv
         logging.info(f"-> Dados do {nome_fonte} salvos com sucesso em '{caminho_saida}'!")
     except Exception as e:
         logging.error(f"!! ERRO ao salvar o arquivo JSON do {nome_fonte}.", exc_info=True)
+
+def _converter_fracao_para_float(fracao_str: str) -> float | None:
+    if not fracao_str or not isinstance(fracao_str, str):
+        return None
+    
+    try:
+        fracao_limpa = fracao_str.strip().rstrip('FJ')
+        if '/' not in fracao_limpa:
+            return None
+
+        partes = fracao_limpa.split('/')
+        if len(partes) != 2:
+            return None
+            
+        numerador = float(partes[0].strip())
+        denominador = float(partes[1].strip())
+        
+        if denominador == 0:
+            return None
+            
+        return numerador / denominador
+    except (ValueError, TypeError):
+        return None
+
+def _limpar_rating_para_int(texto_bruto: str | None) -> int | None:
+    if not texto_bruto:
+        return None
+
+    texto_limpo = texto_bruto.strip()
+    if texto_limpo == "-" or not texto_limpo:
+        return None
+
+    try:
+        return int(texto_limpo)
+    except ValueError:
+        logging.warning(f"Valor de rating inesperado encontrado: '{texto_limpo}'. Ignorando.")
+        return None
