@@ -136,7 +136,6 @@ def mesclar_dados_scraped(dados_tf: list, dados_gh: list, data_alvo: date) -> li
 
 def processar_e_salvar_dados(data_alvo: date):
     logging.info(f"Iniciando ETL (Processamento T & L) para a data: {data_alvo.strftime('%Y-%m-%d')}")
-    data_str = data_alvo.strftime('%Y-%m-%d')
 
     dados_tf, dados_gh = carregar_dados_json(data_alvo)
     if not dados_tf:
@@ -146,14 +145,6 @@ def processar_e_salvar_dados(data_alvo: date):
              return
 
     corridas_mescladas = mesclar_dados_scraped(dados_tf, dados_gh, data_alvo)
-
-    caminho_debug_1 = os.path.join(config.PASTA_DE_DADOS, f"{data_str}_debug_1_mesclado_bruto.json")
-    try:
-        with open(caminho_debug_1, 'w', encoding='utf-8') as f:
-            json.dump(corridas_mescladas, f, indent=2, default=json_serializador_de_data)
-        logging.info(f"Arquivo de debug 1 (bruto mesclado) salvo em: {caminho_debug_1}")
-    except Exception as e_json:
-        logging.error(f"Falha ao salvar JSON de debug 1: {e_json}")
 
     logging.info(f"Aplicando filtros de ML (Categoria e Distância) em {len(corridas_mescladas)} corridas...")
     corridas_filtradas = []
@@ -179,7 +170,6 @@ def processar_e_salvar_dados(data_alvo: date):
         logging.warning(f"  -> {contagem_descarte['categoria']} corridas descartadas por categoria (fora de {config.CATEGORIAS_PERMITIDAS}).")
 
     corridas_validadas_pydantic = []
-    corridas_validadas_dict = []
     falhas_validacao = 0
 
     logging.info(f"Iniciando limpeza e validação de {len(corridas_filtradas)} corridas...")
@@ -197,8 +187,6 @@ def processar_e_salvar_dados(data_alvo: date):
             corrida_com_features = corrida_para_features
             corrida_validada_pydantic = CorridaCompleta(**corrida_com_features.model_dump())
             corridas_validadas_pydantic.append(corrida_validada_pydantic)
-            
-            corridas_validadas_dict.append(corrida_validada_pydantic.model_dump())
         
         except ValidationError as e:
             href = dados_corrida.get('href_tf', 'N/A')
@@ -208,14 +196,6 @@ def processar_e_salvar_dados(data_alvo: date):
             href = dados_corrida.get('href_tf', 'N/A')
             logging.error(f"Falha inesperada ao limpar a corrida {href}.", exc_info=True)
             falhas_validacao += 1
-
-    caminho_debug_2 = os.path.join(config.PASTA_DE_DADOS, f"{data_str}_debug_2_reorganizado_limpo.json")
-    try:
-        with open(caminho_debug_2, 'w', encoding='utf-8') as f:
-            json.dump(corridas_validadas_dict, f, indent=2, default=json_serializador_de_data)
-        logging.info(f"Arquivo de debug 2 (limpo/pydantic) salvo em: {caminho_debug_2}")
-    except Exception as e_json:
-        logging.error(f"Falha ao salvar JSON de debug 2: {e_json}")
 
     if falhas_validacao > 0:
         logging.warning(f"Houveram {falhas_validacao} falhas de validação/limpeza que foram descartadas.")
