@@ -1,0 +1,881 @@
+{
+  "data_corrida": "2023-12-15",
+  "corridas": [
+    {
+      "href_gh": "#result-meeting-result/race_id=2023406&track_id=76&r_date=2023-12-15&r_time=11:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023407&track_id=76&r_date=2023-12-15&r_time=11:21"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023408&track_id=76&r_date=2023-12-15&r_time=11:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023409&track_id=76&r_date=2023-12-15&r_time=11:51"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023410&track_id=76&r_date=2023-12-15&r_time=12:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023411&track_id=76&r_date=2023-12-15&r_time=12:21"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023412&track_id=76&r_date=2023-12-15&r_time=12:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023413&track_id=76&r_date=2023-12-15&r_time=12:51"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023414&track_id=76&r_date=2023-12-15&r_time=13:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023415&track_id=76&r_date=2023-12-15&r_time=13:21"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023416&track_id=76&r_date=2023-12-15&r_time=13:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023417&track_id=76&r_date=2023-12-15&r_time=13:51"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022839&track_id=70&r_date=2023-12-15&r_time=11:13"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022840&track_id=70&r_date=2023-12-15&r_time=11:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022841&track_id=70&r_date=2023-12-15&r_time=11:43"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022842&track_id=70&r_date=2023-12-15&r_time=11:58"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022843&track_id=70&r_date=2023-12-15&r_time=12:13"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022844&track_id=70&r_date=2023-12-15&r_time=12:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022845&track_id=70&r_date=2023-12-15&r_time=12:43"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022846&track_id=70&r_date=2023-12-15&r_time=12:58"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022847&track_id=70&r_date=2023-12-15&r_time=13:13"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022848&track_id=70&r_date=2023-12-15&r_time=13:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022849&track_id=70&r_date=2023-12-15&r_time=13:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022850&track_id=70&r_date=2023-12-15&r_time=13:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023439&track_id=6&r_date=2023-12-15&r_time=14:04"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023440&track_id=6&r_date=2023-12-15&r_time=14:19"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023441&track_id=6&r_date=2023-12-15&r_time=14:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023442&track_id=6&r_date=2023-12-15&r_time=14:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023443&track_id=6&r_date=2023-12-15&r_time=15:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023444&track_id=6&r_date=2023-12-15&r_time=15:26"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023445&track_id=6&r_date=2023-12-15&r_time=15:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023446&track_id=6&r_date=2023-12-15&r_time=16:04"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023447&track_id=6&r_date=2023-12-15&r_time=16:23"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023448&track_id=6&r_date=2023-12-15&r_time=16:43"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023449&track_id=6&r_date=2023-12-15&r_time=17:03"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023450&track_id=6&r_date=2023-12-15&r_time=17:22"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023451&track_id=39&r_date=2023-12-15&r_time=14:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023452&track_id=39&r_date=2023-12-15&r_time=14:27"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023453&track_id=39&r_date=2023-12-15&r_time=14:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023454&track_id=39&r_date=2023-12-15&r_time=14:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023455&track_id=39&r_date=2023-12-15&r_time=15:14"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023456&track_id=39&r_date=2023-12-15&r_time=15:34"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023457&track_id=39&r_date=2023-12-15&r_time=15:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023458&track_id=39&r_date=2023-12-15&r_time=16:14"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023459&track_id=39&r_date=2023-12-15&r_time=16:34"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023460&track_id=39&r_date=2023-12-15&r_time=16:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023461&track_id=39&r_date=2023-12-15&r_time=17:14"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023462&track_id=39&r_date=2023-12-15&r_time=17:33"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022889&track_id=33&r_date=2023-12-15&r_time=18:19"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022890&track_id=33&r_date=2023-12-15&r_time=18:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022891&track_id=33&r_date=2023-12-15&r_time=18:51"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022892&track_id=33&r_date=2023-12-15&r_time=19:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022893&track_id=33&r_date=2023-12-15&r_time=19:26"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022894&track_id=33&r_date=2023-12-15&r_time=19:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022895&track_id=33&r_date=2023-12-15&r_time=19:58"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022896&track_id=33&r_date=2023-12-15&r_time=20:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022897&track_id=33&r_date=2023-12-15&r_time=20:27"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022898&track_id=33&r_date=2023-12-15&r_time=20:46"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022899&track_id=33&r_date=2023-12-15&r_time=21:01"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022900&track_id=33&r_date=2023-12-15&r_time=21:16"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023135&track_id=61&r_date=2023-12-15&r_time=18:26"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023136&track_id=61&r_date=2023-12-15&r_time=18:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023137&track_id=61&r_date=2023-12-15&r_time=18:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023138&track_id=61&r_date=2023-12-15&r_time=19:16"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023139&track_id=61&r_date=2023-12-15&r_time=19:34"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023140&track_id=61&r_date=2023-12-15&r_time=19:51"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023141&track_id=61&r_date=2023-12-15&r_time=20:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023142&track_id=61&r_date=2023-12-15&r_time=20:21"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023143&track_id=61&r_date=2023-12-15&r_time=20:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023144&track_id=61&r_date=2023-12-15&r_time=20:52"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023145&track_id=61&r_date=2023-12-15&r_time=21:11"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023146&track_id=61&r_date=2023-12-15&r_time=21:26"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023113&track_id=63&r_date=2023-12-15&r_time=08:21"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023114&track_id=63&r_date=2023-12-15&r_time=08:37"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023115&track_id=63&r_date=2023-12-15&r_time=08:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023116&track_id=63&r_date=2023-12-15&r_time=09:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023117&track_id=63&r_date=2023-12-15&r_time=09:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023118&track_id=63&r_date=2023-12-15&r_time=09:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023119&track_id=63&r_date=2023-12-15&r_time=10:01"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023120&track_id=63&r_date=2023-12-15&r_time=10:19"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023121&track_id=63&r_date=2023-12-15&r_time=10:34"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023122&track_id=63&r_date=2023-12-15&r_time=10:49"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023046&track_id=69&r_date=2023-12-15&r_time=10:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023047&track_id=69&r_date=2023-12-15&r_time=11:16"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023048&track_id=69&r_date=2023-12-15&r_time=11:33"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023049&track_id=69&r_date=2023-12-15&r_time=11:49"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023050&track_id=69&r_date=2023-12-15&r_time=12:07"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023051&track_id=69&r_date=2023-12-15&r_time=12:24"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023052&track_id=69&r_date=2023-12-15&r_time=12:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023053&track_id=69&r_date=2023-12-15&r_time=12:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023054&track_id=69&r_date=2023-12-15&r_time=13:16"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023055&track_id=69&r_date=2023-12-15&r_time=13:32"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023056&track_id=69&r_date=2023-12-15&r_time=13:49"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023057&track_id=69&r_date=2023-12-15&r_time=14:07"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023394&track_id=5&r_date=2023-12-15&r_time=11:07"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023395&track_id=5&r_date=2023-12-15&r_time=11:23"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023396&track_id=5&r_date=2023-12-15&r_time=11:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023397&track_id=5&r_date=2023-12-15&r_time=11:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023398&track_id=5&r_date=2023-12-15&r_time=12:14"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023399&track_id=5&r_date=2023-12-15&r_time=12:31"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023400&track_id=5&r_date=2023-12-15&r_time=12:47"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023401&track_id=5&r_date=2023-12-15&r_time=13:07"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023402&track_id=5&r_date=2023-12-15&r_time=13:22"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023403&track_id=5&r_date=2023-12-15&r_time=13:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023404&track_id=5&r_date=2023-12-15&r_time=13:57"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023405&track_id=5&r_date=2023-12-15&r_time=14:16"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023204&track_id=73&r_date=2023-12-15&r_time=11:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023205&track_id=73&r_date=2023-12-15&r_time=11:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023206&track_id=73&r_date=2023-12-15&r_time=12:11"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023207&track_id=73&r_date=2023-12-15&r_time=12:27"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023208&track_id=73&r_date=2023-12-15&r_time=12:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023209&track_id=73&r_date=2023-12-15&r_time=13:02"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023210&track_id=73&r_date=2023-12-15&r_time=13:19"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023211&track_id=73&r_date=2023-12-15&r_time=13:37"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023212&track_id=73&r_date=2023-12-15&r_time=13:53"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023213&track_id=73&r_date=2023-12-15&r_time=14:11"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023123&track_id=1&r_date=2023-12-15&r_time=14:23"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023124&track_id=1&r_date=2023-12-15&r_time=14:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023125&track_id=1&r_date=2023-12-15&r_time=15:02"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023126&track_id=1&r_date=2023-12-15&r_time=15:18"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023127&track_id=1&r_date=2023-12-15&r_time=15:38"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023128&track_id=1&r_date=2023-12-15&r_time=15:58"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023129&track_id=1&r_date=2023-12-15&r_time=16:18"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023130&track_id=1&r_date=2023-12-15&r_time=16:38"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023131&track_id=1&r_date=2023-12-15&r_time=16:58"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023132&track_id=1&r_date=2023-12-15&r_time=17:18"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023133&track_id=1&r_date=2023-12-15&r_time=17:37"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023134&track_id=1&r_date=2023-12-15&r_time=17:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023473&track_id=4&r_date=2023-12-15&r_time=14:32"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023474&track_id=4&r_date=2023-12-15&r_time=14:52"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023475&track_id=4&r_date=2023-12-15&r_time=15:11"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023476&track_id=4&r_date=2023-12-15&r_time=15:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023477&track_id=4&r_date=2023-12-15&r_time=15:48"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023478&track_id=4&r_date=2023-12-15&r_time=16:08"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023479&track_id=4&r_date=2023-12-15&r_time=16:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023480&track_id=4&r_date=2023-12-15&r_time=16:48"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023481&track_id=4&r_date=2023-12-15&r_time=17:08"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023482&track_id=4&r_date=2023-12-15&r_time=17:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023483&track_id=4&r_date=2023-12-15&r_time=17:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023484&track_id=4&r_date=2023-12-15&r_time=18:02"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023214&track_id=11&r_date=2023-12-15&r_time=18:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023215&track_id=11&r_date=2023-12-15&r_time=18:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023217&track_id=11&r_date=2023-12-15&r_time=18:58"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023218&track_id=11&r_date=2023-12-15&r_time=19:18"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023219&track_id=11&r_date=2023-12-15&r_time=19:36"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023220&track_id=11&r_date=2023-12-15&r_time=19:56"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023221&track_id=11&r_date=2023-12-15&r_time=20:17"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023222&track_id=11&r_date=2023-12-15&r_time=20:38"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023223&track_id=11&r_date=2023-12-15&r_time=20:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023224&track_id=11&r_date=2023-12-15&r_time=21:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023225&track_id=11&r_date=2023-12-15&r_time=21:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023426&track_id=7&r_date=2023-12-15&r_time=18:17"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023427&track_id=7&r_date=2023-12-15&r_time=18:33"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023428&track_id=7&r_date=2023-12-15&r_time=18:48"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023429&track_id=7&r_date=2023-12-15&r_time=19:07"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023430&track_id=7&r_date=2023-12-15&r_time=19:24"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023431&track_id=7&r_date=2023-12-15&r_time=19:44"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023432&track_id=7&r_date=2023-12-15&r_time=20:03"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023433&track_id=7&r_date=2023-12-15&r_time=20:23"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023434&track_id=7&r_date=2023-12-15&r_time=20:43"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023436&track_id=7&r_date=2023-12-15&r_time=21:18"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023313&track_id=57&r_date=2023-12-15&r_time=18:53"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023314&track_id=57&r_date=2023-12-15&r_time=19:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023315&track_id=57&r_date=2023-12-15&r_time=19:28"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023316&track_id=57&r_date=2023-12-15&r_time=19:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023317&track_id=57&r_date=2023-12-15&r_time=19:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023318&track_id=57&r_date=2023-12-15&r_time=20:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023319&track_id=57&r_date=2023-12-15&r_time=20:29"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023320&track_id=57&r_date=2023-12-15&r_time=20:47"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023321&track_id=57&r_date=2023-12-15&r_time=21:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023322&track_id=57&r_date=2023-12-15&r_time=21:22"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023226&track_id=11&r_date=2023-12-15&r_time=21:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023463&track_id=34&r_date=2023-12-15&r_time=19:34"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023464&track_id=34&r_date=2023-12-15&r_time=19:51"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023465&track_id=34&r_date=2023-12-15&r_time=20:08"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023466&track_id=34&r_date=2023-12-15&r_time=20:25"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023467&track_id=34&r_date=2023-12-15&r_time=20:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023468&track_id=34&r_date=2023-12-15&r_time=20:59"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023469&track_id=34&r_date=2023-12-15&r_time=21:16"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023470&track_id=34&r_date=2023-12-15&r_time=21:33"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023471&track_id=34&r_date=2023-12-15&r_time=21:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023472&track_id=34&r_date=2023-12-15&r_time=22:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023147&track_id=61&r_date=2023-12-15&r_time=21:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023148&track_id=61&r_date=2023-12-15&r_time=21:56"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023227&track_id=41&r_date=2023-12-15&r_time=19:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023228&track_id=41&r_date=2023-12-15&r_time=19:45"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023229&track_id=41&r_date=2023-12-15&r_time=20:00"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023230&track_id=41&r_date=2023-12-15&r_time=20:15"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023231&track_id=41&r_date=2023-12-15&r_time=20:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023232&track_id=41&r_date=2023-12-15&r_time=20:45"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023233&track_id=41&r_date=2023-12-15&r_time=21:00"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023234&track_id=41&r_date=2023-12-15&r_time=21:15"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023235&track_id=41&r_date=2023-12-15&r_time=21:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023271&track_id=50&r_date=2023-12-15&r_time=19:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023272&track_id=50&r_date=2023-12-15&r_time=19:41"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023273&track_id=50&r_date=2023-12-15&r_time=19:55"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023274&track_id=50&r_date=2023-12-15&r_time=20:06"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023275&track_id=50&r_date=2023-12-15&r_time=20:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023276&track_id=50&r_date=2023-12-15&r_time=20:31"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023277&track_id=50&r_date=2023-12-15&r_time=20:45"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023278&track_id=50&r_date=2023-12-15&r_time=20:56"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023279&track_id=50&r_date=2023-12-15&r_time=21:10"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023280&track_id=50&r_date=2023-12-15&r_time=21:21"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023281&track_id=50&r_date=2023-12-15&r_time=21:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023237&track_id=42&r_date=2023-12-15&r_time=19:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023238&track_id=42&r_date=2023-12-15&r_time=19:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023239&track_id=42&r_date=2023-12-15&r_time=20:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023240&track_id=42&r_date=2023-12-15&r_time=20:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023241&track_id=42&r_date=2023-12-15&r_time=20:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023242&track_id=42&r_date=2023-12-15&r_time=20:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023243&track_id=42&r_date=2023-12-15&r_time=21:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023244&track_id=42&r_date=2023-12-15&r_time=21:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023245&track_id=42&r_date=2023-12-15&r_time=21:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023246&track_id=42&r_date=2023-12-15&r_time=21:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023324&track_id=58&r_date=2023-12-15&r_time=19:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023325&track_id=58&r_date=2023-12-15&r_time=19:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023326&track_id=58&r_date=2023-12-15&r_time=20:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023327&track_id=58&r_date=2023-12-15&r_time=20:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023328&track_id=58&r_date=2023-12-15&r_time=20:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023329&track_id=58&r_date=2023-12-15&r_time=20:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023330&track_id=58&r_date=2023-12-15&r_time=21:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023331&track_id=58&r_date=2023-12-15&r_time=21:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023332&track_id=58&r_date=2023-12-15&r_time=21:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023333&track_id=58&r_date=2023-12-15&r_time=21:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023283&track_id=40&r_date=2023-12-15&r_time=19:39"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023284&track_id=40&r_date=2023-12-15&r_time=19:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023285&track_id=40&r_date=2023-12-15&r_time=20:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023286&track_id=40&r_date=2023-12-15&r_time=20:24"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023287&track_id=40&r_date=2023-12-15&r_time=20:39"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023288&track_id=40&r_date=2023-12-15&r_time=20:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023289&track_id=40&r_date=2023-12-15&r_time=21:09"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023290&track_id=40&r_date=2023-12-15&r_time=21:24"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023291&track_id=40&r_date=2023-12-15&r_time=21:39"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023292&track_id=40&r_date=2023-12-15&r_time=21:54"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023301&track_id=21&r_date=2023-12-15&r_time=19:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023302&track_id=21&r_date=2023-12-15&r_time=19:57"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023303&track_id=21&r_date=2023-12-15&r_time=20:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023304&track_id=21&r_date=2023-12-15&r_time=20:27"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023305&track_id=21&r_date=2023-12-15&r_time=20:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023306&track_id=21&r_date=2023-12-15&r_time=20:57"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023307&track_id=21&r_date=2023-12-15&r_time=21:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023308&track_id=21&r_date=2023-12-15&r_time=21:27"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023309&track_id=21&r_date=2023-12-15&r_time=21:42"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023310&track_id=21&r_date=2023-12-15&r_time=21:57"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023311&track_id=21&r_date=2023-12-15&r_time=22:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022786&track_id=51&r_date=2023-12-15&r_time=19:45"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022787&track_id=51&r_date=2023-12-15&r_time=20:02"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023570&track_id=51&r_date=2023-12-15&r_time=20:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023571&track_id=51&r_date=2023-12-15&r_time=20:37"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023572&track_id=51&r_date=2023-12-15&r_time=20:55"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023573&track_id=51&r_date=2023-12-15&r_time=21:12"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023574&track_id=51&r_date=2023-12-15&r_time=21:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023575&track_id=51&r_date=2023-12-15&r_time=21:47"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023576&track_id=51&r_date=2023-12-15&r_time=22:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023577&track_id=51&r_date=2023-12-15&r_time=22:22"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023578&track_id=51&r_date=2023-12-15&r_time=22:40"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022423&track_id=49&r_date=2023-12-15&r_time=19:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022424&track_id=49&r_date=2023-12-15&r_time=20:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023264&track_id=49&r_date=2023-12-15&r_time=20:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023265&track_id=49&r_date=2023-12-15&r_time=20:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023266&track_id=49&r_date=2023-12-15&r_time=20:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023267&track_id=49&r_date=2023-12-15&r_time=21:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023268&track_id=49&r_date=2023-12-15&r_time=21:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023269&track_id=49&r_date=2023-12-15&r_time=21:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023270&track_id=49&r_date=2023-12-15&r_time=21:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022563&track_id=55&r_date=2023-12-15&r_time=20:00"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022564&track_id=55&r_date=2023-12-15&r_time=20:15"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023294&track_id=55&r_date=2023-12-15&r_time=20:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023295&track_id=55&r_date=2023-12-15&r_time=20:45"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023296&track_id=55&r_date=2023-12-15&r_time=21:00"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023297&track_id=55&r_date=2023-12-15&r_time=21:15"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022565&track_id=55&r_date=2023-12-15&r_time=21:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022566&track_id=55&r_date=2023-12-15&r_time=21:45"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023298&track_id=55&r_date=2023-12-15&r_time=22:00"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023299&track_id=55&r_date=2023-12-15&r_time=22:15"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023300&track_id=55&r_date=2023-12-15&r_time=22:30"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023248&track_id=88&r_date=2023-12-15&r_time=20:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023249&track_id=88&r_date=2023-12-15&r_time=20:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023250&track_id=88&r_date=2023-12-15&r_time=20:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023251&track_id=88&r_date=2023-12-15&r_time=21:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023252&track_id=88&r_date=2023-12-15&r_time=21:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023253&track_id=88&r_date=2023-12-15&r_time=21:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023254&track_id=88&r_date=2023-12-15&r_time=21:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023255&track_id=88&r_date=2023-12-15&r_time=22:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2022561&track_id=45&r_date=2023-12-15&r_time=20:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023257&track_id=45&r_date=2023-12-15&r_time=21:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023258&track_id=45&r_date=2023-12-15&r_time=21:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023259&track_id=45&r_date=2023-12-15&r_time=21:35"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023260&track_id=45&r_date=2023-12-15&r_time=21:50"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023261&track_id=45&r_date=2023-12-15&r_time=22:05"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023262&track_id=45&r_date=2023-12-15&r_time=22:20"
+    },
+    {
+      "href_gh": "#result-meeting-result/race_id=2023263&track_id=45&r_date=2023-12-15&r_time=22:35"
+    }
+  ]
+}

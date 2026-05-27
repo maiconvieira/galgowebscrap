@@ -1,7 +1,6 @@
 from sqlalchemy import (
     Column, Integer, String, Date, Time, Numeric, ForeignKey, 
-    UniqueConstraint, Index, Text,
-    DateTime, func
+    UniqueConstraint, Text, DateTime, func
 )
 from sqlalchemy.orm import relationship
 from app.db.conexao import Base

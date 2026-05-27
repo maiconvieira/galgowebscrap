@@ -5,7 +5,7 @@ from alembic import context
 from dotenv import load_dotenv
 import os
 load_dotenv()
-from app.db.conexao import Base
+from app.db.modelos import Base
 from app.core import schemas
 
 config = context.config

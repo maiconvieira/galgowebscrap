@@ -1,6 +1,7 @@
-import logging
 import re
 import time
+import random
+import logging
 from bs4 import BeautifulSoup
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -66,10 +67,9 @@ def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: in
             except TimeoutException:
                 logging.info(f"Nenhuma tabela de histórico encontrada em {url_completa} após a espera. Provavelmente não há dados de histórico.")
 
-            time.sleep(1)
+            time.sleep(random.uniform(0.5, 2))
 
             soup = BeautifulSoup(driver.page_source, 'html.parser')
-
             body = soup.find('body')
             if body:
                 body_content = body.get_text(strip=True)

@@ -3,8 +3,8 @@ import json
 import os
 from datetime import date, datetime, timedelta
 
-# Importa as configurações centralizadas
 from app.core import config
+from app.db.conexao import engine, Base
 
 def padronizar_data(texto_data):
     if not texto_data:
@@ -52,6 +52,27 @@ def json_serializador_de_data(o):
     if isinstance(o, (datetime, date)):
         return o.isoformat()
     raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
+def inicializar_banco_seguro():
+    try:
+        logging.info("Verificando e criando tabelas (se não existirem)...")
+        Base.metadata.create_all(bind=engine, checkfirst=True)
+        logging.info("Banco de dados verificado com sucesso.")
+    except Exception as e:
+        logging.critical(f"Não foi possível inicializar o banco de dados. Abortando.", exc_info=True)
+        raise
+
+def carregar_mapa_pistas():
+    try:
+        with open(config.ARQUIVO_MAPA_PISTAS, 'r') as f:
+            mapa_pistas = json.load(f)
+            return mapa_pistas
+    except FileNotFoundError:
+        logging.critical(f"Arquivo '{config.ARQUIVO_MAPA_PISTAS}' não encontrado. Abortando.")
+        return None
+    except json.JSONDecodeError:
+        logging.critical(f"Arquivo '{config.ARQUIVO_MAPA_PISTAS}' está corrompido (JSON inválido). Abortando.")
+        return None
 
 def salvar_dados_em_json(dados_para_salvar: list, nome_fonte: str, sufixo_arquivo: str, data_alvo: date):
     if not dados_para_salvar:
