@@ -9,8 +9,10 @@ __pycache__/
 *.env
 
 *.pem
-ca_sinsej.pem
-ca_maicon.pem
+*ca_sinsej.pem
+*ca_maicon.pem
 
 .vscode/
 .idea/
+
+data/
