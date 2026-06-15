@@ -1,8 +1,9 @@
 from datetime import time as dt_time
+import os
 
 # --- Configurações Gerais ---
 PASTA_DE_DADOS = "data"
-ARQUIVO_MAPA_PISTAS = f"{PASTA_DE_DADOS}/mapa_pistas.json"
+ARQUIVO_MAPA_PISTAS = os.path.join(PASTA_DE_DADOS, "mapa_pistas.json")
 
 # --- Configurações do Scanner ---
 HORARIO_CORTE_BUSCA = dt_time(21, 0)

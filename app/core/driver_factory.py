@@ -19,41 +19,27 @@ from urllib3.exceptions import ProtocolError, MaxRetryError
 driver_creation_lock = threading.Lock()
 
 def configurar_driver_uc(driver_path: str):
-    thread_id = threading.get_ident()
-    driver_dir = os.path.dirname(driver_path)
-    driver_name = os.path.basename(driver_path)
-    new_driver_name = f"{driver_name}_{thread_id}"
-    new_driver_path = os.path.join(driver_dir, new_driver_name)
+    options = uc.ChromeOptions()
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+
+    USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+    options.add_argument(f'--user-agent={USER_AGENT}')
 
     with driver_creation_lock:
         try:
-            if not os.path.exists(new_driver_path):
-                shutil.copy2(driver_path, new_driver_path)
-        except Exception as e:
-            logging.critical(f"Erro ao copiar driver para thread {thread_id}: {e}")
-            return None   
-     
-        options = uc.ChromeOptions()
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1920,1080")
-        USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
-        options.add_argument(f'--user-agent={USER_AGENT}')
-        
-        try:
-            driver = uc.Chrome(options=options, 
-                               use_subprocess=True,
-                               driver_executable_path=driver_path)
-
-            driver.custom_exe_path = new_driver_path
+            driver = uc.Chrome(
+                options=options,
+                use_subprocess=True,
+                driver_executable_path=driver_path)
 
             cooldown = random.uniform(5, 10)
             time.sleep(cooldown)
             return driver
         except Exception as e:
             logging.critical("Falha CRÍTICA ao criar a instância do driver (Undetected).", exc_info=True)
-            logging.error("Liberando lock após falha na criação do driver.")
             return None
 
 def configurar_driver_padrao(driver_path: str):
@@ -83,7 +69,6 @@ def warm_up_driver(driver_instance, url_base: str):
     if not driver_instance:
         return None
     try:
-        logging.info(f"Aquecendo o driver com a URL base: {url_base}")
         driver_instance.get(url_base)
         time.sleep(random.uniform(4, 7))
         if "timeform" in url_base:

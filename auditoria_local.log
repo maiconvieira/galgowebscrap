@@ -1,0 +1,270 @@
+2026-06-14 21:51:00,216 - INFO - ### INICIANDO AUDITORIA UNIFICADA (TESTE 1 E TESTE 2) ###
+2026-06-14 21:51:00,216 - INFO - Período: 2021-01-01 até 2021-01-31
+2026-06-14 21:51:00,216 - INFO - --- Auditando GH para a data: 2021-01-01 ---
+2026-06-14 21:51:00,220 - INFO - [2021-01-01 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,220 - INFO - [2021-01-01 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,223 - INFO - [2021-01-01 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,223 - INFO - --- Auditando TF para a data: 2021-01-01 ---
+2026-06-14 21:51:00,228 - INFO - [2021-01-01 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,228 - INFO - [2021-01-01 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,232 - INFO - [2021-01-01 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,232 - INFO - --- Auditando GH para a data: 2021-01-02 ---
+2026-06-14 21:51:00,241 - INFO - [2021-01-02 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,241 - INFO - [2021-01-02 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,247 - ERROR - [2021-01-02 | GH] TESTE 2 FALHOU (Participante): Campo 'sp_real' variou tipos: ['float', 'NoneType', 'str']
+2026-06-14 21:51:00,247 - INFO - --- Auditando TF para a data: 2021-01-02 ---
+2026-06-14 21:51:00,253 - WARNING - [2021-01-02 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,254 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 3 itens.
+2026-06-14 21:51:00,254 - INFO - [2021-01-02 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,258 - INFO - [2021-01-02 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,258 - INFO - --- Auditando GH para a data: 2021-01-03 ---
+2026-06-14 21:51:00,262 - INFO - [2021-01-03 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,262 - INFO - [2021-01-03 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,264 - INFO - [2021-01-03 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,264 - INFO - --- Auditando TF para a data: 2021-01-03 ---
+2026-06-14 21:51:00,270 - INFO - [2021-01-03 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,270 - INFO - [2021-01-03 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,272 - INFO - [2021-01-03 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,272 - INFO - --- Auditando GH para a data: 2021-01-04 ---
+2026-06-14 21:51:00,279 - INFO - [2021-01-04 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,279 - INFO - [2021-01-04 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,282 - INFO - [2021-01-04 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,282 - INFO - --- Auditando TF para a data: 2021-01-04 ---
+2026-06-14 21:51:00,288 - INFO - [2021-01-04 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,288 - INFO - [2021-01-04 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,291 - INFO - [2021-01-04 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,292 - INFO - --- Auditando GH para a data: 2021-01-05 ---
+2026-06-14 21:51:00,299 - INFO - [2021-01-05 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,299 - INFO - [2021-01-05 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,302 - INFO - [2021-01-05 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,302 - INFO - --- Auditando TF para a data: 2021-01-05 ---
+2026-06-14 21:51:00,308 - WARNING - [2021-01-05 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,309 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 3 itens.
+2026-06-14 21:51:00,309 - INFO - [2021-01-05 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,312 - INFO - [2021-01-05 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,312 - INFO - --- Auditando GH para a data: 2021-01-06 ---
+2026-06-14 21:51:00,318 - INFO - [2021-01-06 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,318 - INFO - [2021-01-06 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,321 - INFO - [2021-01-06 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,321 - INFO - --- Auditando TF para a data: 2021-01-06 ---
+2026-06-14 21:51:00,326 - WARNING - [2021-01-06 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,327 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 1 itens.
+2026-06-14 21:51:00,327 - INFO - [2021-01-06 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,329 - INFO - [2021-01-06 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,330 - INFO - --- Auditando GH para a data: 2021-01-07 ---
+2026-06-14 21:51:00,335 - INFO - [2021-01-07 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,336 - INFO - [2021-01-07 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,339 - INFO - [2021-01-07 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,339 - INFO - --- Auditando TF para a data: 2021-01-07 ---
+2026-06-14 21:51:00,345 - WARNING - [2021-01-07 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,345 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 3 itens.
+2026-06-14 21:51:00,345 - INFO - [2021-01-07 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,348 - INFO - [2021-01-07 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,349 - INFO - --- Auditando GH para a data: 2021-01-08 ---
+2026-06-14 21:51:00,356 - INFO - [2021-01-08 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,356 - INFO - [2021-01-08 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,359 - INFO - [2021-01-08 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,359 - INFO - --- Auditando TF para a data: 2021-01-08 ---
+2026-06-14 21:51:00,365 - WARNING - [2021-01-08 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,365 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,365 - INFO - [2021-01-08 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,369 - INFO - [2021-01-08 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,370 - INFO - --- Auditando GH para a data: 2021-01-09 ---
+2026-06-14 21:51:00,375 - INFO - [2021-01-09 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,375 - INFO - [2021-01-09 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,378 - INFO - [2021-01-09 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,378 - INFO - --- Auditando TF para a data: 2021-01-09 ---
+2026-06-14 21:51:00,384 - WARNING - [2021-01-09 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,384 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,384 - INFO - [2021-01-09 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,387 - INFO - [2021-01-09 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,388 - INFO - --- Auditando GH para a data: 2021-01-10 ---
+2026-06-14 21:51:00,392 - INFO - [2021-01-10 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,392 - INFO - [2021-01-10 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,395 - INFO - [2021-01-10 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,395 - INFO - --- Auditando TF para a data: 2021-01-10 ---
+2026-06-14 21:51:00,399 - INFO - [2021-01-10 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,400 - INFO - [2021-01-10 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,403 - INFO - [2021-01-10 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,403 - INFO - --- Auditando GH para a data: 2021-01-11 ---
+2026-06-14 21:51:00,409 - INFO - [2021-01-11 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,409 - INFO - [2021-01-11 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,413 - INFO - [2021-01-11 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,415 - INFO - --- Auditando TF para a data: 2021-01-11 ---
+2026-06-14 21:51:00,420 - WARNING - [2021-01-11 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,420 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 4 itens.
+2026-06-14 21:51:00,420 - INFO - [2021-01-11 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,423 - INFO - [2021-01-11 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,423 - INFO - --- Auditando GH para a data: 2021-01-12 ---
+2026-06-14 21:51:00,431 - INFO - [2021-01-12 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,431 - INFO - [2021-01-12 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,436 - INFO - [2021-01-12 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,437 - INFO - --- Auditando TF para a data: 2021-01-12 ---
+2026-06-14 21:51:00,444 - WARNING - [2021-01-12 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,444 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 4 itens.
+2026-06-14 21:51:00,444 - INFO - [2021-01-12 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,448 - INFO - [2021-01-12 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,448 - INFO - --- Auditando GH para a data: 2021-01-13 ---
+2026-06-14 21:51:00,455 - INFO - [2021-01-13 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,455 - INFO - [2021-01-13 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,458 - INFO - [2021-01-13 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,459 - INFO - --- Auditando TF para a data: 2021-01-13 ---
+2026-06-14 21:51:00,465 - INFO - [2021-01-13 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,465 - INFO - [2021-01-13 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,468 - INFO - [2021-01-13 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,469 - INFO - --- Auditando GH para a data: 2021-01-14 ---
+2026-06-14 21:51:00,477 - INFO - [2021-01-14 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,477 - INFO - [2021-01-14 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,481 - INFO - [2021-01-14 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,481 - INFO - --- Auditando TF para a data: 2021-01-14 ---
+2026-06-14 21:51:00,488 - WARNING - [2021-01-14 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,488 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 3 itens.
+2026-06-14 21:51:00,488 - INFO - [2021-01-14 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,491 - INFO - [2021-01-14 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,491 - INFO - --- Auditando GH para a data: 2021-01-15 ---
+2026-06-14 21:51:00,498 - INFO - [2021-01-15 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,499 - INFO - [2021-01-15 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,503 - INFO - [2021-01-15 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,503 - INFO - --- Auditando TF para a data: 2021-01-15 ---
+2026-06-14 21:51:00,509 - WARNING - [2021-01-15 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,509 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,509 - INFO - [2021-01-15 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,512 - INFO - [2021-01-15 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,512 - INFO - --- Auditando GH para a data: 2021-01-16 ---
+2026-06-14 21:51:00,526 - INFO - [2021-01-16 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,527 - INFO - [2021-01-16 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,532 - INFO - [2021-01-16 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,533 - INFO - --- Auditando TF para a data: 2021-01-16 ---
+2026-06-14 21:51:00,548 - INFO - [2021-01-16 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,548 - INFO - [2021-01-16 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,552 - INFO - [2021-01-16 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,552 - INFO - --- Auditando GH para a data: 2021-01-17 ---
+2026-06-14 21:51:00,558 - INFO - [2021-01-17 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,558 - INFO - [2021-01-17 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,561 - INFO - [2021-01-17 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,561 - INFO - --- Auditando TF para a data: 2021-01-17 ---
+2026-06-14 21:51:00,565 - WARNING - [2021-01-17 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,566 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,566 - INFO - [2021-01-17 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,570 - INFO - [2021-01-17 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,570 - INFO - --- Auditando GH para a data: 2021-01-18 ---
+2026-06-14 21:51:00,576 - INFO - [2021-01-18 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,576 - INFO - [2021-01-18 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,580 - INFO - [2021-01-18 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,580 - INFO - --- Auditando TF para a data: 2021-01-18 ---
+2026-06-14 21:51:00,586 - WARNING - [2021-01-18 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,586 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 1 itens.
+2026-06-14 21:51:00,586 - INFO - [2021-01-18 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,589 - INFO - [2021-01-18 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,589 - INFO - --- Auditando GH para a data: 2021-01-19 ---
+2026-06-14 21:51:00,597 - INFO - [2021-01-19 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,598 - INFO - [2021-01-19 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,601 - INFO - [2021-01-19 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,602 - INFO - --- Auditando TF para a data: 2021-01-19 ---
+2026-06-14 21:51:00,609 - WARNING - [2021-01-19 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,609 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 4 itens.
+2026-06-14 21:51:00,609 - INFO - [2021-01-19 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,612 - INFO - [2021-01-19 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,613 - INFO - --- Auditando GH para a data: 2021-01-20 ---
+2026-06-14 21:51:00,620 - INFO - [2021-01-20 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,620 - INFO - [2021-01-20 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,624 - INFO - [2021-01-20 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,624 - INFO - --- Auditando TF para a data: 2021-01-20 ---
+2026-06-14 21:51:00,629 - INFO - [2021-01-20 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,629 - INFO - [2021-01-20 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,633 - INFO - [2021-01-20 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,633 - INFO - --- Auditando GH para a data: 2021-01-21 ---
+2026-06-14 21:51:00,641 - INFO - [2021-01-21 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,641 - INFO - [2021-01-21 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,645 - INFO - [2021-01-21 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,646 - INFO - --- Auditando TF para a data: 2021-01-21 ---
+2026-06-14 21:51:00,652 - WARNING - [2021-01-21 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,652 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,652 - INFO - [2021-01-21 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,656 - INFO - [2021-01-21 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,656 - INFO - --- Auditando GH para a data: 2021-01-22 ---
+2026-06-14 21:51:00,664 - INFO - [2021-01-22 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,664 - INFO - [2021-01-22 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,669 - INFO - [2021-01-22 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,669 - INFO - --- Auditando TF para a data: 2021-01-22 ---
+2026-06-14 21:51:00,674 - WARNING - [2021-01-22 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,674 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,674 - INFO - [2021-01-22 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,679 - INFO - [2021-01-22 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,679 - INFO - --- Auditando GH para a data: 2021-01-23 ---
+2026-06-14 21:51:00,685 - INFO - [2021-01-23 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,685 - INFO - [2021-01-23 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,689 - INFO - [2021-01-23 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,689 - INFO - --- Auditando TF para a data: 2021-01-23 ---
+2026-06-14 21:51:00,696 - WARNING - [2021-01-23 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,696 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 4 itens.
+2026-06-14 21:51:00,696 - INFO - [2021-01-23 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,699 - INFO - [2021-01-23 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,699 - INFO - --- Auditando GH para a data: 2021-01-24 ---
+2026-06-14 21:51:00,704 - INFO - [2021-01-24 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,704 - INFO - [2021-01-24 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,705 - INFO - [2021-01-24 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,706 - INFO - --- Auditando TF para a data: 2021-01-24 ---
+2026-06-14 21:51:00,709 - INFO - [2021-01-24 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,709 - INFO - [2021-01-24 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,710 - INFO - [2021-01-24 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,710 - INFO - --- Auditando GH para a data: 2021-01-25 ---
+2026-06-14 21:51:00,717 - INFO - [2021-01-25 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,717 - INFO - [2021-01-25 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,719 - INFO - [2021-01-25 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,720 - INFO - --- Auditando TF para a data: 2021-01-25 ---
+2026-06-14 21:51:00,725 - WARNING - [2021-01-25 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,725 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 3 itens.
+2026-06-14 21:51:00,725 - INFO - [2021-01-25 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,728 - INFO - [2021-01-25 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,728 - INFO - --- Auditando GH para a data: 2021-01-26 ---
+2026-06-14 21:51:00,736 - INFO - [2021-01-26 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,737 - INFO - [2021-01-26 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,740 - INFO - [2021-01-26 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,741 - INFO - --- Auditando TF para a data: 2021-01-26 ---
+2026-06-14 21:51:00,746 - WARNING - [2021-01-26 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,746 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 2 itens.
+2026-06-14 21:51:00,748 - INFO - [2021-01-26 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,750 - INFO - [2021-01-26 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,751 - INFO - --- Auditando GH para a data: 2021-01-27 ---
+2026-06-14 21:51:00,756 - INFO - [2021-01-27 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,758 - INFO - [2021-01-27 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,762 - INFO - [2021-01-27 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,763 - INFO - --- Auditando TF para a data: 2021-01-27 ---
+2026-06-14 21:51:00,768 - WARNING - [2021-01-27 | TF] Falha de Paridade Ficheiro Link vs Scraped.
+2026-06-14 21:51:00,769 - WARNING -   [-] Consta em LINKS, mas FALTA no SCRAPED: 4 itens.
+2026-06-14 21:51:00,769 - INFO - [2021-01-27 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,772 - INFO - [2021-01-27 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,772 - INFO - --- Auditando GH para a data: 2021-01-28 ---
+2026-06-14 21:51:00,779 - INFO - [2021-01-28 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,779 - INFO - [2021-01-28 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,783 - INFO - [2021-01-28 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,783 - INFO - --- Auditando TF para a data: 2021-01-28 ---
+2026-06-14 21:51:00,790 - INFO - [2021-01-28 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,790 - INFO - [2021-01-28 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,793 - INFO - [2021-01-28 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,794 - INFO - --- Auditando GH para a data: 2021-01-29 ---
+2026-06-14 21:51:00,802 - INFO - [2021-01-29 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,802 - INFO - [2021-01-29 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,806 - INFO - [2021-01-29 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,806 - INFO - --- Auditando TF para a data: 2021-01-29 ---
+2026-06-14 21:51:00,813 - INFO - [2021-01-29 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,813 - INFO - [2021-01-29 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,817 - INFO - [2021-01-29 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,817 - INFO - --- Auditando GH para a data: 2021-01-30 ---
+2026-06-14 21:51:00,825 - INFO - [2021-01-30 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,827 - INFO - [2021-01-30 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,831 - INFO - [2021-01-30 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,832 - INFO - --- Auditando TF para a data: 2021-01-30 ---
+2026-06-14 21:51:00,838 - INFO - [2021-01-30 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,838 - INFO - [2021-01-30 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,841 - INFO - [2021-01-30 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,842 - INFO - --- Auditando GH para a data: 2021-01-31 ---
+2026-06-14 21:51:00,846 - INFO - [2021-01-31 | GH] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,847 - INFO - [2021-01-31 | GH] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,849 - INFO - [2021-01-31 | GH] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,851 - INFO - --- Auditando TF para a data: 2021-01-31 ---
+2026-06-14 21:51:00,856 - INFO - [2021-01-31 | TF] Paridade de mapeamento interna: 100%.
+2026-06-14 21:51:00,856 - INFO - [2021-01-31 | TF] TESTE 1 OK: Nenhuma duplicata encontrada.
+2026-06-14 21:51:00,858 - INFO - [2021-01-31 | TF] TESTE 2 OK: Consistência do esquema validada com sucesso.
+2026-06-14 21:51:00,858 - INFO - ### AUDITORIA UNIFICADA CONCLUÍDA ###

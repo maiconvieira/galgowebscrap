@@ -51,7 +51,6 @@ def extrair_links_tf(driver, data_para_buscar):
 
 def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: int = 3):
     url_completa = f"{config.URL_BASE_TF}{trabalho['href_tf']}"
-    logging.info(f"Raspando resultados de: {url_completa}")
 
     for attempt in range(max_retries):
         try:

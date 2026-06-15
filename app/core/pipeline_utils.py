@@ -6,8 +6,8 @@ import logging
 from datetime import date
 
 from selenium.common.exceptions import WebDriverException, TimeoutException
-
 from urllib3.exceptions import ProtocolError, MaxRetryError
+
 from app.core import config
 from app.core.driver_factory import warm_up_driver
 from app.core.helpers import salvar_dados_em_json
@@ -67,10 +67,18 @@ def cache_links(nome_cache: str, funcao_extracao: callable, driver_factory: call
         'data_corrida': data_alvo_str,
         'corridas': lista_de_corridas
     }
+
     try:
         caminho_tmp = caminho_do_cache + ".tmp"
-        with open(caminho_tmp, 'w') as f:
+        with open(caminho_tmp, 'w', encoding='utf-8') as f:
             json.dump(novo_cache, f, indent=2)
+            
+        if os.path.exists(caminho_do_cache):
+            try:
+                os.remove(caminho_do_cache)
+            except OSError:
+                logging.warning(f"Arquivo {caminho_do_cache} travado por outro processo. Tentando forçar substituição.")
+                
         os.replace(caminho_tmp, caminho_do_cache)
         logging.info(f"-> Novos links ({len(lista_de_corridas)}) salvos em '{caminho_do_cache}' para a data {data_alvo_str}.")
     except Exception as e:
@@ -80,95 +88,59 @@ def cache_links(nome_cache: str, funcao_extracao: callable, driver_factory: call
 
     return lista_de_corridas
 
-def processar_lista_em_serie(lista_de_trabalho: list, funcao_raspagem: callable, mapa_json, url_base: str, driver_factory: callable, pausa_config: tuple, restart_por_trabalho: bool = False):
+def processar_lista_em_serie(lista_de_trabalho: list, funcao_raspagem: callable, mapa_json, url_base: str, driver_factory: callable, pausa_config: tuple):
     if not lista_de_trabalho:
         logging.info("Lista de trabalho vazia. Nenhum processamento necessário.")
         return []
 
     resultados = []
+    driver = None
+    try:
+        driver = driver_factory()   
+        driver = warm_up_driver(driver, url_base)
+        if not driver:
+            logging.critical("Não foi possível criar o driver principal. Abortando processamento serial.")
+            return []
 
-    if not restart_por_trabalho:
-        driver = None
-        try:
-            driver = driver_factory()   
-            driver = warm_up_driver(driver, url_base)
-            if not driver:
-                logging.critical("Não foi possível criar o driver principal. Abortando processamento serial.")
-                return []
-
-            total_trabalhos = len(lista_de_trabalho)
-            logging.info(f"Iniciando processamento serial (modo driver único) de {total_trabalhos} trabalhos...")
-
-            for i, trabalho in enumerate(lista_de_trabalho):
-                url_trabalho = trabalho.get('href_tf') or trabalho.get('href_gh')
-                logging.info(f"Processando [{i+1}/{total_trabalhos}]: {url_trabalho}")
-
-                try:
-                    resultado = funcao_raspagem(driver, trabalho, mapa_json)
-                    
-                    if resultado:
-                        resultados.append(resultado)
-                    else:
-                        logging.warning(f"Scraping de {url_trabalho} não retornou dados (possivelmente falhou após retentativas).")
-
-                except (WebDriverException, MaxRetryError, ProtocolError, TimeoutException, AttributeError) as e_driver_comm:
-                    logging.critical(f"ERRO CRÍTICO DE DRIVER/COMUNICAÇÃO ({type(e_driver_comm).__name__}) ao processar {url_trabalho}.", exc_info=True)
-                    logging.error("Tentando reiniciar o driver...")
-                    try:
-                        driver.quit()
-                    except:
-                        pass 
-                    
-                    driver = driver_factory()
-                    driver = warm_up_driver(driver, url_base)
-
-                    if not driver:
-                        logging.critical("Não foi possível reiniciar o driver. Abortando os trabalhos restantes.")
-                        break 
-
-                except Exception as e_parse:
-                    logging.error(f"Erro inesperado de scraping/parsing ao processar {url_trabalho}", exc_info=True)
-                
-                pausa_polida = random.uniform(pausa_config[0], pausa_config[1])
-                logging.info(f"Pausa de {pausa_polida:.1f}s...")
-                time.sleep(pausa_polida)
-        finally:
-            if driver:
-                logging.info("Fechando o driver principal (modo driver único) após concluir os trabalhos.")
-                driver.quit()
-
-    else:
         total_trabalhos = len(lista_de_trabalho)
-        logging.info(f"Iniciando processamento serial (modo 'um-driver-por-trabalho') de {total_trabalhos} trabalhos...")
+        logging.info(f"Iniciando processamento serial (modo driver único) de {total_trabalhos} trabalhos...")
 
         for i, trabalho in enumerate(lista_de_trabalho):
             url_trabalho = trabalho.get('href_tf') or trabalho.get('href_gh')
             logging.info(f"Processando [{i+1}/{total_trabalhos}]: {url_trabalho}")
 
-            driver = None
             try:
-                driver = driver_factory()
-                driver = warm_up_driver(driver, url_base)
-                if not driver:
-                    logging.error(f"Não foi possível criar o driver para o trabalho {url_trabalho}. Pulando.")
-                    continue
-
                 resultado = funcao_raspagem(driver, trabalho, mapa_json)
-                
                 if resultado:
                     resultados.append(resultado)
                 else:
-                    logging.warning(f"Scraping de {url_trabalho} não retornou dados.")
+                    logging.warning(f"Scraping de {url_trabalho} não retornou dados (possivelmente falhou após retentativas).")
 
             except (WebDriverException, MaxRetryError, ProtocolError, TimeoutException, AttributeError) as e_driver_comm:
-                logging.critical(f"ERRO CRÍTICE DE DRIVER/COMUNICAÇÃO ({type(e_driver_comm).__name__}) no trabalho {url_trabalho}. O driver será descartado.", exc_info=True)
+                logging.critical(f"ERRO CRÍTICO DE DRIVER/COMUNICAÇÃO ({type(e_driver_comm).__name__}) ao processar {url_trabalho}.", exc_info=True)
+                logging.error("Tentando reiniciar o driver...")
+                try:
+                    driver.quit()
+                except:
+                    pass 
+                
+                driver = driver_factory()
+                driver = warm_up_driver(driver, url_base)
+                if not driver:
+                    logging.critical("Não foi possível reiniciar o driver. Abortando os trabalhos restantes.")
+                    break 
+
             except Exception as e_parse:
                 logging.error(f"Erro inesperado de scraping/parsing ao processar {url_trabalho}", exc_info=True)
             
-            finally:
-                if driver:
-                    driver.quit()
-                logging.info(f"Driver do trabalho [{i+1}/{total_trabalhos}] fechado. Próxima iteração.")
+            pausa_polida = random.uniform(pausa_config[0], pausa_config[1])
+            logging.info(f"Pausa de {pausa_polida:.1f}s...")
+            time.sleep(pausa_polida)
+
+    finally:
+        if driver:
+            logging.info("Fechando o driver principal (modo driver único) após concluir os trabalhos.")
+            driver.quit()
 
     logging.info(f"Processamento serial concluído. {len(resultados)} resultados coletados.")
     return resultados
@@ -183,17 +155,15 @@ def executar_pipeline_site(
     url_base: str,
     driver_factory: callable,
     pausa_config: tuple,
-    data_alvo: date,
-    restart_por_trabalho: bool = False
+    data_alvo: date
 ):
     try:
         logging.info(f"### INICIANDO PIPELINE {nome_fonte.upper()} PARA {data_alvo.strftime('%Y-%m-%d')} ###")
         lista_links = cache_links(nome_cache_links, funcao_extracao, driver_factory, data_alvo)
         
         lista_de_trabalho_final = lista_links
-        chave_href = f"href_{sufixo_dados.split('_')[-1]}" # ex: "href_tf" ou "href_gh"
-        
-        # Verifica se um arquivo raspado *parcial* já existe
+        chave_href = f"href_{sufixo_dados.split('_')[-1]}"
+
         data_alvo_str = data_alvo.strftime('%Y-%m-%d')
         nome_arquivo_scraped = f"{data_alvo_str}_scraped_{sufixo_dados}.json"
         caminho_arquivo_scraped = os.path.join(config.PASTA_DE_DADOS, nome_arquivo_scraped)
@@ -202,8 +172,7 @@ def executar_pipeline_site(
             try:
                 with open(caminho_arquivo_scraped, 'r', encoding='utf-8') as f:
                     dados_raspados_existentes = json.load(f)
-                
-                # Cria um set de links que já foram raspados com sucesso
+
                 links_ja_raspados = {
                     corrida.get(chave_href) 
                     for corrida in dados_raspados_existentes 
@@ -211,19 +180,17 @@ def executar_pipeline_site(
                 }
                 
                 if links_ja_raspados:
-                    # Filtra a lista de trabalho
                     lista_de_trabalho_final = [
                         trabalho for trabalho in lista_links 
                         if trabalho.get(chave_href) not in links_ja_raspados
                     ]
-                    
                     logging.info(f"-> {nome_fonte}: Arquivo raspado parcial encontrado.")
                     logging.info(f"-> {nome_fonte}: Links de origem: {len(lista_links)}. Já raspados: {len(links_ja_raspados)}. Faltando: {len(lista_de_trabalho_final)}.")
                 
             except (json.JSONDecodeError, Exception) as e:
                 logging.warning(f"Não foi possível ler o arquivo raspado parcial '{caminho_arquivo_scraped}'. O scraping será re-executado.", exc_info=True)
         
-        dados_scraped = processar_lista_em_serie(lista_links, funcao_raspagem, mapa_json, url_base, driver_factory, pausa_config, restart_por_trabalho)
+        dados_scraped = processar_lista_em_serie(lista_links, funcao_raspagem, mapa_json, url_base, driver_factory, pausa_config)
         salvar_dados_em_json(dados_scraped, nome_fonte, sufixo_dados, data_alvo)
         logging.info(f"### PIPELINE {nome_fonte.upper()} CONCLUÍDO PARA {data_alvo.strftime('%Y-%m-%d')} ###")
     except Exception as e:
