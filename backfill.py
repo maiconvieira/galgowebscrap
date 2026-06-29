@@ -1,27 +1,47 @@
-import logging
 import os
+os.environ['WDM_LOG'] = '0'
+os.environ['WDM_PRINT_FIRST_LINE'] = 'False'
+
 import time
 import json
+import logging
 from datetime import date, timedelta
 from webdriver_manager.chrome import ChromeDriverManager
 from concurrent.futures import ThreadPoolExecutor
 from sqlalchemy import func, update
 from sqlalchemy.orm import Session
-
-# Imports do Banco de Dados para controle de progresso do Backfill
 from app.db.modelos import BackfillLog
 from app.db.conexao import SessionLocal, engine, Base
 from app.core import config
-
-# Imports de Extração
 from app.core.helpers import carregar_mapa_pistas
 from app.core.driver_factory import configurar_driver_uc, configurar_driver_padrao
 from app.core.pipeline_utils import executar_pipeline_site
 from app.scrapers import tf_arquivo_scraper as tf_results_scraper
 from app.scrapers import gh_arquivo_scraper as gh_results_scraper
 
+class TaxonomiaBackfillFormatter(logging.Formatter):
+    def format(self, record):
+        data_exec = self.formatTime(record, "%Y-%m-%d %H:%M:%S")
+        
+        t_name = record.threadName
+        if t_name == "MainThread":
+            thread_id = "SYS"
+        elif t_name.startswith("Worker_"):
+            thread_id = f"W{t_name.split('_')[1]}"
+        else:
+            thread_id = t_name[:3].upper()
+
+        status = record.levelname
+        if status == "WARNING": status = "WARN"
+        elif status == "ERROR": status = "ERR "
+        elif status == "CRITICAL": status = "CRIT"
+        elif status == "DEBUG": status = "DEBG"
+        else: status = status[:4].upper()
+        
+        return f"[{data_exec}][{thread_id:<3}][{record.name.split('.')[-1][:4].upper()}][{status:<4}] {record.getMessage()}"
+
 def popular_datas_pendentes(db: Session, start_date, end_date):
-    logging.info(f"Populando log de backfill de {start_date} até {end_date}...")
+    logging.info(f"Populando log de backfill de {start_date} até {end_date}")
     all_required_dates = {start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)}
 
     existing_dates = {dt[0] for dt in db.query(BackfillLog.data_corrida).filter(BackfillLog.data_corrida.between(start_date, end_date))}
@@ -30,23 +50,23 @@ def popular_datas_pendentes(db: Session, start_date, end_date):
     if dates_to_insert:
         db.bulk_save_objects([BackfillLog(data_corrida=dt, status='pending') for dt in sorted(list(dates_to_insert))])
         db.commit()
-        logging.info(f"{len(dates_to_insert)} novas datas adicionadas ao log.")
+        logging.info(f"Adicionadas {len(dates_to_insert)} novas datas pendentes ao banco.")
 
 def resetar_trabalhos_presos(db: Session):
     resultado = db.execute(update(BackfillLog).where(BackfillLog.status == 'running').values(status='pending'))
     if resultado.rowcount > 0:
         db.commit()
-        logging.warning(f"{resultado.rowcount} trabalhos travados resetados para 'pending'.")
+        logging.warning(f"Reset de emergência: {resultado.rowcount} trabalhos reativados para 'pending'.")
 
 def run_extraction_for_date(target_date: date, mapa_pistas: dict, driver_path: str):
     data_str = target_date.strftime('%Y-%m-%d')
-    logging.info(f"### EXTRAINDO DADOS BRUTOS PARA: {data_str} ###")
+    logging.info(f"Iniciando extração bruta para a data alvo: {data_str}")
 
     arquivo_gh = os.path.join(config.PASTA_DE_DADOS, f"{data_str}_scraped_1_gh.json")
     arquivo_tf = os.path.join(config.PASTA_DE_DADOS, f"{data_str}_scraped_1_tf.json")
 
     if os.path.exists(arquivo_tf) and os.path.exists(arquivo_gh):
-        logging.info(f"Arquivos JSON brutos já existem para {data_str}. Pulando raspagem.")
+        logging.info(f"Arquivos JSON já existem para {data_str}. Ponto de verificação atingido.")
         return
 
     with ThreadPoolExecutor(max_workers=2, thread_name_prefix='Worker') as executor:
@@ -81,45 +101,31 @@ def run_extraction_for_date(target_date: date, mapa_pistas: dict, driver_path: s
         future_tf.result()
         future_gh.result()
         
-    logging.info(f"Extração bruta para {data_str} concluída e salva em disco.")
+    logging.info(f"Processamento concluído e salvo em disco para a data {data_str}.")
 
 def verificar_links_do_dia(data_alvo_str: str):
-    logging.info(f"--- Iniciando verificação de integridade para {data_alvo_str} ---")
+    logging.info(f"Iniciando verificação de integridade bidirecional para {data_alvo_str}.")
     erros_encontrados = False
 
-    logging.info("Verificando Greyhound (GH)...")
-    gh_links_file = os.path.join(config.PASTA_DE_DADOS, f"{data_alvo_str}_links_1_gh.json")
-    gh_scraped_file = os.path.join(config.PASTA_DE_DADOS, f"{data_alvo_str}_scraped_1_gh.json")
-    
-    missing_gh = _comparar_arquivos(gh_links_file, gh_scraped_file, "href_gh")
-    
-    if missing_gh is None:
-        erros_encontrados = True
-    elif not missing_gh:
-        logging.info("✅ SUCESSO (GH): Todos os links de origem estão no arquivo raspado.")
-    else:
-        logging.warning(f"🚨 FALHA (GH): {len(missing_gh)} links estão faltando no arquivo raspado:")
-        for link in missing_gh:
-            logging.warning(f"  - {link}")
-        erros_encontrados = True
+    configuracoes = [
+        ("Greyhound", "gh", "href_gh"),
+        ("Timeform", "tf", "href_tf")
+    ]
 
-    logging.info("Verificando Timeform (TF)...")
-    tf_links_file = os.path.join(config.PASTA_DE_DADOS, f"{data_alvo_str}_links_1_tf.json")
-    tf_scraped_file = os.path.join(config.PASTA_DE_DADOS, f"{data_alvo_str}_scraped_1_tf.json")
+    for nome_casa, sufixo, chave_link in configuracoes:
+        links_file = os.path.join(config.PASTA_DE_DADOS, f"{data_alvo_str}_links_1_{sufixo}.json")
+        scraped_file = os.path.join(config.PASTA_DE_DADOS, f"{data_alvo_str}_scraped_1_{sufixo}.json")
+        
+        missing_links = _comparar_arquivos(links_file, scraped_file, chave_link)
+        
+        if missing_links is None:
+            erros_encontrados = True
+        elif not missing_links:
+            logging.info(f"Paridade validada com sucesso no {nome_casa} (100%).")
+        else:
+            logging.warning(f"Falha de integridade {sufixo.upper()}: Omissão de {len(missing_links)} links no arquivo extraído.")
+            erros_encontrados = True
 
-    missing_tf = _comparar_arquivos(tf_links_file, tf_scraped_file, "href_tf")
-    
-    if missing_tf is None:
-        erros_encontrados = True
-    elif not missing_tf:
-        logging.info("✅ SUCESSO (TF): Todos os links de origem estão no arquivo raspado.")
-    else:
-        logging.warning(f"🚨 FALHA (TF): {len(missing_tf)} links estão faltando no arquivo raspado:")
-        for link in missing_tf:
-            logging.warning(f"  - {link}")
-        erros_encontrados = True
-
-    logging.info(f"--- Verificação Concluída para {data_alvo_str} ---")
     return erros_encontrados
 
 def _comparar_arquivos(links_file_path: str, scraped_file_path: str, link_key: str) -> list | None:
@@ -128,14 +134,14 @@ def _comparar_arquivos(links_file_path: str, scraped_file_path: str, link_key: s
             links_data = json.load(f)
         source_links = {item[link_key] for item in links_data.get("corridas", []) if link_key in item}
     except FileNotFoundError:
-        logging.error(f"Arquivo de links não encontrado: {links_file_path}")
+        logging.error(f"Arquivo origem inexistente: {links_file_path}")
         return None
     except (json.JSONDecodeError, TypeError, KeyError) as e:
-        logging.error(f"Falha ao ler {links_file_path}. Formato inválido? {e}")
+        logging.error(f"Formatação inválida no arquivo origem {links_file_path}: {e}")
         return None
 
     if not source_links:
-        logging.info(f"Nenhum link de origem encontrado em {links_file_path}. Pulando.")
+        logging.info(f"Conjunto de links vazio no arquivo {links_file_path}. Operação ignorada.")
         return []
 
     try:
@@ -143,10 +149,10 @@ def _comparar_arquivos(links_file_path: str, scraped_file_path: str, link_key: s
             scraped_data = json.load(f)
         scraped_links = {item[link_key] for item in scraped_data if isinstance(item, dict) and link_key in item}
     except FileNotFoundError:
-        logging.error(f"Arquivo de dados raspados não encontrado: {scraped_file_path}")
+        logging.error(f"Arquivo alvo inexistente: {scraped_file_path}")
         return sorted(list(source_links))
     except (json.JSONDecodeError, TypeError) as e:
-        logging.error(f"Falha ao ler {scraped_file_path}. Formato inválido? {e}")
+        logging.error(f"Formatação inválida no arquivo alvo {scraped_file_path}: {e}")
         return None
 
     missing_links = source_links - scraped_links
@@ -165,9 +171,10 @@ def rodar_backfill():
         mapa_pistas = carregar_mapa_pistas()
 
         if not mapa_pistas:
+            logging.error("O carregamento do dicionário de pistas falhou. Operação abortada.")
             return
 
-        logging.info("Garantindo ChromeDriver...")
+        logging.info("Garantindo estabilidade do ChromeDriver via WDM...")
         driver_path = ChromeDriverManager().install()
 
         while True:
@@ -176,10 +183,11 @@ def rodar_backfill():
             ).order_by(BackfillLog.data_corrida.asc()).first()
 
             if not trabalho:
-                logging.info("### BACKFILL (FASE 1: EXTRAÇÃO) CONCLUÍDO! ###")
+                logging.info("Backfill e fila de pendências integralmente concluídos.")
                 break
             
             data_alvo = trabalho.data_corrida
+            logging.info(f"Fila: Processando data {data_alvo} (Status anterior: {trabalho.status})")
             trabalho.status = 'running'
             trabalho.last_updated = func.now()
             db.commit()
@@ -187,12 +195,13 @@ def rodar_backfill():
             try:
                 run_extraction_for_date(data_alvo, mapa_pistas, driver_path)
                 trabalho.status = 'success'
+                logging.info(f"Data {data_alvo}: Pipeline concluído e validado.")
                 db.commit()
 
                 verificar_links_do_dia(data_alvo.strftime('%Y-%m-%d'))
 
             except Exception as e:
-                logging.error(f"FALHA na extração para: {data_alvo}", exc_info=True)
+                logging.error(f"Quebra sistêmica ao processar a data {data_alvo}", exc_info=True)
                 db.rollback()
                 trabalho.status = 'failed'
                 db.commit()
@@ -202,13 +211,25 @@ def rodar_backfill():
         db.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(threadName)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler("backfill_extracao.log", mode='a', encoding='utf-8')
-        ]
-    )
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    
+    if logger.hasHandlers():
+        logger.handlers.clear()
+        
+    formatter = TaxonomiaBackfillFormatter()
+    
+    fh = logging.FileHandler("backfill_extracao.log", mode='a', encoding='utf-8')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    
+    sh = logging.StreamHandler()
+    sh.setFormatter(formatter)
+    logger.addHandler(sh)
+
     logging.getLogger("undetected_chromedriver").setLevel(logging.ERROR)
     logging.getLogger("selenium").setLevel(logging.ERROR)
+    logging.getLogger("urllib3").setLevel(logging.ERROR)
+    logging.getLogger("wdm").setLevel(logging.ERROR)
+    
     rodar_backfill()

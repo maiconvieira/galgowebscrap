@@ -16,7 +16,7 @@ from app.core.helpers import analisar_posicao_final, _converter_fracao_para_floa
 def extrair_links_gh(driver, data_para_buscar):
     data_url = data_para_buscar.strftime('%Y-%m-%d')
     url_resultados = f"{config.URL_BASE_GH}#results-list/r_date={data_url}"
-    logging.info(f"Acessando Greyhound Bet para a data de resultados: {data_url}")
+    logging.debug(f"Acessando Greyhound para a data de resultados: {data_url}")
     
     try:
         driver.get(url_resultados)
@@ -40,7 +40,7 @@ def extrair_links_gh(driver, data_para_buscar):
         href = link_tag['href'] 
         unidades_de_trabalho.append({'href_gh': href})
     
-    logging.info(f"-> [GH-Results] {len(unidades_de_trabalho)} links de corrida individuais encontrados no Greyhound Bet.")
+    logging.debug(f"-> [GH-Results] {len(unidades_de_trabalho)} links de corrida encontrados.")
     return unidades_de_trabalho
 
 def raspar_detalhes_pagina_gh(driver, trabalho: dict, mapa_json, max_retries: int = 3):

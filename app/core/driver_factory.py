@@ -70,23 +70,41 @@ def warm_up_driver(driver_instance, url_base: str):
         return None
     try:
         driver_instance.get(url_base)
-        time.sleep(random.uniform(4, 7))
-        if "timeform" in url_base:
-            try:
-                cookie_wait = WebDriverWait(driver_instance, 5)
-                accept_button = cookie_wait.until(EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler")))
-                accept_button.click()
-                time.sleep(1)
-            except TimeoutException:
-                logging.info("Banner de cookies (Timeform) não encontrado durante o aquecimento. Seguindo.")
-            except Exception as e_cookie:
-                logging.warning(f"Erro ao tentar aceitar cookies no aquecimento: {e_cookie}")
-
+        WebDriverWait(driver_instance, 10).until(
+            lambda d: d.execute_script('return document.readyState') == 'complete'
+        )
+        time.sleep(random.uniform(2, 4))
         return driver_instance
-    except (WebDriverException, MaxRetryError, ProtocolError) as e_warmup:
-        logging.critical(f"FALHA NO AQUECIMENTO do driver ({type(e_warmup).__name__}). Tentando reiniciar...", exc_info=True)
+    except (WebDriverException, MaxRetryError, ProtocolError) as e:
+        logging.critical(f"[SYS][ERR ] Falha no aquecimento básico em {url_base}: {type(e).__name__}", exc_info=True)
         try:
             driver_instance.quit()
-        except:
+        except Exception:
             pass
         return None
+    
+#def warm_up_driver(driver_instance, url_base: str):
+    #if not driver_instance:
+        #return None
+    #try:
+        #driver_instance.get(url_base)
+        #time.sleep(random.uniform(4, 7))
+        #if "timeform" in url_base:
+            #try:
+                #cookie_wait = WebDriverWait(driver_instance, 5)
+                #accept_button = cookie_wait.until(EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler")))
+                #accept_button.click()
+                #time.sleep(1)
+            #except TimeoutException:
+                #logging.info("Banner de cookies (Timeform) não encontrado durante o aquecimento. Seguindo.")
+            #except Exception as e_cookie:
+                #logging.warning(f"Erro ao tentar aceitar cookies no aquecimento: {e_cookie}")
+
+        #return driver_instance
+    #except (WebDriverException, MaxRetryError, ProtocolError) as e_warmup:
+        #logging.critical(f"FALHA NO AQUECIMENTO do driver ({type(e_warmup).__name__}). Tentando reiniciar...", exc_info=True)
+        #try:
+            #driver_instance.quit()
+        #except:
+            #pass
+        #return None

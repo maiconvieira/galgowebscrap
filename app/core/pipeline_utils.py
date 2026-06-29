@@ -90,7 +90,7 @@ def cache_links(nome_cache: str, funcao_extracao: callable, driver_factory: call
 
 def processar_lista_em_serie(lista_de_trabalho: list, funcao_raspagem: callable, mapa_json, url_base: str, driver_factory: callable, pausa_config: tuple):
     if not lista_de_trabalho:
-        logging.info("Lista de trabalho vazia. Nenhum processamento necessário.")
+        logging.debug("Lista de trabalho vazia.")
         return []
 
     resultados = []
@@ -103,46 +103,40 @@ def processar_lista_em_serie(lista_de_trabalho: list, funcao_raspagem: callable,
             return []
 
         total_trabalhos = len(lista_de_trabalho)
-        logging.info(f"Iniciando processamento serial (modo driver único) de {total_trabalhos} trabalhos...")
-
         for i, trabalho in enumerate(lista_de_trabalho):
-            url_trabalho = trabalho.get('href_tf') or trabalho.get('href_gh')
-            logging.info(f"Processando [{i+1}/{total_trabalhos}]: {url_trabalho}")
+            url = trabalho.get('href_tf') or trabalho.get('href_gh')
+            logging.info(f"Progresso: {i+1}/{total_trabalhos} | URL: {url}")
 
             try:
                 resultado = funcao_raspagem(driver, trabalho, mapa_json)
                 if resultado:
                     resultados.append(resultado)
                 else:
-                    logging.warning(f"Scraping de {url_trabalho} não retornou dados (possivelmente falhou após retentativas).")
-
-            except (WebDriverException, MaxRetryError, ProtocolError, TimeoutException, AttributeError) as e_driver_comm:
-                logging.critical(f"ERRO CRÍTICO DE DRIVER/COMUNICAÇÃO ({type(e_driver_comm).__name__}) ao processar {url_trabalho}.", exc_info=True)
-                logging.error("Tentando reiniciar o driver...")
+                    logging.warning(f"Raspagem sem dados retornados: {url}")
+            
+            except (WebDriverException, MaxRetryError, ProtocolError, TimeoutException, AttributeError) as e_driver:
+                logging.error(f"Falha de infraestrutura/driver em {url} ({type(e_driver).__name__}). Tentando recuperar...")
                 try:
                     driver.quit()
                 except:
-                    pass 
-                
+                    pass
+
                 driver = driver_factory()
                 driver = warm_up_driver(driver, url_base)
                 if not driver:
-                    logging.critical("Não foi possível reiniciar o driver. Abortando os trabalhos restantes.")
-                    break 
+                    logging.critical("Falha irrecuperável na reinicialização do driver. Abortando loop.")
+                    break
 
             except Exception as e_parse:
-                logging.error(f"Erro inesperado de scraping/parsing ao processar {url_trabalho}", exc_info=True)
+                logging.error(f"Erro inesperado de parsing/lógica em {url}", exc_info=True)
             
             pausa_polida = random.uniform(pausa_config[0], pausa_config[1])
-            logging.info(f"Pausa de {pausa_polida:.1f}s...")
+            logging.debug(f"Pausa entre tarefas: {pausa_polida:.1f}s.")
             time.sleep(pausa_polida)
 
     finally:
         if driver:
-            logging.info("Fechando o driver principal (modo driver único) após concluir os trabalhos.")
             driver.quit()
-
-    logging.info(f"Processamento serial concluído. {len(resultados)} resultados coletados.")
     return resultados
 
 def executar_pipeline_site(

@@ -1,0 +1,482 @@
+{
+  "data_corrida": "2025-06-21",
+  "corridas": [
+    {
+      "href_tf": "/greyhound-racing/results/central-park/1837/2025-06-21/1297288"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/1853/2025-06-21/1297289"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/1911/2025-06-21/1297290"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/1927/2025-06-21/1297291"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/1944/2025-06-21/1297292"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2001/2025-06-21/1297293"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2019/2025-06-21/1297294"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2036/2025-06-21/1297295"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2054/2025-06-21/1297296"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2111/2025-06-21/1297297"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2128/2025-06-21/1297298"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/central-park/2146/2025-06-21/1297299"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1041/2025-06-21/1298215"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1057/2025-06-21/1298216"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1113/2025-06-21/1298217"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1129/2025-06-21/1298218"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1147/2025-06-21/1298219"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1204/2025-06-21/1298220"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1221/2025-06-21/1298221"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1238/2025-06-21/1298222"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1254/2025-06-21/1298223"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1312/2025-06-21/1298224"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1329/2025-06-21/1298225"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1811/2025-06-21/1298205"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1829/2025-06-21/1298206"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1846/2025-06-21/1298207"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1904/2025-06-21/1298208"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1924/2025-06-21/1298209"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1942/2025-06-21/1298210"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/1958/2025-06-21/1298211"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/2016/2025-06-21/1298212"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/2034/2025-06-21/1298213"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/doncaster/2052/2025-06-21/1298214"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1808/2025-06-21/1298269"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1826/2025-06-21/1298270"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1842/2025-06-21/1298271"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1859/2025-06-21/1298272"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1916/2025-06-21/1298273"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1933/2025-06-21/1298274"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/1949/2025-06-21/1298275"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/2007/2025-06-21/1298276"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/2024/2025-06-21/1298277"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/2041/2025-06-21/1298278"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/2059/2025-06-21/1298279"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/hove/2116/2025-06-21/1298280"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1101/2025-06-21/1298044"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1118/2025-06-21/1298045"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1134/2025-06-21/1298046"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1152/2025-06-21/1298047"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1209/2025-06-21/1298048"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1226/2025-06-21/1298049"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1242/2025-06-21/1298050"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1259/2025-06-21/1298051"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1317/2025-06-21/1298052"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1333/2025-06-21/1298053"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1351/2025-06-21/1298054"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1407/2025-06-21/1298055"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1831/2025-06-21/1298056"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1848/2025-06-21/1298057"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1906/2025-06-21/1298058"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1922/2025-06-21/1298059"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1939/2025-06-21/1298060"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/1956/2025-06-21/1298061"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/2013/2025-06-21/1298062"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/2031/2025-06-21/1298063"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/2047/2025-06-21/1298064"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/2104/2025-06-21/1298065"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/2123/2025-06-21/1298066"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/monmore/2139/2025-06-21/1298067"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1423/2025-06-21/1298349"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1441/2025-06-21/1298350"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1501/2025-06-21/1298351"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1519/2025-06-21/1298352"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1538/2025-06-21/1298353"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1557/2025-06-21/1298354"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1616/2025-06-21/1298355"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1634/2025-06-21/1298356"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1653/2025-06-21/1298357"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1712/2025-06-21/1298358"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1731/2025-06-21/1298359"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/newcastle/1749/2025-06-21/1298360"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1747/2025-06-21/1298000"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1804/2025-06-21/1298001"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1821/2025-06-21/1298002"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1839/2025-06-21/1298003"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1856/2025-06-21/1298004"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1914/2025-06-21/1298005"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1931/2025-06-21/1298006"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/1951/2025-06-21/1298007"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/2009/2025-06-21/1298008"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/2026/2025-06-21/1298009"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/2043/2025-06-21/1298010"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/2101/2025-06-21/1298011"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/oxford/2118/2025-06-21/1298012"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/1901/2025-06-21/1297926"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/1918/2025-06-21/1297927"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/1936/2025-06-21/1297928"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/1953/2025-06-21/1297929"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2011/2025-06-21/1297930"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2028/2025-06-21/1297931"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2044/2025-06-21/1297932"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2102/2025-06-21/1297933"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2120/2025-06-21/1297934"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2136/2025-06-21/1297935"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2152/2025-06-21/1297936"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/perry-barr/2211/2025-06-21/1297937"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1109/2025-06-21/1298166"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1127/2025-06-21/1298167"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1143/2025-06-21/1298168"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1201/2025-06-21/1298169"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1218/2025-06-21/1298170"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1234/2025-06-21/1298171"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1251/2025-06-21/1298172"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1308/2025-06-21/1298173"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1326/2025-06-21/1298174"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1342/2025-06-21/1298175"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1908/2025-06-21/1297667"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1925/2025-06-21/1297668"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1941/2025-06-21/1297669"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/1959/2025-06-21/1297670"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2017/2025-06-21/1297671"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2037/2025-06-21/1297672"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2056/2025-06-21/1297673"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2114/2025-06-21/1297674"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2132/2025-06-21/1297675"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2148/2025-06-21/1297676"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/romford/2204/2025-06-21/1297677"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/1930/2025-06-21/1298081"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/1947/2025-06-21/1298082"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2004/2025-06-21/1298083"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2021/2025-06-21/1298084"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2038/2025-06-21/1298085"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2055/2025-06-21/1298086"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2112/2025-06-21/1298087"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2129/2025-06-21/1298088"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2146/2025-06-21/1298089"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/sheffield/2202/2025-06-21/1298090"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/1902/2025-06-21/1298115"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/1917/2025-06-21/1298116"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/1934/2025-06-21/1298117"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/1948/2025-06-21/1298118"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2003/2025-06-21/1298119"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2018/2025-06-21/1298120"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2032/2025-06-21/1298121"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2048/2025-06-21/1298122"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2106/2025-06-21/1298123"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2124/2025-06-21/1298124"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/star-pelaw/2140/2025-06-21/1298125"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1032/2025-06-21/1298307"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1048/2025-06-21/1298308"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1104/2025-06-21/1298309"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1121/2025-06-21/1298310"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1138/2025-06-21/1298311"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1154/2025-06-21/1298312"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1212/2025-06-21/1298313"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1229/2025-06-21/1298314"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1246/2025-06-21/1298315"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1303/2025-06-21/1298316"
+    },
+    {
+      "href_tf": "/greyhound-racing/results/towcester/1319/2025-06-21/1298317"
+    }
+  ]
+}

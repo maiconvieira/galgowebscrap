@@ -16,7 +16,18 @@ from app.core.helpers import analisar_posicao_final, _converter_fracao_para_floa
 def extrair_links_tf(driver, data_para_buscar):
     data_str = data_para_buscar.strftime('%Y-%m-%d')
     url_resultados = f"{config.URL_BASE_TF}/greyhound-racing/results/{data_str}"
-    logging.info(f"Acessando Timeform para a data de resultados: {data_str}")
+    logging.debug(f"Acessando Timeform para a data de resultados: {data_str}")
+
+    driver = warm_up_driver(driver, url_resultados)
+
+    try:
+        cookie_wait = WebDriverWait(driver, 5)
+        accept_button = cookie_wait.until(
+            EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))
+        )
+        accept_button.click()
+    except TimeoutException:
+        pass
 
     try:
         driver.get(url_resultados)
@@ -46,7 +57,7 @@ def extrair_links_tf(driver, data_para_buscar):
                 'href_tf': href
             })
     
-    logging.info(f"-> {len(unidades_de_trabalho)} links de resultados encontrados no Timeform.")
+    logging.debug(f"-> {len(unidades_de_trabalho)} links de resultados encontrados no Timeform.")
     return unidades_de_trabalho
 
 def raspar_detalhes_pagina_tf(driver, trabalho: dict, mapa_json, max_retries: int = 3):
